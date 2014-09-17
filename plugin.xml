@@ -26,7 +26,6 @@
 
   <platform name="android">
     <source-file src="src/android/jni" target-dir="." />
-    <source-file src="src/native/cheminotc" target-dir="jni" />
     <source-file src="src/android/m.cheminot.plugin/Cheminot.java" target-dir="src/m/cheminot/plugin" />
     <source-file src="src/android/m.cheminot.plugin/CheminotActivity.java" target-dir="src/m/cheminot/plugin" />
     <source-file src="src/android/m.cheminot.plugin/CheminotLib.java" target-dir="src/m/cheminot/plugin/jni" />

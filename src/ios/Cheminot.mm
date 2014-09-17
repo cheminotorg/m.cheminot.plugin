@@ -1,6 +1,5 @@
 #import "Cheminot.h"
 #import <Cordova/CDVPlugin.h>
-#import "Adapter.h"
 
 @implementation Cheminot
 
@@ -12,8 +11,7 @@
 - (void)init:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-    NSString* version = [NSString stringWithUTF8String:getVersion(self.dbPath)];
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:version];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"pong"];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
