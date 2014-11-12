@@ -80,7 +80,7 @@ public class Cheminot extends CordovaPlugin {
       String vsId = args.getString(0);
       String veId = args.getString(1);
       int at = args.getInt(2);
-      CheminotLib.lookForBestTrip(vsId, veId, at);
+      cbc.success(CheminotLib.lookForBestTrip(vsId, veId, at));
     } catch (JSONException e) {
       cbc.error(e.getMessage());
     }
