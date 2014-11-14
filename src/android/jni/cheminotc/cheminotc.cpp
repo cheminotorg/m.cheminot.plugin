@@ -338,22 +338,23 @@ namespace cheminotc {
     return hasSameTime(&a->arrival, &a->departure) && a->pos > 0;
   }
 
-  Json::Value serializeArrivalTime(ArrivalTime arrivalTime) {
+  Json::Value serializeArrivalTime(ArrivalTime *arrivalTime) {
     Json::Value json;
-    int arrival = asTimestamp(arrivalTime.arrival);
-    int departure = asTimestamp(arrivalTime.departure);
-    json["stopId"] = arrivalTime.stopId;
-    json["arrival"] = arrival;
-    json["departure"] = departure;
-    json["tripId"] = arrivalTime.tripId;
-    json["pos"] = arrivalTime.pos;
+    int arrival = asTimestamp(arrivalTime->arrival);
+    int departure = asTimestamp(arrivalTime->departure);
+    json["stopId"] = arrivalTime->stopId;
+    json["arrivalTime"] = arrival;
+    json["departureTime"] = departure;
+    json["tripId"] = arrivalTime->tripId;
+    json["pos"] = arrivalTime->pos;
     return json;
   }
 
   Json::Value serializeArrivalTimes(std::list<ArrivalTime> arrivalTimes) {
     Json::Value array;
-    for(cheminotc::ArrivalTime arrivalTime : arrivalTimes) {
-      array.append(serializeArrivalTime(arrivalTime));
+    for(std::list<ArrivalTime>::const_iterator iterator = arrivalTimes.begin(), end = arrivalTimes.end(); iterator != end; ++iterator) {
+      ArrivalTime arrivalTime = *iterator;
+      array.append(serializeArrivalTime(&arrivalTime));
     }
     return array;
   }
@@ -584,6 +585,8 @@ namespace cheminotc {
     auto stopTimeGs = *(std::find_if(vs.stopTimes.begin(), vs.stopTimes.end(), [&](StopTime stopTime) {
       return stopTime.tripId == last.tripId;
     }));
+
+    gs.tripId = stopTimeGs.tripId;
     gs.departure = stopTimeGs.departure;
     gs.arrival = stopTimeGs.arrival;
 
