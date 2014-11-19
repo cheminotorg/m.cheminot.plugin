@@ -7,10 +7,11 @@
 #include <numeric>
 #include <algorithm>
 #include <sstream>
+#include <fstream>
 #include <memory>
 #include <sqlite3.h>
 #include <json/json.h>
-#include <cheminotc.h>
+#include "cheminotc.h"
 
 namespace cheminotc {
 
@@ -165,22 +166,18 @@ namespace cheminotc {
     return json;
   }
 
-  std::map<std::string, std::list<CalendarException>> parseCalendarExceptions(Json::Value json) {
-    std::map<std::string, std::list<CalendarException>> calendarExceptions;
-    for(auto const &serviceId : json.getMemberNames()) {
-      std::list<CalendarException> exceptions;
-      Json::Value array = json[serviceId];
-      for(int index=0; index < array.size(); ++index) {
-        CalendarException calendarException;
-        Json::Value value = array[index];
-        calendarException.serviceId = value["serviceId"].asString();
-        calendarException.date = parseDate(value["date"].asString());
-        calendarException.exceptionType = value["exceptionType"].asInt();
-        exceptions.push_back(calendarException);
-      }
-      calendarExceptions[serviceId] = exceptions;
+  std::list<CalendarException> getCalendarExceptionsFor(Json::Value *calendarExceptions, std::string serviceId) {
+    std::list<CalendarException> exceptions;
+    Json::Value array = (*calendarExceptions)[serviceId];
+    for(int index=0; index < array.size(); ++index) {
+      CalendarException calendarException;
+      Json::Value value = array[index];
+      calendarException.serviceId = value["serviceId"].asString();
+      calendarException.date = parseDate(value["date"].asString());
+      calendarException.exceptionType = value["exceptionType"].asInt();
+      exceptions.push_back(calendarException);
     }
-    return calendarExceptions;
+    return exceptions;
   }
 
   StopTime parseStopTime(Json::Value value) {
@@ -228,18 +225,17 @@ namespace cheminotc {
     return calendar;
   }
 
-  Vertice parseVerticeRow(std::list< std::map<std::string, const void*> >::const_iterator it) {
-    std::map<std::string, const void*> row = *it;
-    const char*id = (const char*)row["id"];
-    const char*name = (const char*)row["name"];
-    const char*edges = (const char*)row["edges"];
-    const char*stopTimes = (const char*)row["stopTimes"];
+  Vertice parseVerticeRow(Json::Value value) {
     struct Vertice vertice;
-    vertice.id = id;
-    vertice.name = name;
-    vertice.edges = parseEdges(toJson(edges));
-    vertice.stopTimes = parseStopTimes(toJson(stopTimes));
+    vertice.id = value["id"].asString();
+    vertice.name = value["name"].asString();
+    vertice.edges = parseEdges(value["edges"]);
+    vertice.stopTimes = parseStopTimes(value["stopTimes"]);
     return vertice;
+  }
+
+  Vertice getVerticeFromGraph(Json::Value *graph, std::string id) {
+    return parseVerticeRow((*graph)[id]);
   }
 
   Trip parseTripRow(std::list< std::map<std::string, const void*> >::const_iterator it) {
@@ -289,33 +285,35 @@ namespace cheminotc {
     return handle;
   }
 
-  std::map<std::string, Vertice> buildGraph(sqlite3 *handle) {
-    std::map<std::string, Vertice> graph;
-    std::list< std::map<std::string, const void*> > results = executeSQL(handle, "SELECT * FROM GRAPH;");
-    for (std::list< std::map<std::string, const void*> >::const_iterator iterator = results.begin(), end = results.end(); iterator != end; ++iterator) {
-      Vertice vertice = parseVerticeRow(iterator);
-      graph[vertice.id] = vertice;
+  Json::Value parseGraph(std::string path) {
+    std::ifstream in(path);
+    if(in.is_open()) {
+      Json::Value json;
+      auto reader = new Json::Reader();
+      reader->parse(in, json, false);
+      return json;
+    } else {
+      throw std::runtime_error("Unexpected error while reading: " + path);
     }
-    return graph;
+  }
+
+  Json::Value parseCalendarExceptions(std::string path) {
+    std::ifstream in(path);
+    if(in.is_open()) {
+      Json::Value json;
+      auto reader = new Json::Reader();
+      reader->parse(in, json, false);
+      in.close();
+      return json;
+    } else {
+      throw std::runtime_error("Unexpected error while reading: " + path);
+    }
   }
 
   std::string getVersion(sqlite3 *handle) {
-    std::string query = "SELECT value FROM CACHE WHERE key = 'version'";
+    std::string query = "SELECT value FROM META WHERE key = 'version'";
     std::list< std::map<std::string, const void*> > results = executeSQL(handle, query);
     return (char *)results.front()["value"];
-  }
-
-  Vertice getVerticeById(sqlite3 *handle, std:: string id) {
-    std::string query = "SELECT * FROM GRAPH WHERE id = '" + id + "'";
-    std::list< std::map<std::string, const void*> > results = executeSQL(handle, query);
-    return parseVerticeRow(results.begin());
-  }
-
-  std::map<std::string, std::list<CalendarException> > getCalendarExceptions(sqlite3 *handle) {
-    std::string query = "SELECT value FROM CACHE WHERE key = 'exceptions'";
-    std::list< std::map<std::string, const void*> > results = executeSQL(handle, query);
-    char *exceptions = (char *)results.front()["value"];
-    return parseCalendarExceptions(toJson(exceptions));
   }
 
   std::list<Trip> getTripsByIds(sqlite3 *handle, std::list<std::string> ids) {
@@ -366,28 +364,20 @@ namespace cheminotc {
     }
   };
 
-  bool isTripRemovedOn(std::list<Trip>::const_iterator trip, std::map<std::string, std::list<CalendarException>> *calendarExceptions, struct tm when) {
-    auto exceptions = calendarExceptions->find(trip->calendar->serviceId);
-    if(exceptions != calendarExceptions->end()) {
-      auto it = std::find_if(exceptions->second.begin(), exceptions->second.end(), [&](CalendarException exception) {
+  bool isTripRemovedOn(std::list<Trip>::const_iterator trip, Json::Value *calendarExceptions, struct tm when) {
+    auto exceptions = getCalendarExceptionsFor(calendarExceptions, trip->calendar->serviceId);
+    auto it = std::find_if(exceptions.begin(), exceptions.end(), [&when](CalendarException exception) {
         return hasSameDate(&exception.date, &when) && (exception.exceptionType == 2);
       });
-      return it != exceptions->second.end();
-    } else {
-      return false;
-    }
+    return it != exceptions.end();
   }
 
-  bool isTripAddedOn(std::list<Trip>::const_iterator trip, std::map<std::string, std::list<CalendarException>> *calendarExceptions, struct tm when) {
-    auto exceptions = calendarExceptions->find(trip->calendar->serviceId);
-    if(exceptions != calendarExceptions->end()) {
-      auto it = std::find_if(exceptions->second.begin(), exceptions->second.end(), [&](CalendarException exception) {
+  bool isTripAddedOn(std::list<Trip>::const_iterator trip, Json::Value *calendarExceptions, struct tm when) {
+    auto exceptions = getCalendarExceptionsFor(calendarExceptions, trip->calendar->serviceId);
+    auto it = std::find_if(exceptions.begin(), exceptions.end(), [&when](CalendarException exception) {
         return hasSameDate(&exception.date, &when) && (exception.exceptionType == 1);
       });
-      return it != exceptions->second.end();
-    } else {
-      return false;
-    }
+    return it != exceptions.end();
   }
 
   bool isTripValidToday(std::list<Trip>::const_iterator trip, struct tm when) {
@@ -403,7 +393,7 @@ namespace cheminotc {
     return before && after;
   }
 
-  bool isTripValidOn(std::list<Trip>::const_iterator trip, std::map<std::string, std::list<CalendarException>> *calendarExceptions, struct tm when) {
+  bool isTripValidOn(std::list<Trip>::const_iterator trip, Json::Value *calendarExceptions, struct tm when) {
     if(trip->calendar != NULL) {
       bool removed = isTripRemovedOn(trip, calendarExceptions, when);
       bool added = isTripAddedOn(trip, calendarExceptions, when);
@@ -414,7 +404,7 @@ namespace cheminotc {
     return false;
   }
 
-  std::map<std::string, bool> tripsAvailability(sqlite3 *handle, std::list<std::string> ids, std::map<std::string, std::list<CalendarException>> *calendarExceptions, struct tm when) {
+  std::map<std::string, bool> tripsAvailability(sqlite3 *handle, std::list<std::string> ids, Json::Value *calendarExceptions, struct tm when) {
     std::map<std::string, bool> availablities;
     auto trips = getTripsByIds(handle, ids);
     for (std::list<Trip>::const_iterator iterator = trips.begin(), end = trips.end(); iterator != end; ++iterator) {
@@ -448,8 +438,8 @@ namespace cheminotc {
     return next;
   }
 
-  std::list<StopTime> getAvailableDepartures(sqlite3 *handle, std::map<std::string, std::list<CalendarException>> *calendarExceptions, ArrivalTime *vi, struct tm ts) {
-    std::list<StopTime> departures(sortStopTimesBy(vi->vertice->stopTimes, ts));
+  std::list<StopTime> getAvailableDepartures(sqlite3 *handle, Json::Value *calendarExceptions, ArrivalTime *vi, struct tm ts) {
+    std::list<StopTime> departures(sortStopTimesBy(vi->vertice.stopTimes, ts));
 
     departures.remove_if([&] (StopTime &stopTime) {
         return !(timeIsBeforeNotEq(vi->arrival, stopTime.departure) && !isTerminus(&stopTime));
@@ -469,7 +459,7 @@ namespace cheminotc {
     return departures;
   }
 
-  std::map<std::string, ArrivalTime> refineArrivalTimes(sqlite3 *handle, std::map<std::string, Vertice> *graph, std::map<std::string, std::list<CalendarException>> *calendarExceptions, std::string vsId, std::string veId, struct tm ts) {
+  std::map<std::string, ArrivalTime> refineArrivalTimes(sqlite3 *handle, Json::Value *graph, Json::Value *calendarExceptions, std::string vsId, std::string veId, struct tm ts) {
 
     std::map<std::string, ArrivalTime> results;
     std::map< std::string, ArrivalTime > pushed;
@@ -478,12 +468,12 @@ namespace cheminotc {
 
     std::priority_queue<ArrivalTime, std::vector<ArrivalTime>, CompareArrivalTime> queue;
 
-    Vertice vs = (*graph)[vsId];
+    Vertice vs = getVerticeFromGraph(graph, vsId);
 
     struct ArrivalTime gs;
     gs.stopId = vsId;
     gs.arrival = ts;
-    gs.vertice = &vs;
+    gs.vertice = vs;
     queue.push(gs);
     pushed[vsId] = gs;
 
@@ -501,15 +491,15 @@ namespace cheminotc {
         return results;
       } else {
 
-        Vertice vi = *(head.vertice);
+        Vertice vi = head.vertice;
         auto departures = getAvailableDepartures(handle, calendarExceptions, &head, ts);
 
         if(!departures.empty()) {
 
           for (std::list<std::string>::const_iterator iterator = vi.edges.begin(), end = vi.edges.end(); iterator != end; ++iterator) {
             std::string vjId = *iterator;
-            Vertice *vj = &(*graph)[vjId];
-            std::list<StopTime> stopTimes(sortStopTimesBy(vj->stopTimes, head.arrival));
+            Vertice vj = getVerticeFromGraph(graph, vjId);
+            std::list<StopTime> stopTimes(sortStopTimesBy(vj.stopTimes, head.arrival));
 
             auto arrivalTimes = std::accumulate(departures.begin(), departures.end(), std::list<StopTime>(), [&stopTimes](std::list<StopTime> acc, StopTime departureTime) {
                 auto it = std::find_if(stopTimes.begin(), stopTimes.end(), [&departureTime](StopTime stopTime) {
@@ -545,9 +535,9 @@ namespace cheminotc {
     return results;
   }
 
-  std::list<ArrivalTime> pathSelection(std::map<std::string, Vertice> *graph, std::map<std::string, ArrivalTime> *arrivalTimes, struct tm ts, std::string vsId, std::string veId) {
-    Vertice vs = (*graph)[vsId];
-    Vertice vj = (*graph)[veId];
+  std::list<ArrivalTime> pathSelection(Json::Value *graph, std::map<std::string, ArrivalTime> *arrivalTimes, struct tm ts, std::string vsId, std::string veId) {
+    Vertice vs = getVerticeFromGraph(graph, vsId);
+    Vertice vj = getVerticeFromGraph(graph, veId);
     ArrivalTime ge = (*arrivalTimes)[vj.id];
     std::list<ArrivalTime> path;
     while(vj.id != vs.id) {
@@ -555,7 +545,7 @@ namespace cheminotc {
       std::list< std::pair<ArrivalTime, Vertice> > matched;
       for (std::list<std::string>::const_iterator iterator = vj.edges.begin(), end = vj.edges.end(); iterator != end; ++iterator) {
         std::string viId = *iterator;
-        Vertice vi = (*graph)[viId];
+        Vertice vi = getVerticeFromGraph(graph, viId);
         auto gi = arrivalTimes->find(viId);
         if(gi != arrivalTimes->end()) {
           auto found = std::find_if(vi.stopTimes.begin(), vi.stopTimes.end(), [&](StopTime viStopTime) {
@@ -594,7 +584,7 @@ namespace cheminotc {
     return path;
   }
 
-  std::list<ArrivalTime> lookForBestTrip(sqlite3 *handle, std::map<std::string, Vertice> *graph, std::map<std::string, std::list<CalendarException>> *calendarExceptions, std::string vsId, std::string veId, struct tm at) {
+  std::list<ArrivalTime> lookForBestTrip(sqlite3 *handle, Json::Value *graph, Json::Value *calendarExceptions, std::string vsId, std::string veId, struct tm at) {
     auto arrivalTimes = refineArrivalTimes(handle, graph, calendarExceptions, vsId, veId, at);
     return pathSelection(graph, &arrivalTimes, at, vsId, veId);
   }
