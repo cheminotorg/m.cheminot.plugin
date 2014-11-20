@@ -46,19 +46,23 @@ public class Cheminot extends CordovaPlugin {
     return true;
   }
 
-  private void init(CallbackContext cbc) {
-    String database = "cheminot.db";
-    try {
-      this.prepareDatabase(database);
-      String dbpath = this.cordova.getActivity().getDatabasePath(database).getAbsolutePath();
-      cbc.success(CheminotLib.init(dbpath));
-    } catch (IOException e) {
-      cbc.error(e.getMessage());
-    }
+  private void init(final CallbackContext cbc) {
+    final String database = "cheminot.db";
+    final Activity activity = this.cordova.getActivity();
+    this.cordova.getThreadPool().execute(new Runnable() {
+        public void run() {
+          try {
+            prepareDatabase(activity, database);
+            String dbpath = activity.getDatabasePath(database).getAbsolutePath();
+            cbc.success(CheminotLib.init(activity.getAssets(), dbpath));
+          } catch (IOException e) {
+            cbc.error(e.getMessage());
+          }
+        }
+    });
   }
 
-  private void prepareDatabase(String database) throws IOException {
-    Activity activity = this.cordova.getActivity();
+  private static void prepareDatabase(Activity activity, String database) throws IOException {
     File dbFile = activity.getDatabasePath(database);
     if(!dbFile.exists()){
       File dbDirectory = new File(dbFile.getParent());
@@ -75,14 +79,18 @@ public class Cheminot extends CordovaPlugin {
     }
   }
 
-  private void lookForBestTrip(JSONArray args, CallbackContext cbc) {
-    try {
-      String vsId = args.getString(0);
-      String veId = args.getString(1);
-      int at = args.getInt(2);
-      cbc.success(CheminotLib.lookForBestTrip(vsId, veId, at));
-    } catch (JSONException e) {
-      cbc.error(e.getMessage());
-    }
+  private void lookForBestTrip(final JSONArray args, final CallbackContext cbc) {
+      this.cordova.getThreadPool().execute(new Runnable() {
+          public void run() {
+            try {
+              String vsId = args.getString(0);
+              String veId = args.getString(1);
+              int at = args.getInt(2);
+              cbc.success(CheminotLib.lookForBestTrip(vsId, veId, at));
+            } catch (JSONException e) {
+              cbc.error(e.getMessage());
+            }
+          }
+      });
   }
 }
