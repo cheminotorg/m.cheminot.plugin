@@ -2,9 +2,13 @@
 #include <map>
 #include <list>
 #include <memory>
-#include <../jsoncpp/json/json.h>
+#include "protobuf/cheminotBuf.pb.h"
+#include <json/json.h>
 
 namespace cheminotc {
+
+  typedef google::protobuf::Map< std::string,m::cheminot::data::Vertice> Graph;
+  typedef google::protobuf::Map<std::string,m::cheminot::data::CalendarExceptions> CalendarDates;
 
   struct StopTime {
     std::string tripId;
@@ -29,29 +33,48 @@ namespace cheminotc {
     int pos;
   };
 
-  struct CalendarException {
+  struct CalendarDate {
     std::string serviceId;
     struct tm date;
     int exceptionType;
   };
 
-  struct tm getNow();
+  struct Calendar {
+    std::string serviceId;
+    std::map<std::string, bool> week;
+    struct tm startDate;
+    struct tm endDate;
+  };
 
-  Json::Value toJson(std::string value);
+  struct Trip {
+    std::string id;
+    std::unique_ptr<Calendar> calendar;
+    std::string direction;
+  };
+
+  struct tm getNow();
 
   sqlite3* openConnection(std::string path);
 
   std::string getVersion(sqlite3 *handle);
 
-  Json::Value parseGraph(std::string path);
+  std::list<Trip> getTripsByIds(sqlite3 *handle, std::list<std::string> ids);
 
-  Json::Value parseCalendarExceptions(std::string path);
+  void parseGraphFromFile(std::string path, Graph *graph);
 
-  std::list<ArrivalTime> lookForBestTrip(sqlite3 *handle, Json::Value *graph, Json::Value *calendarExceptions, std::string vsId, std::string veId, struct tm at);
+  void parseGraph(std::string content, Graph *graph);
 
-  Json::Value serializeArrivalTimes(std::list<ArrivalTime> arrivalTimes);
+  void parseCalendarDatesFromFile(std::string content, CalendarDates *calendarDates);
+
+  void parseCalendarDates(std::string content, CalendarDates *calendarDates);
+
+  std::list<ArrivalTime> lookForBestTrip(sqlite3 *handle, Graph *graph, CalendarDates *calendarDates, std::string vsId, std::string veId, struct tm at);
 
   std::string formatTime(struct tm time);
 
+  std::string formatDate(struct tm time);
+
   struct tm asDateTime(time_t t);
+
+  Json::Value serializeArrivalTimes(std::list<ArrivalTime> arrivalTimes);
 }

@@ -9,11 +9,12 @@
 #include <cheminotc.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
+#include <omp.h>
 
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,"Cheminot", __VA_ARGS__)
 
-static Json::Value graph;
-static Json::Value calendarExceptions;
+static cheminotc::Graph graph;
+static cheminotc::CalendarDates calendarDates;
 static sqlite3* connection = NULL;
 
 extern "C" {
@@ -36,13 +37,28 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *en
   connection = cheminotc::openConnection(dbpath);
   std::string result = cheminotc::getVersion(connection);
   env->ReleaseStringUTFChars(jdbpath, dbpath);
-  if(calendarExceptions.empty()) {
-    std::string content = readAssetFile(env, assetManager, "date_exceptions.json");
-    calendarExceptions = cheminotc::toJson(content);
+  if(calendarDates.empty()) {
+    double startRead = omp_get_wtime();
+    LOGD(">>>>>> Starting date_exceptions %f", startRead);
+    std::string content = readAssetFile(env, assetManager, "calendar_dates");
+    double stopRead = omp_get_wtime();
+    LOGD(">>>>>> date_exceptions %f", stopRead - startRead);
+    double startParse = omp_get_wtime();
+    cheminotc::parseCalendarDates(content, &calendarDates);
+    double stopParse = omp_get_wtime();
+    LOGD(">>>>>> date_exceptions %f", stopParse - startParse);
   }
   if(graph.empty()) {
-    std::string content = readAssetFile(env, assetManager, "graph.json");
-    graph = cheminotc::toJson(content);
+    double startRead = omp_get_wtime();
+    std::string content = readAssetFile(env, assetManager, "graph");
+    double stopRead = omp_get_wtime();
+    LOGD(">>>>>> graph %f", stopRead - startRead);
+    double startParse = omp_get_wtime();
+    cheminotc::parseGraph(content, &graph);
+    double stopParse = omp_get_wtime();
+    LOGD(">>>>>> graph %f", stopParse - startParse);
+    long s = graph.size();
+    LOGD(">>>>>> graph size %lu", s);
   }
   long unsigned int a = graph.size();
   return env->NewStringUTF(result.c_str());
@@ -53,11 +69,11 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
   const char* veId = env->GetStringUTFChars(endId, (jboolean *)0);
   struct tm at = cheminotc::asDateTime((int)when);
   long unsigned int a = graph.size();
-  long unsigned int b = calendarExceptions.size();
+  long unsigned int b = calendarDates.size();
   LOGD("GRAPH %lu", a);
   LOGD("CALENDAR %lu", b);
   LOGD("###> lookForBestTrip %s %s %s", vsId, veId, cheminotc::formatTime(at).c_str());
-  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(connection, &graph, &calendarExceptions, vsId, veId, at);
+  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(connection, &graph, &calendarDates, vsId, veId, at);
   long unsigned int c = arrivalTimes.size();
   LOGD("######> DONE %lu", c);
   Json::Value serialized = cheminotc::serializeArrivalTimes(arrivalTimes);

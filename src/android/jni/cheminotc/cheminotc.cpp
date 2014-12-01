@@ -9,8 +9,6 @@
 #include <sstream>
 #include <fstream>
 #include <memory>
-#include <sqlite3.h>
-#include <json/json.h>
 #include "cheminotc.h"
 
 namespace cheminotc {
@@ -22,26 +20,6 @@ namespace cheminotc {
     return os.str() ;
   }
 
-  struct Calendar {
-    std::string serviceId;
-    std::map<std::string, bool> week;
-    struct tm startDate;
-    struct tm endDate;
-  };
-
-  struct Trip {
-    std::string id;
-    std::unique_ptr<Calendar> calendar;
-    std::string direction;
-  };
-
-  struct Stop {
-    std::string id;
-    std::string name;
-    double lat;
-    double lng;
-  };
-
   struct tm getNow() {
     time_t rawtime;
     time(&rawtime);
@@ -51,6 +29,10 @@ namespace cheminotc {
 
   std::string formatTime(struct tm time) {
     return to_string(time.tm_hour) + ":" + to_string(time.tm_min);
+  }
+
+  std::string formatDate(struct tm time) {
+    return to_string(time.tm_mday) + "/" + to_string(time.tm_mon) + "/" + to_string(time.tm_year);
   }
 
   struct tm parseTime(std::string datetime) {
@@ -159,96 +141,107 @@ namespace cheminotc {
     }
   }
 
-  Json::Value toJson(std::string value) {
+  Json::Value serializeArrivalTime(ArrivalTime *arrivalTime) {
     Json::Value json;
-    Json::Reader reader;
-    reader.parse(value, json);
+    int arrival = asTimestamp(arrivalTime->arrival);
+    int departure = asTimestamp(arrivalTime->departure);
+    json["stopId"] = arrivalTime->stopId;
+    json["arrivalTime"] = arrival;
+    json["departureTime"] = departure;
+    json["tripId"] = arrivalTime->tripId;
+    json["pos"] = arrivalTime->pos;
     return json;
   }
 
-  std::list<CalendarException> getCalendarExceptionsFor(Json::Value *calendarExceptions, std::string serviceId) {
-    std::list<CalendarException> exceptions;
-    Json::Value array = (*calendarExceptions)[serviceId];
-    for(int index=0; index < array.size(); ++index) {
-      CalendarException calendarException;
-      Json::Value value = array[index];
-      calendarException.serviceId = value["serviceId"].asString();
-      calendarException.date = parseDate(value["date"].asString());
-      calendarException.exceptionType = value["exceptionType"].asInt();
-      exceptions.push_back(calendarException);
+  Json::Value serializeArrivalTimes(std::list<ArrivalTime> arrivalTimes) {
+    Json::Value array;
+    for(std::list<ArrivalTime>::const_iterator iterator = arrivalTimes.begin(), end = arrivalTimes.end(); iterator != end; ++iterator) {
+      ArrivalTime arrivalTime = *iterator;
+      array.append(serializeArrivalTime(&arrivalTime));
     }
-    return exceptions;
+    return array;
   }
 
-  StopTime parseStopTime(Json::Value value) {
+  std::list<CalendarDate> getCalendarDatesByServiceId(CalendarDates *calendarDates, std::string serviceId) {
+    std::list<CalendarDate> results;
+    auto exceptions = (*calendarDates)[serviceId].calendardates();
+
+    for (auto iterator = exceptions.begin(), end = exceptions.end(); iterator != end; ++iterator) {
+      m::cheminot::data::CalendarDate calendarDateBuf = *iterator;
+      CalendarDate calendarDate;
+      calendarDate.serviceId = calendarDateBuf.serviceid();
+      calendarDate.date = parseDate(calendarDateBuf.date());
+      calendarDate.exceptionType = calendarDateBuf.exceptiontype();
+      results.push_back(calendarDate);
+    }
+    return results;
+  }
+
+  StopTime parseStopTime(m::cheminot::data::StopTime stopTimeBuf) {
     struct StopTime stopTime;
-    stopTime.tripId = value["tripId"].asString();
-    stopTime.arrival = parseTime(value["arrival"].asString());
-    stopTime.departure = parseTime(value["departure"].asString());
-    stopTime.pos = value["pos"].asInt();
+    stopTime.tripId = stopTimeBuf.tripid();
+    stopTime.arrival = parseTime(stopTimeBuf.arrival());
+    stopTime.departure = parseTime(stopTimeBuf.departure());
+    stopTime.pos = stopTimeBuf.pos();
     return stopTime;
   }
 
-  std::list<StopTime> parseStopTimes(Json::Value array) {
+  std::list<StopTime> parseStopTimes(google::protobuf::RepeatedPtrField< ::m::cheminot::data::StopTime> stopTimesBuf) {
     std::list<StopTime> stopTimes;
-    long size = array.size();
-    for(int index=0; index < size; ++index) {
-      StopTime stopTime = parseStopTime(array[index]);
+    for(auto iterator = stopTimesBuf.begin(), end = stopTimesBuf.end(); iterator != end; ++iterator) {
+      StopTime stopTime = parseStopTime(*iterator);
       stopTimes.push_back(stopTime);
     }
     return stopTimes;
   }
 
-  std::list<std::string> parseEdges(Json::Value array) {
+  std::list<std::string> parseEdges(google::protobuf::RepeatedPtrField< std::string > edgesBuf) {
     std::list<std::string> stopIds;
-    for(int index=0; index < array.size(); index++) {
-      stopIds.push_back(array[index].asString());
+    for(auto iterator = edgesBuf.begin(), end = edgesBuf.end(); iterator != end; ++iterator) {
+      stopIds.push_back(*iterator);
     }
     return stopIds;
   }
 
-  std::unique_ptr<Calendar> parseCalendar(Json::Value value) {
+  std::unique_ptr<Calendar> parseCalendar(m::cheminot::data::Calendar calendarBuf) {
     std::unique_ptr<Calendar> calendar(new Calendar());
     std::map<std::string, bool> week;
-    week["monday"] = value["monday"].asString() == "1";
-    week["tuesday"] = value["tuesday"].asString() == "1";
-    week["wednesday"] = value["wednesday"].asString() == "1";
-    week["thursday"] = value["thursday"].asString() == "1";
-    week["friday"] = value["friday"].asString() == "1";
-    week["saturday"] = value["saturday"].asString() == "1";
-    week["sunday"] = value["sunday"].asString() == "1";
+    week["monday"] = calendarBuf.monday() == "1";
+    week["tuesday"] = calendarBuf.tuesday() == "1";
+    week["wednesday"] = calendarBuf.wednesday() == "1";
+    week["thursday"] = calendarBuf.thursday() == "1";
+    week["friday"] = calendarBuf.friday() == "1";
+    week["saturday"] = calendarBuf.saturday() == "1";
+    week["sunday"] = calendarBuf.sunday() == "1";
 
-    calendar->serviceId = value["serviceId"].asString();
+    calendar->serviceId = calendarBuf.serviceid();
     calendar->week = week;
-    calendar->startDate = parseDate(value["startDate"].asString());
-    calendar->endDate = parseDate(value["endDate"].asString());
+    calendar->startDate = parseDate(calendarBuf.startdate());
+    calendar->endDate = parseDate(calendarBuf.enddate());
     return calendar;
   }
 
-  Vertice parseVerticeRow(Json::Value value) {
+  Vertice getVerticeFromGraph(Graph *graph, std::string id) {
     struct Vertice vertice;
-    vertice.id = value["id"].asString();
-    vertice.name = value["name"].asString();
-    vertice.edges = parseEdges(value["edges"]);
-    vertice.stopTimes = parseStopTimes(value["stopTimes"]);
+    auto verticeBuf = (*graph)[id];
+    vertice.id = verticeBuf.id();
+    vertice.name = verticeBuf.name();
+    vertice.edges = parseEdges(verticeBuf.edges());
+    vertice.stopTimes = parseStopTimes(verticeBuf.stoptimes());
     return vertice;
-  }
-
-  Vertice getVerticeFromGraph(Json::Value *graph, std::string id) {
-    return parseVerticeRow((*graph)[id]);
   }
 
   Trip parseTripRow(std::list< std::map<std::string, const void*> >::const_iterator it) {
     std::map<std::string, const void*> row = *it;
-    const char *id = (const char*)row["id"];
-    const char *calendar = (const char*)row["service"];
-    const char *direction = (const char*)row["direction"];
     struct Trip trip;
-    trip.id = id;
-    if(std::string(calendar) != "null") {
-      trip.calendar = parseCalendar(toJson(calendar));
+    trip.id = (const char*)row["id"];
+    trip.direction = (const char*)row["direction"];
+    const char *calendar = (const char*)row["calendar"];
+    if(calendar != NULL) {
+      m::cheminot::data::Calendar calendarBuf;
+      calendarBuf.ParseFromString(calendar);
+      trip.calendar = parseCalendar(calendarBuf);
     }
-    trip.direction = direction;
     return trip;
   }
 
@@ -257,7 +250,10 @@ namespace cheminotc {
     std::map<std::string, const void*> row;
     for(int col=0 ; col<cols; col++) {
       std::string name(sqlite3_column_name(stmt, col));
-      row[name] = strdup((const char *)sqlite3_column_text(stmt, col));
+      const char *value = (const char *)sqlite3_column_text(stmt, col);
+      if(value != NULL) {
+        row[name] = strdup(value);
+      }
     }
     return row;
   }
@@ -285,26 +281,37 @@ namespace cheminotc {
     return handle;
   }
 
-  Json::Value parseGraph(std::string path) {
+  void parseGraph(std::string content, Graph *graph) {
+    m::cheminot::data::Graph graphBuf;
+    graphBuf.ParseFromString(content);
+    *graph = *graphBuf.mutable_vertices();
+  }
+
+  void parseGraphFromFile(std::string path, Graph *graph) {
     std::ifstream in(path);
     if(in.is_open()) {
-      Json::Value json;
-      auto reader = new Json::Reader();
-      reader->parse(in, json, false);
-      return json;
+      m::cheminot::data::Graph graphBuf;
+      graphBuf.ParseFromIstream(&in);
+      *graph = *graphBuf.mutable_vertices();
+      in.close();
     } else {
       throw std::runtime_error("Unexpected error while reading: " + path);
     }
   }
 
-  Json::Value parseCalendarExceptions(std::string path) {
+  void parseCalendarDates(std::string content, CalendarDates *calendarDates) {
+    m::cheminot::data::CalendarDates calendarDatesBuf;
+    calendarDatesBuf.ParseFromString(content);
+    *calendarDates = calendarDatesBuf.exceptionsbyserviceid();
+  }
+
+  void parseCalendarDatesFromFile(std::string path, CalendarDates *calendarDates) {
     std::ifstream in(path);
     if(in.is_open()) {
-      Json::Value json;
-      auto reader = new Json::Reader();
-      reader->parse(in, json, false);
+      m::cheminot::data::CalendarDates calendarDatesBuf;
+      calendarDatesBuf.ParseFromIstream(&in);
+      *calendarDates = calendarDatesBuf.exceptionsbyserviceid();
       in.close();
-      return json;
     } else {
       throw std::runtime_error("Unexpected error while reading: " + path);
     }
@@ -318,12 +325,12 @@ namespace cheminotc {
 
   std::list<Trip> getTripsByIds(sqlite3 *handle, std::list<std::string> ids) {
     std::list<Trip> trips;
-    std::string params = std::accumulate(ids.begin(), ids.end(), (std::string)"", [](std::string acc, std::string id) {
-        std::string p = "id = '" + id + "'";
-        return (acc == "") ? p : (acc + " OR " + p);
-      });
-    if(params != "") {
-      std::string query = "SELECT * FROM TRIPS WHERE " + params;
+    std::string values = std::accumulate(ids.begin(), ids.end(), (std::string)"", [](std::string acc, std::string id) {
+        std::string quoted = "'" + id + "'";
+        return (acc == "") ? quoted : (acc + ", " + quoted);
+    });
+    if(!ids.empty()) {
+      std::string query = "SELECT * FROM TRIPS WHERE id IN (" + values + ")";
       std::list< std::map<std::string, const void*> > results = executeSQL(handle, query);
       for (std::list< std::map<std::string, const void*> >::const_iterator iterator = results.begin(), end = results.end(); iterator != end; ++iterator) {
         trips.push_back(parseTripRow(iterator));
@@ -336,27 +343,6 @@ namespace cheminotc {
     return hasSameTime(&a->arrival, &a->departure) && a->pos > 0;
   }
 
-  Json::Value serializeArrivalTime(ArrivalTime *arrivalTime) {
-    Json::Value json;
-    int arrival = asTimestamp(arrivalTime->arrival);
-    int departure = asTimestamp(arrivalTime->departure);
-    json["stopId"] = arrivalTime->stopId;
-    json["arrivalTime"] = arrival;
-    json["departureTime"] = departure;
-    json["tripId"] = arrivalTime->tripId;
-    json["pos"] = arrivalTime->pos;
-    return json;
-  }
-
-  Json::Value serializeArrivalTimes(std::list<ArrivalTime> arrivalTimes) {
-    Json::Value array;
-    for(std::list<ArrivalTime>::const_iterator iterator = arrivalTimes.begin(), end = arrivalTimes.end(); iterator != end; ++iterator) {
-      ArrivalTime arrivalTime = *iterator;
-      array.append(serializeArrivalTime(&arrivalTime));
-    }
-    return array;
-  }
-
   class CompareArrivalTime {
   public:
     bool operator()(const ArrivalTime& gi, const ArrivalTime& gj) {
@@ -364,17 +350,17 @@ namespace cheminotc {
     }
   };
 
-  bool isTripRemovedOn(std::list<Trip>::const_iterator trip, Json::Value *calendarExceptions, struct tm when) {
-    auto exceptions = getCalendarExceptionsFor(calendarExceptions, trip->calendar->serviceId);
-    auto it = std::find_if(exceptions.begin(), exceptions.end(), [&when](CalendarException exception) {
-        return hasSameDate(&exception.date, &when) && (exception.exceptionType == 2);
+  bool isTripRemovedOn(std::list<Trip>::const_iterator trip, CalendarDates *calendarDates, struct tm when) {
+    auto exceptions = getCalendarDatesByServiceId(calendarDates, trip->calendar->serviceId);
+    auto it = std::find_if(exceptions.begin(), exceptions.end(), [&when](CalendarDate calendarDate) {
+        return hasSameDate(&calendarDate.date, &when) && (calendarDate.exceptionType == 2);
       });
     return it != exceptions.end();
   }
 
-  bool isTripAddedOn(std::list<Trip>::const_iterator trip, Json::Value *calendarExceptions, struct tm when) {
-    auto exceptions = getCalendarExceptionsFor(calendarExceptions, trip->calendar->serviceId);
-    auto it = std::find_if(exceptions.begin(), exceptions.end(), [&when](CalendarException exception) {
+  bool isTripAddedOn(std::list<Trip>::const_iterator trip, CalendarDates *calendarDates, struct tm when) {
+    auto exceptions = getCalendarDatesByServiceId(calendarDates, trip->calendar->serviceId);
+    auto it = std::find_if(exceptions.begin(), exceptions.end(), [&when](CalendarDate exception) {
         return hasSameDate(&exception.date, &when) && (exception.exceptionType == 1);
       });
     return it != exceptions.end();
@@ -393,10 +379,10 @@ namespace cheminotc {
     return before && after;
   }
 
-  bool isTripValidOn(std::list<Trip>::const_iterator trip, Json::Value *calendarExceptions, struct tm when) {
+  bool isTripValidOn(std::list<Trip>::const_iterator trip, CalendarDates *calendarDates, struct tm when) {
     if(trip->calendar != NULL) {
-      bool removed = isTripRemovedOn(trip, calendarExceptions, when);
-      bool added = isTripAddedOn(trip, calendarExceptions, when);
+      bool removed = isTripRemovedOn(trip, calendarDates, when);
+      bool added = isTripAddedOn(trip, calendarDates, when);
       bool availableToday = isTripValidToday(trip, when);
       bool inPeriod = isTripInPeriod(trip, when);
       return (!removed && inPeriod && availableToday) || added;
@@ -404,11 +390,11 @@ namespace cheminotc {
     return false;
   }
 
-  std::map<std::string, bool> tripsAvailability(sqlite3 *handle, std::list<std::string> ids, Json::Value *calendarExceptions, struct tm when) {
+  std::map<std::string, bool> tripsAvailability(sqlite3 *handle, std::list<std::string> ids, CalendarDates *calendarDates, struct tm when) {
     std::map<std::string, bool> availablities;
     auto trips = getTripsByIds(handle, ids);
     for (std::list<Trip>::const_iterator iterator = trips.begin(), end = trips.end(); iterator != end; ++iterator) {
-      availablities[iterator->id] = isTripValidOn(iterator, calendarExceptions, when);
+      availablities[iterator->id] = isTripValidOn(iterator, calendarDates, when);
     }
     return availablities;
   }
@@ -438,7 +424,7 @@ namespace cheminotc {
     return next;
   }
 
-  std::list<StopTime> getAvailableDepartures(sqlite3 *handle, Json::Value *calendarExceptions, ArrivalTime *vi, struct tm ts) {
+  std::list<StopTime> getAvailableDepartures(sqlite3 *handle, CalendarDates *calendarDates, ArrivalTime *vi, struct tm ts) {
     std::list<StopTime> departures(sortStopTimesBy(vi->vertice.stopTimes, ts));
 
     departures.remove_if([&] (StopTime &stopTime) {
@@ -450,7 +436,7 @@ namespace cheminotc {
       tripIds.push_back(iterator->tripId);
     }
 
-    auto availablities = tripsAvailability(handle, tripIds, calendarExceptions, ts);
+    auto availablities = tripsAvailability(handle, tripIds, calendarDates, ts);
 
     departures.remove_if([&] (const StopTime& stopTime) {
       return !availablities[stopTime.tripId];
@@ -459,7 +445,7 @@ namespace cheminotc {
     return departures;
   }
 
-  std::map<std::string, ArrivalTime> refineArrivalTimes(sqlite3 *handle, Json::Value *graph, Json::Value *calendarExceptions, std::string vsId, std::string veId, struct tm ts) {
+  std::map<std::string, ArrivalTime> refineArrivalTimes(sqlite3 *handle, Graph *graph, CalendarDates *calendarDates, std::string vsId, std::string veId, struct tm ts) {
 
     std::map<std::string, ArrivalTime> results;
     std::map< std::string, ArrivalTime > pushed;
@@ -483,7 +469,6 @@ namespace cheminotc {
 
       ArrivalTime head = pushed[queue.top().stopId];
       queue.pop();
-
       results[head.stopId] = head;
 
       if(head.stopId == veId) {
@@ -492,7 +477,7 @@ namespace cheminotc {
       } else {
 
         Vertice vi = head.vertice;
-        auto departures = getAvailableDepartures(handle, calendarExceptions, &head, ts);
+        auto departures = getAvailableDepartures(handle, calendarDates, &head, ts);
 
         if(!departures.empty()) {
 
@@ -535,7 +520,7 @@ namespace cheminotc {
     return results;
   }
 
-  std::list<ArrivalTime> pathSelection(Json::Value *graph, std::map<std::string, ArrivalTime> *arrivalTimes, struct tm ts, std::string vsId, std::string veId) {
+  std::list<ArrivalTime> pathSelection(Graph *graph, std::map<std::string, ArrivalTime> *arrivalTimes, struct tm ts, std::string vsId, std::string veId) {
     Vertice vs = getVerticeFromGraph(graph, vsId);
     Vertice vj = getVerticeFromGraph(graph, veId);
     ArrivalTime ge = (*arrivalTimes)[vj.id];
@@ -584,8 +569,8 @@ namespace cheminotc {
     return path;
   }
 
-  std::list<ArrivalTime> lookForBestTrip(sqlite3 *handle, Json::Value *graph, Json::Value *calendarExceptions, std::string vsId, std::string veId, struct tm at) {
-    auto arrivalTimes = refineArrivalTimes(handle, graph, calendarExceptions, vsId, veId, at);
+  std::list<ArrivalTime> lookForBestTrip(sqlite3 *handle, Graph *graph, CalendarDates *calendarDates, std::string vsId, std::string veId, struct tm at) {
+    auto arrivalTimes = refineArrivalTimes(handle, graph, calendarDates, vsId, veId, at);
     return pathSelection(graph, &arrivalTimes, at, vsId, veId);
   }
 }
