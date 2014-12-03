@@ -7,9 +7,6 @@
 #include <sqlite3.h>
 #include <ctime>
 #include <cheminotc.h>
-#include <android/asset_manager.h>
-#include <android/asset_manager_jni.h>
-#include <omp.h>
 
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,"Cheminot", __VA_ARGS__)
 
@@ -18,65 +15,55 @@ static cheminotc::CalendarDates calendarDates;
 static sqlite3* connection = NULL;
 
 extern "C" {
-  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jobject jassetManager, jstring jdbpath);
-  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass jassetManager, jstring startId, jstring endId, jint when);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jveId, jstring jvsId, jint jat);
 };
 
-std::string readAssetFile(JNIEnv *env, AAssetManager* assetManager, const char* file) {
-  AAsset* asset = AAssetManager_open(assetManager, file, AASSET_MODE_UNKNOWN);
-  long size = AAsset_getLength(asset);
-  char* buffer = (char*) malloc (sizeof(char)*size);
-  AAsset_read(asset, buffer, size);
-  AAsset_close(asset);
-  return buffer;
-}
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath) {
+  const char *dbPath = env->GetStringUTFChars(jdbPath, (jboolean *)0);
+  const char *graphPath = env->GetStringUTFChars(jgraphPath, (jboolean *)0);
+  const char *calendarDatesPath = env->GetStringUTFChars(jcalendarDatesPath, (jboolean *)0);
 
-JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jobject jassetManager, jstring jdbpath) {
-  AAssetManager *assetManager = AAssetManager_fromJava(env, jassetManager);
-  const char *dbpath = env->GetStringUTFChars(jdbpath, (jboolean *)0);
-  connection = cheminotc::openConnection(dbpath);
+  connection = cheminotc::openConnection(dbPath);
   std::string result = cheminotc::getVersion(connection);
-  env->ReleaseStringUTFChars(jdbpath, dbpath);
+
   if(calendarDates.empty()) {
-    double startRead = omp_get_wtime();
-    LOGD(">>>>>> Starting date_exceptions %f", startRead);
-    std::string content = readAssetFile(env, assetManager, "calendar_dates");
-    double stopRead = omp_get_wtime();
-    LOGD(">>>>>> date_exceptions %f", stopRead - startRead);
-    double startParse = omp_get_wtime();
-    cheminotc::parseCalendarDates(content, &calendarDates);
-    double stopParse = omp_get_wtime();
-    LOGD(">>>>>> date_exceptions %f", stopParse - startParse);
+    cheminotc::parseCalendarDates(calendarDatesPath, &calendarDates);
   }
+
   if(graph.empty()) {
-    double startRead = omp_get_wtime();
-    std::string content = readAssetFile(env, assetManager, "graph");
-    double stopRead = omp_get_wtime();
-    LOGD(">>>>>> graph %f", stopRead - startRead);
-    double startParse = omp_get_wtime();
-    cheminotc::parseGraph(content, &graph);
-    double stopParse = omp_get_wtime();
-    LOGD(">>>>>> graph %f", stopParse - startParse);
-    long s = graph.size();
-    LOGD(">>>>>> graph size %lu", s);
+    cheminotc::parseGraph(graphPath, &graph);
   }
-  long unsigned int a = graph.size();
+
+  env->ReleaseStringUTFChars(jdbPath, dbPath);
+  env->ReleaseStringUTFChars(jgraphPath, graphPath);
+  env->ReleaseStringUTFChars(jcalendarDatesPath, calendarDatesPath);
+
   return env->NewStringUTF(result.c_str());
 }
 
-JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass obj, jstring startId, jstring endId, jint when) {
-  const char* vsId = env->GetStringUTFChars(startId, (jboolean *)0);
-  const char* veId = env->GetStringUTFChars(endId, (jboolean *)0);
-  struct tm at = cheminotc::asDateTime((int)when);
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jveId, jstring jvsId, jint jat) {
+  const char* vsId = env->GetStringUTFChars(jvsId, (jboolean *)0);
+  const char* veId = env->GetStringUTFChars(jveId, (jboolean *)0);
+  struct tm at = cheminotc::asDateTime((int)jat);
+
   long unsigned int a = graph.size();
   long unsigned int b = calendarDates.size();
+
   LOGD("GRAPH %lu", a);
   LOGD("CALENDAR %lu", b);
   LOGD("###> lookForBestTrip %s %s %s", vsId, veId, cheminotc::formatTime(at).c_str());
+
   std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(connection, &graph, &calendarDates, vsId, veId, at);
+
   long unsigned int c = arrivalTimes.size();
   LOGD("######> DONE %lu", c);
+
   Json::Value serialized = cheminotc::serializeArrivalTimes(arrivalTimes);
   Json::FastWriter* writer = new Json::FastWriter();
+
+  env->ReleaseStringUTFChars(jvsId, vsId);
+  env->ReleaseStringUTFChars(jveId, veId);
+
   return env->NewStringUTF(writer->write(serialized).c_str());
 }

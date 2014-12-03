@@ -47,14 +47,14 @@ public class Cheminot extends CordovaPlugin {
   }
 
   private void init(final CallbackContext cbc) {
-    final String database = "cheminot.db";
     final Activity activity = this.cordova.getActivity();
     this.cordova.getThreadPool().execute(new Runnable() {
         public void run() {
           try {
-            prepareDatabase(activity, database);
-            String dbpath = activity.getDatabasePath(database).getAbsolutePath();
-            cbc.success(CheminotLib.init(activity.getAssets(), dbpath));
+            String dbPath = copyFromAssets(activity, "cheminot.db");
+            String graphPath = copyFromAssets(activity, "graph");
+            String calendarDatesPath = copyFromAssets(activity, "calendar_dates");
+            cbc.success(CheminotLib.init(dbPath, graphPath, calendarDatesPath));
           } catch (IOException e) {
             cbc.error(e.getMessage());
           }
@@ -62,12 +62,12 @@ public class Cheminot extends CordovaPlugin {
     });
   }
 
-  private static void prepareDatabase(Activity activity, String database) throws IOException {
-    File dbFile = activity.getDatabasePath(database);
+  private static String copyFromAssets(Activity activity, String file) throws IOException {
+    File dbFile = activity.getDatabasePath(file);
     if(!dbFile.exists()){
       File dbDirectory = new File(dbFile.getParent());
       dbDirectory.mkdirs();
-      InputStream in = activity.getApplicationContext().getAssets().open(database);
+      InputStream in = activity.getApplicationContext().getAssets().open(file);
       OutputStream out = new FileOutputStream(dbFile);
       byte[] buf = new byte[1024];
       int len;
@@ -77,6 +77,7 @@ public class Cheminot extends CordovaPlugin {
       in.close();
       out.close();
     }
+    return activity.getDatabasePath(file).getAbsolutePath();
   }
 
   private void lookForBestTrip(final JSONArray args, final CallbackContext cbc) {
