@@ -21,7 +21,7 @@ static cheminotc::CalendarDatesCache calendarDatesCache;
 
 extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
-  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jveId, jstring jvsId, jint jat);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jveId, jstring jvsId, jint jat, jint jte, jint jmax);
 };
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath) {
@@ -47,11 +47,12 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *en
   return env->NewStringUTF(result.c_str());
 }
 
-JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jveId, jstring jvsId, jint jat) {
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jveId, jstring jvsId, jint jat, jint jte, jint jmax) {
   const char* vsId = env->GetStringUTFChars(jvsId, (jboolean *)0);
   const char* veId = env->GetStringUTFChars(jveId, (jboolean *)0);
-  struct tm at = cheminotc::asDateTime((int)jat);
-  tm te = cheminotc::addHours(at, 2);
+  tm at = cheminotc::asDateTime((int)jat);
+  tm te = cheminotc::asDateTime((int)jte);
+  int max = (int)jmax;
 
   long unsigned int a = graph.size();
   long unsigned int b = calendarDates.size();
@@ -60,12 +61,12 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
   LOGD("CALENDAR %lu", b);
   LOGD("###> lookForBestTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
 
-  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(connection, &graph, &tripsCache, &verticesCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te, 1);
+  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(connection, &graph, &tripsCache, &verticesCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te, max);
 
   long unsigned int c = arrivalTimes.size();
   LOGD("######> DONE %lu", c);
 
-  Json::Value serialized = cheminotc::serializeArrivalTimes(arrivalTimes);
+  Json::Value serialized = cheminotc::serializeArrivalTimes(&graph, &verticesCache, arrivalTimes);
   Json::FastWriter* writer = new Json::FastWriter();
 
   env->ReleaseStringUTFChars(jvsId, vsId);

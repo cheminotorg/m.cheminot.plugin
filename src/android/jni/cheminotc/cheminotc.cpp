@@ -167,34 +167,34 @@ namespace cheminotc {
     return datetimeIsBeforeEq(a, b) && !hasSameDateTime(a, b);
   }
 
-  Json::Value serializeArrivalTime(ArrivalTime arrivalTime) {
+  Json::Value serializeArrivalTime(Graph *graph, VerticesCache *verticesCache, ArrivalTime arrivalTime) {
     Json::Value json;
-    int arrival = asTimestamp(arrivalTime.arrival);
-    int departure = asTimestamp(arrivalTime.departure);
+    std::shared_ptr<Vertice> vi = cheminotc::getVerticeFromGraph(graph, verticesCache, arrivalTime.stopId);
     json["stopId"] = arrivalTime.stopId;
-    json["arrival"] = arrival;
-    json["departure"] = departure;
+    json["stopName"] = vi->name;
+    json["arrival"] = (int)asTimestamp(arrivalTime.arrival);
+    json["departure"] = (int)asTimestamp(arrivalTime.departure);
     json["tripId"] = arrivalTime.tripId;
     json["pos"] = arrivalTime.pos;
     return json;
   }
 
-  Json::Value serializeArrivalTimes(std::list<ArrivalTime> arrivalTimes) {
-    Json::Value array;
+  Json::Value serializeArrivalTimes(Graph *graph, VerticesCache *verticesCache, const std::list<ArrivalTime> arrivalTimes) {
+    Json::Value array = Json::Value(Json::arrayValue);
     for(auto iterator = arrivalTimes.begin(), end = arrivalTimes.end(); iterator != end; ++iterator) {
       ArrivalTime arrivalTime = *iterator;
-      array.append(serializeArrivalTime(arrivalTime));
+      array.append(serializeArrivalTime(graph, verticesCache, arrivalTime));
     }
     return array;
   }
 
-  std::string formatArrivalTime(ArrivalTime arrivalTime) {
-    Json::Value serialized = serializeArrivalTime(arrivalTime);
+  std::string formatArrivalTime(Graph *graph, VerticesCache *verticesCache, ArrivalTime arrivalTime) {
+    Json::Value serialized = serializeArrivalTime(graph, verticesCache, arrivalTime);
     return serialized.toStyledString();
   }
 
-  std::string formatArrivalTimes(std::list<ArrivalTime> arrivalTimes) {
-    return serializeArrivalTimes(arrivalTimes).toStyledString();
+  std::string formatArrivalTimes(Graph *graph, VerticesCache *verticesCache, std::list<ArrivalTime> arrivalTimes) {
+    return serializeArrivalTimes(graph, verticesCache, arrivalTimes).toStyledString();
   }
 
   Json::Value serializeEdges(std::list<std::string> edges) {

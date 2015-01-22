@@ -97,11 +97,7 @@ namespace cheminotc {
 
   tm addHours(tm datetime, int n);
 
-  Json::Value serializeArrivalTimes(std::list<ArrivalTime> arrivalTimes);
+  std::shared_ptr<Vertice> getVerticeFromGraph(Graph *graph, VerticesCache *verticesCache, std::string id);
 
-  Json::Value serializeArrivalTime(ArrivalTime arrivalTime);
-
-  Json::Value serializeStopTimes(std::list<StopTime> stopTimes);
-
-  Json::Value serializeEdges(std::list<std::string> edges);
+  Json::Value serializeArrivalTimes(Graph *graph, VerticesCache *verticesCache, std::list<ArrivalTime> arrivalTimes);
 }
