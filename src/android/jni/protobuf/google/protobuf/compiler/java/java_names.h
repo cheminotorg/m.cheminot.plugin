@@ -29,44 +29,59 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Author: kenton@google.com (Kenton Varda)
+//  Based on original Protocol Buffers design by
+//  Sanjay Ghemawat, Jeff Dean, and others.
+//
+// Provides a mechanism for mapping a descriptor to the
+// fully-qualified name of the corresponding Java class.
 
-#include <google/protobuf/compiler/command_line_interface.h>
-#include <google/protobuf/compiler/cpp/cpp_generator.h>
-#include <google/protobuf/compiler/python/python_generator.h>
-#include <google/protobuf/compiler/java/java_generator.h>
-#include <google/protobuf/compiler/javanano/javanano_generator.h>
-#include <google/protobuf/compiler/ruby/ruby_generator.h>
+#ifndef GOOGLE_PROTOBUF_COMPILER_JAVA_NAMES_H__
+#define GOOGLE_PROTOBUF_COMPILER_JAVA_NAMES_H__
 
-int main(int argc, char* argv[]) {
+#include <string>
 
-  google::protobuf::compiler::CommandLineInterface cli;
-  cli.AllowPlugins("protoc-");
+namespace google {
+namespace protobuf {
 
-  // Proto2 C++
-  google::protobuf::compiler::cpp::CppGenerator cpp_generator;
-  cli.RegisterGenerator("--cpp_out", "--cpp_opt", &cpp_generator,
-                        "Generate C++ header and source.");
+class Descriptor;
+class EnumDescriptor;
+class FileDescriptor;
+class ServiceDescriptor;
 
-  // Proto2 Java
-  google::protobuf::compiler::java::JavaGenerator java_generator;
-  cli.RegisterGenerator("--java_out", &java_generator,
-                        "Generate Java source file.");
+namespace compiler {
+namespace java {
 
+// Requires:
+//   descriptor != NULL
+//
+// Returns:
+//   The fully-qualified Java class name.
+string ClassName(const Descriptor* descriptor);
 
-  // Proto2 Python
-  google::protobuf::compiler::python::Generator py_generator;
-  cli.RegisterGenerator("--python_out", &py_generator,
-                        "Generate Python source file.");
+// Requires:
+//   descriptor != NULL
+//
+// Returns:
+//   The fully-qualified Java class name.
+string ClassName(const EnumDescriptor* descriptor);
 
-  // Java Nano
-  google::protobuf::compiler::javanano::JavaNanoGenerator javanano_generator;
-  cli.RegisterGenerator("--javanano_out", &javanano_generator,
-                        "Generate Java Nano source file.");
+// Requires:
+//   descriptor != NULL
+//
+// Returns:
+//   The fully-qualified Java class name.
+string ClassName(const FileDescriptor* descriptor);
 
-  // Ruby
-  google::protobuf::compiler::ruby::Generator rb_generator;
-  cli.RegisterGenerator("--ruby_out", &rb_generator,
-                        "Generate Ruby source file.");
+// Requires:
+//   descriptor != NULL
+//
+// Returns:
+//   The fully-qualified Java class name.
+string ClassName(const ServiceDescriptor* descriptor);
 
-  return cli.Run(argc, argv);
-}
+}  // namespace java
+}  // namespace compiler
+}  // namespace protobuf
+}  // namespace google
+
+#endif  // GOOGLE_PROTOBUF_COMPILER_JAVA_NAMES_H__

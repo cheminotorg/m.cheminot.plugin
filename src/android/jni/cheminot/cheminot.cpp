@@ -14,6 +14,11 @@ static cheminotc::Graph graph;
 static cheminotc::CalendarDates calendarDates;
 static sqlite3* connection = NULL;
 
+//Cache
+static cheminotc::VerticesCache verticesCache;
+static cheminotc::TripsCache tripsCache;
+static cheminotc::CalendarDatesCache calendarDatesCache;
+
 extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jveId, jstring jvsId, jint jat);
@@ -46,15 +51,16 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
   const char* vsId = env->GetStringUTFChars(jvsId, (jboolean *)0);
   const char* veId = env->GetStringUTFChars(jveId, (jboolean *)0);
   struct tm at = cheminotc::asDateTime((int)jat);
+  tm te = cheminotc::addHours(at, 2);
 
   long unsigned int a = graph.size();
   long unsigned int b = calendarDates.size();
 
   LOGD("GRAPH %lu", a);
   LOGD("CALENDAR %lu", b);
-  LOGD("###> lookForBestTrip %s %s %s", vsId, veId, cheminotc::formatTime(at).c_str());
+  LOGD("###> lookForBestTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
 
-  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(connection, &graph, &calendarDates, vsId, veId, at);
+  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(connection, &graph, &tripsCache, &verticesCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te, 1);
 
   long unsigned int c = arrivalTimes.size();
   LOGD("######> DONE %lu", c);
