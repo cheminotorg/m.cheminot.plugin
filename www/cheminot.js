@@ -10,11 +10,7 @@ Cheminot.init = function(success, fail) {
 Cheminot.lookForBestTrip = function(vsId, veId, at, te, max, success, fail) {
   exec(function (result) {
     try {
-      var trip = JSON.parse(result).map(function(stopTime) {
-        stopTime.arrivalTime = new Date(stopTime.arrivalTime * 1000);
-        stopTime.departureTime = new Date(stopTime.departureTime * 1000);
-        return stopTime;
-      });
+      var trip = JSON.parse(result);
       success && success(trip);
     } catch(e) {
       fail && fail(e);
