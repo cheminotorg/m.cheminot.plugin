@@ -12,6 +12,7 @@
 
 static cheminotc::Graph graph;
 static cheminotc::CalendarDates calendarDates;
+static cheminotc::Tracker tracker = { false };
 static sqlite3* connection = NULL;
 
 //Cache
@@ -22,6 +23,7 @@ static cheminotc::CalendarDatesCache calendarDatesCache;
 extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax);
+  JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz);
 };
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath) {
@@ -60,17 +62,24 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
   LOGD("GRAPH %lu", a);
   LOGD("CALENDAR %lu", b);
   LOGD("###> lookForBestTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
-
-  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(connection, &graph, &tripsCache, &verticesCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te, max);
-
+  tracker.abort = false;
+  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(&tracker, connection, &graph, &tripsCache, &verticesCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te, max);
   long unsigned int c = arrivalTimes.size();
   LOGD("######> DONE %lu", c);
-
-  Json::Value serialized = cheminotc::serializeArrivalTimes(&graph, &verticesCache, arrivalTimes);
-  Json::FastWriter* writer = new Json::FastWriter();
 
   env->ReleaseStringUTFChars(jvsId, vsId);
   env->ReleaseStringUTFChars(jveId, veId);
 
-  return env->NewStringUTF(writer->write(serialized).c_str());
+  if(!tracker.abort) {
+    Json::Value serialized = cheminotc::serializeArrivalTimes(&graph, &verticesCache, arrivalTimes);
+    Json::FastWriter* writer = new Json::FastWriter();
+    return env->NewStringUTF(writer->write(serialized).c_str());
+  } else {
+    return env->NewStringUTF("null");
+  }
+}
+
+JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz) {
+  LOGD("ABORTED");
+  tracker.abort = true;
 }
