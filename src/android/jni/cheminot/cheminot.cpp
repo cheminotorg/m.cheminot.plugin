@@ -23,6 +23,7 @@ static cheminotc::CalendarDatesCache calendarDatesCache;
 extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte);
   JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz);
 };
 
@@ -77,6 +78,35 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
   } else {
     return env->NewStringUTF("null");
   }
+}
+
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte) {
+  const char* vsId = env->GetStringUTFChars(jvsId, (jboolean *)0);
+  const char* veId = env->GetStringUTFChars(jveId, (jboolean *)0);
+  tm at = cheminotc::asDateTime((int)jat);
+  tm te = cheminotc::asDateTime((int)jte);
+
+  long unsigned int a = graph.size();
+  long unsigned int b = calendarDates.size();
+
+  LOGD("GRAPH %lu", a);
+  LOGD("CALENDAR %lu", b);
+  LOGD("###> lookForBestDirectTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
+  tracker.abort = false;
+  std::pair<bool, std::list<cheminotc::ArrivalTime>> result = lookForBestDirectTrip(connection, &graph, &verticesCache, &tripsCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te);
+  std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
+  long unsigned int c = arrivalTimes.size();
+  LOGD("######> DONE %lu", c);
+
+  env->ReleaseStringUTFChars(jvsId, vsId);
+  env->ReleaseStringUTFChars(jveId, veId);
+
+  Json::Value serialized = cheminotc::serializeArrivalTimes(&graph, &verticesCache, arrivalTimes);
+  Json::Value json;
+  json["arrivalTimes"] = serialized;
+  json["hasDirect"] = result.first;
+  Json::FastWriter* writer = new Json::FastWriter();
+  return env->NewStringUTF(writer->write(json).c_str());
 }
 
 JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz) {
