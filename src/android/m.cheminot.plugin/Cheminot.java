@@ -121,8 +121,12 @@ public class Cheminot extends CordovaPlugin {
       });
   }
 
-  private void abort(CallbackContext cbc) {
-    CheminotLib.abort();
-    cbc.success();
+  private void abort(final CallbackContext cbc) {
+    this.cordova.getThreadPool().execute(new Runnable() {
+      public void run() {
+        CheminotLib.abort();
+        cbc.success();
+      }
+    });
   }
 }

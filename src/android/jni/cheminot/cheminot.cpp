@@ -12,7 +12,6 @@
 
 static cheminotc::Graph graph;
 static cheminotc::CalendarDates calendarDates;
-static cheminotc::Tracker tracker = { false };
 static sqlite3* connection = NULL;
 
 //Cache
@@ -59,19 +58,20 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
 
   long unsigned int a = graph.size();
   long unsigned int b = calendarDates.size();
-
-  LOGD("GRAPH %lu", a);
-  LOGD("CALENDAR %lu", b);
   LOGD("###> lookForBestTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
-  tracker.abort = false;
-  std::list<cheminotc::ArrivalTime> arrivalTimes = cheminotc::lookForBestTrip(&tracker, connection, &graph, &tripsCache, &verticesCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te, max);
+
+  cheminotc::unlock(connection);
+  auto result = cheminotc::lookForBestTrip(connection, &graph, &tripsCache, &verticesCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te, max);
+  std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
+  bool locked = result.first;
+
   long unsigned int c = arrivalTimes.size();
   LOGD("######> DONE %lu", c);
 
   env->ReleaseStringUTFChars(jvsId, vsId);
   env->ReleaseStringUTFChars(jveId, veId);
 
-  if(!tracker.abort) {
+  if(!locked) {
     Json::Value serialized = cheminotc::serializeArrivalTimes(&graph, &verticesCache, arrivalTimes);
     Json::FastWriter* writer = new Json::FastWriter();
     return env->NewStringUTF(writer->write(serialized).c_str());
@@ -88,13 +88,12 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDire
 
   long unsigned int a = graph.size();
   long unsigned int b = calendarDates.size();
-
-  LOGD("GRAPH %lu", a);
-  LOGD("CALENDAR %lu", b);
   LOGD("###> lookForBestDirectTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
-  tracker.abort = false;
+
+  cheminotc::unlock(connection);
   std::pair<bool, std::list<cheminotc::ArrivalTime>> result = lookForBestDirectTrip(connection, &graph, &verticesCache, &tripsCache, &calendarDates, &calendarDatesCache, vsId, veId, at, te);
   std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
+
   long unsigned int c = arrivalTimes.size();
   LOGD("######> DONE %lu", c);
 
@@ -110,6 +109,6 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDire
 }
 
 JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz) {
+  cheminotc::lock(connection);
   LOGD("ABORTED");
-  tracker.abort = true;
 }
