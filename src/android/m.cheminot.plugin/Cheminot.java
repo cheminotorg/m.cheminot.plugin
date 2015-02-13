@@ -24,7 +24,6 @@ import org.json.JSONException;
 import android.app.Activity;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.util.Log;
 
 public class Cheminot extends CordovaPlugin {
 
@@ -120,24 +119,24 @@ public class Cheminot extends CordovaPlugin {
 
   private void init(final CallbackContext cbc) {
     final Activity activity = this.cordova.getActivity();
-    final CheminotDB cheminotDB = getMostRecentDB(activity);
-    if(cheminotDB != null) {
       this.cordova.getThreadPool().execute(new Runnable() {
         public void run() {
           try {
-            File dbFile = copyFromAssets(activity, cheminotDB.getDb());
-            File graphFile = copyFromAssets(activity, cheminotDB.getGraph());
-            File calendarDatesFile = copyFromAssets(activity, cheminotDB.getCalendarDates());
-            cleanDbDirectory(new File(dbFile.getParent()), cheminotDB);
-            cbc.success(CheminotLib.init(dbFile.getAbsolutePath(), graphFile.getAbsolutePath(), calendarDatesFile.getAbsolutePath()));
+            final CheminotDB cheminotDB = getMostRecentDB(activity);
+            if(cheminotDB != null) {
+              File dbFile = copyFromAssets(activity, cheminotDB.getDb());
+              File graphFile = copyFromAssets(activity, cheminotDB.getGraph());
+              File calendarDatesFile = copyFromAssets(activity, cheminotDB.getCalendarDates());
+              cleanDbDirectory(new File(dbFile.getParent()), cheminotDB);
+              cbc.success(CheminotLib.init(dbFile.getAbsolutePath(), graphFile.getAbsolutePath(), calendarDatesFile.getAbsolutePath()));
+            } else {
+              cbc.error("Unable to find the most recent db");
+            }
           } catch (IOException e) {
             cbc.error(e.getMessage());
           }
         }
       });
-    } else {
-      cbc.error("Unable to find the most recent db");
-    }
   }
 
   private static File copyFromAssets(Activity activity, String file) throws IOException {
