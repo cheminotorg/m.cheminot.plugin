@@ -562,6 +562,24 @@ namespace cheminotc {
     return availablities;
   }
 
+  std::list<ArrivalTime> orderArrivalTimesBy(std::list<ArrivalTime> arrivalTimes, const tm &t) {
+    std::list<ArrivalTime> arrivalTimesAt;
+    for (auto iterator = arrivalTimes.begin(), end = arrivalTimes.end(); iterator != end; ++iterator) {
+      ArrivalTime arrivalTime = *iterator;
+      if(datetimeIsBeforeNotEq(arrivalTime.arrival, t)) {
+        arrivalTime.departure = addDays(arrivalTime.departure, 1);
+        arrivalTime.arrival = addDays(arrivalTime.arrival, 1);
+      }
+      arrivalTimesAt.push_back(arrivalTime);
+    };
+
+    arrivalTimesAt.sort([](const ArrivalTime &a, const ArrivalTime &b) {
+      return datetimeIsBeforeEq(a.arrival, b.arrival);
+    });
+
+    return arrivalTimesAt;
+  }
+
   std::list<StopTime> orderStopTimesBy(std::list<StopTime> stopTimes, const tm &t) { //TODO
     std::list<StopTime> stopTimesAt;
     for (auto iterator = stopTimes.begin(), end = stopTimes.end(); iterator != end; ++iterator) {
@@ -730,7 +748,6 @@ namespace cheminotc {
 
   std::list<tm> getStartingPeriod(sqlite3 *handle, TripsCache *tripsCache, CalendarDates *calendarDates, CalendarDatesCache *calendarDatesCache, std::shared_ptr<Vertice> vs, tm ts, tm te, int maxStartingTimes) {
     auto departures = getAvailableDepartures(handle, tripsCache, calendarDates, calendarDatesCache, ts, vs);
-
     std::list<tm> startingPeriod;
     for (auto iterator = departures.begin(), end = departures.end(); iterator != end; ++iterator) {
       StopTime departureTime = *iterator;
@@ -812,9 +829,8 @@ namespace cheminotc {
     Queue queue;
     ArrivalTimesFunc arrivalTimesFunc;
     std::unordered_map<std::string, tm> uptodate;
-    std::shared_ptr<Vertice> vs = getVerticeFromGraph(&te, graph, verticesCache, vsId);
+    std::shared_ptr<Vertice> vs = getVerticeFromGraph(&ts, graph, verticesCache, vsId);
     std::list<tm> startingPeriod = getStartingPeriod(handle, tripsCache, calendarDates, calendarDatesCache, vs, ts, te, maxStartingTimes);
-
     if(startingPeriod.empty()) {
       return { false, arrivalTimesFunc };
     }
@@ -1030,7 +1046,7 @@ namespace cheminotc {
       }
     }
 
-    return { trips.size() > 0, arrivalTimes };
+    return { trips.size() > 0, orderArrivalTimesBy(arrivalTimes, ts) };
   }
 
   std::pair<bool, std::list<ArrivalTime>> lookForBestTrip(sqlite3 *handle, Graph *graph, TripsCache *tripsCache, VerticesCache *verticesCache, CalendarDates *calendarDates, CalendarDatesCache *calendarDatesCache, std::string vsId, std::string veId, tm ts, tm te, int maxStartingTimes) {
