@@ -602,6 +602,16 @@ namespace cheminotc {
     std::list<ArrivalTime> arrivalTimesAt;
     for (auto iterator = arrivalTimes.begin(), end = arrivalTimes.end(); iterator != end; ++iterator) {
       ArrivalTime arrivalTime = *iterator;
+      arrivalTime.departure.tm_mday = t.tm_mday;
+      arrivalTime.departure.tm_wday = t.tm_wday;
+      arrivalTime.departure.tm_yday = t.tm_yday;
+      arrivalTime.departure.tm_mon = t.tm_mon;
+      arrivalTime.departure.tm_year = t.tm_year;
+      arrivalTime.arrival.tm_mday = t.tm_mday;
+      arrivalTime.arrival.tm_wday = t.tm_wday;
+      arrivalTime.arrival.tm_yday = t.tm_yday;
+      arrivalTime.arrival.tm_mon = t.tm_mon;
+      arrivalTime.arrival.tm_year = t.tm_year;
       if(datetimeIsBeforeNotEq(arrivalTime.arrival, t)) {
         arrivalTime.departure = addDays(arrivalTime.departure, 1);
         arrivalTime.arrival = addDays(arrivalTime.arrival, 1);
@@ -797,7 +807,6 @@ namespace cheminotc {
 
   StopTime getEarliestArrivalTime(sqlite3 *handle, TripsCache *tripsCache, CalendarDates *calendarDates, CalendarDatesCache *calendarDatesCache, const Vertice *vi, const Vertice *vj, ArrivalTime *gi) {
     std::list<StopTime> viDepartures = getAvailableDepartures(handle, tripsCache, calendarDates, calendarDatesCache, gi->arrival, vi);
-    //std::list<StopTime> vjStopTimes(orderStopTimesBy(vj->stopTimes, gi->arrival)); //HERE
     StopTime earliestArrivalTime;
     earliestArrivalTime.arrival = infinite();
     for(auto iterator = viDepartures.begin(), end = viDepartures.end(); iterator != end; ++iterator) {
