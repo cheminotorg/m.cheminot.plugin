@@ -232,7 +232,7 @@ public class Cheminot extends CordovaPlugin {
               int max = args.getInt(4);
               cbc.success(CheminotLib.lookForBestTrip(vsId, veId, at, te, max));
             } catch (JSONException e) {
-              cbc.error(e.getMessage());
+              cbc.error("Unable to perform `lookForBestTrip`: " + e.getMessage());
             }
           }
       });
@@ -248,7 +248,7 @@ public class Cheminot extends CordovaPlugin {
               int te = args.getInt(3);
               cbc.success(CheminotLib.lookForBestDirectTrip(vsId, veId, at, te));
             } catch (JSONException e) {
-              cbc.error(e.getMessage());
+              cbc.error("Unable to perform `lookForBestDirectTrip`: " + e.getMessage());
             }
           }
       });
