@@ -29,7 +29,7 @@ Cheminot.lookForBestTrip = function(vsId, veId, at, te, max, success, fail) {
           return arrivalTime;
         }));
       } else {
-        fail && fail('Computation was probably aborted');
+        fail && fail('aborted');
       }
     } catch(e) {
       fail && fail(e);
