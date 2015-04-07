@@ -23,6 +23,8 @@ namespace cheminotc
     {
         std::string id;
         std::string name;
+        double lat;
+        double lng;
         std::list<std::string> edges;
         std::list<StopTime> stopTimes;
     };
@@ -76,6 +78,14 @@ namespace cheminotc
         TripsCache trips;
     };
 
+    struct LatLng
+    {
+        double lat;
+        double lng;
+    };
+
+    double distance(const LatLng &a, const LatLng &b);
+
     tm getNow();
 
     sqlite3* openConnection(std::string path);
@@ -122,7 +132,7 @@ namespace cheminotc
 
     Json::Value serializeArrivalTimes(Graph *graph, Cache *cache, std::list<ArrivalTime> arrivalTimes);
 
-    Vertice getVerticeFromGraph(const tm *dateref, Graph *graph, Cache *cache, std::string id, bool byDeparture = true);
+    Vertice getVerticeFromGraph(const tm *dateref, Graph *graph, Cache *cache, std::string id);
 
     Json::Value getMeta(sqlite3 *handle);
 
