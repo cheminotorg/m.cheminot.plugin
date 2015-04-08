@@ -19,7 +19,7 @@ static cheminotc::Cache cache;
 extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax);
-  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring joutput, jstring jvsId, jstring jveId, jint jat, jint jte);
   JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz);
 };
 
@@ -47,7 +47,8 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *en
   return env->NewStringUTF(writer->write(meta).c_str());
 }
 
-JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax) {
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring joutput, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax) {
+  std::string output = env->GetStringUTFChars(joutput, (jboolean *)0);
   const char* vsId = env->GetStringUTFChars(jvsId, (jboolean *)0);
   const char* veId = env->GetStringUTFChars(jveId, (jboolean *)0);
   tm at = cheminotc::asDateTime((int)jat);
@@ -59,7 +60,7 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
   LOGD("###> lookForBestTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
 
   cheminotc::unlock(connection);
-  auto result = cheminotc::lookForBestTrip(connection, &graph, &cache, &calendarDates, vsId, veId, at, te, max);
+  auto result = cheminotc::lookForBestTrip(connection, &output, &graph, &cache, &calendarDates, vsId, veId, at, te, max);
   std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
   bool locked = result.first;
 
