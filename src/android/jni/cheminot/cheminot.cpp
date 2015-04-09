@@ -21,6 +21,7 @@ extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte);
   JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz);
 };
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath) {
@@ -58,16 +59,18 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
   long unsigned int b = calendarDates.size();
   LOGD("###> lookForBestTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
 
+  cheminotc::resetTrace(connection);
   cheminotc::unlock(connection);
   auto result = cheminotc::lookForBestTrip(connection, &graph, &cache, &calendarDates, vsId, veId, at, te, max);
   std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
   bool locked = result.first;
-
   long unsigned int c = arrivalTimes.size();
   LOGD("######> DONE %lu", c);
 
   env->ReleaseStringUTFChars(jvsId, vsId);
   env->ReleaseStringUTFChars(jveId, veId);
+
+  cheminotc::resetTrace(connection);
 
   if(!locked) {
     Json::Value serialized = cheminotc::serializeArrivalTimes(&graph, &cache, arrivalTimes);
@@ -109,4 +112,12 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDire
 JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz) {
   cheminotc::lock(connection);
   LOGD("ABORTED");
+}
+
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz) {
+  LOGD("TRACE");
+  Json::Value trace = cheminotc::getLastTrace(connection);
+  LOGD("%s \n", trace.toStyledString().c_str());
+  Json::FastWriter* writer = new Json::FastWriter();
+  return env->NewStringUTF(writer->write(trace).c_str());
 }

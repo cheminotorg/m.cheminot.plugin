@@ -24,12 +24,13 @@ import org.json.JSONException;
 import android.app.Activity;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.util.JsonReader;
 import android.util.Log;
 
 public class Cheminot extends CordovaPlugin {
 
   enum CheminotAction {
-    unknown, init, lookForBestTrip, lookForBestDirectTrip, abort
+    unknown, init, lookForBestTrip, lookForBestDirectTrip, abort, trace
   }
 
   static class CheminotDB {
@@ -109,6 +110,10 @@ public class Cheminot extends CordovaPlugin {
 
     case abort:
       this.abort(cbc);
+      break;
+
+    case trace:
+      this.trace(args, cbc);
       break;
 
     default:
@@ -263,4 +268,12 @@ public class Cheminot extends CordovaPlugin {
       }
     });
   }
+
+  private void trace(final JSONArray args, final CallbackContext cbc) {
+    this.cordova.getThreadPool().execute(new Runnable() {
+      public void run() {
+        cbc.success(CheminotLib.trace());
+      };
+    });
+  };
 }

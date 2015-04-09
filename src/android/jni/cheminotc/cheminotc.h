@@ -92,6 +92,14 @@ namespace cheminotc
 
     std::string getVersion(sqlite3 *handle);
 
+    Json::Value getLastTrace(sqlite3 *handle);
+
+    void cleanTrace(sqlite3 *handle, int id = 0);
+
+    void resetTrace(sqlite3 *handle);
+
+    void traceVertice(sqlite3 *handle, const Vertice &vertice);
+
     void lock(sqlite3 *handle);
 
     void unlock(sqlite3 *handle);

@@ -14,4 +14,6 @@ public class CheminotLib {
   public static native String lookForBestDirectTrip(String vsId, String veId, int at, int te);
 
   public static native void abort();
+
+  public static native String trace();
 }

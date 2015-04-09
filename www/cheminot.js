@@ -62,4 +62,15 @@ Cheminot.abort = function(success, fail) {
   exec(success, fail, "Cheminot", "abort", []);
 };
 
+Cheminot.trace = function(success, fail) {
+  exec(function(result) {
+    try {
+      result = JSON.parse(result);
+      success && success(result);
+    } catch(e) {
+      fail && fail(e);
+    }
+  }, fail, "Cheminot", "trace", []);
+};
+
 module.exports = Cheminot;
