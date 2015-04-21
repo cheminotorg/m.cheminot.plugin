@@ -136,6 +136,8 @@ namespace cheminotc
 
     tm addMinutes(tm datetime, int n);
 
+    tm addDays(tm datetime, int n);
+
     tm addHours(tm datetime, int n);
 
     Json::Value serializeArrivalTimes(Graph *graph, Cache *cache, std::list<ArrivalTime> arrivalTimes);

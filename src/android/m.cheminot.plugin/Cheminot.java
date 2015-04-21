@@ -65,7 +65,7 @@ public class Cheminot extends CordovaPlugin {
       return this.calendarDates;
     }
 
-   public Date getDate() {
+    public Date getDate() {
       return this.date;
     }
 

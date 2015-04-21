@@ -112,15 +112,8 @@ namespace cheminotc
 
     time_t asTimestamp(tm a)
     {
-        time_t timestamp = fastmktime::mk(&a);
+        time_t timestamp = mktime(&a);
         return timestamp;
-    }
-
-    tm addHours(tm datetime, int n)
-    {
-        datetime.tm_hour += n;
-        fastmktime::mk(&datetime);
-        return datetime;
     }
 
     tm addSeconds(tm datetime, int n)
@@ -133,14 +126,22 @@ namespace cheminotc
     tm minusHours(tm datetime, int n)
     {
         datetime.tm_hour -= n;
-        fastmktime::mk(&datetime);
+        mktime(&datetime);
         return datetime;
     }
+
+    tm addHours(tm datetime, int n)
+    {
+        datetime.tm_hour += n;
+        mktime(&datetime);
+        return datetime;
+    }
+
 
     tm addDays(tm datetime, int n)
     {
         datetime.tm_mday += n;
-        fastmktime::mk(&datetime);
+        mktime(&datetime);
         return datetime;
     }
 
