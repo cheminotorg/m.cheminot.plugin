@@ -29,6 +29,8 @@ import android.util.Log;
 
 public class Cheminot extends CordovaPlugin {
 
+  private static String DBPATH;
+
   enum CheminotAction {
     unknown, init, lookForBestTrip, lookForBestDirectTrip, abort, trace
   }
@@ -134,6 +136,7 @@ public class Cheminot extends CordovaPlugin {
               File graphFile = copyFromAssets(activity, cheminotDB.getGraph(), 4096);
               File calendarDatesFile = copyFromAssets(activity, cheminotDB.getCalendarDates(), 1024);
               cleanDbDirectory(new File(dbFile.getParent()), cheminotDB);
+              DBPATH = dbFile.getAbsolutePath();
               cbc.success(CheminotLib.init(dbFile.getAbsolutePath(), graphFile.getAbsolutePath(), calendarDatesFile.getAbsolutePath()));
             } else {
               cbc.error("Unable to find the most recent db");
@@ -236,7 +239,7 @@ public class Cheminot extends CordovaPlugin {
               int at = args.getInt(2);
               int te = args.getInt(3);
               int max = args.getInt(4);
-              cbc.success(CheminotLib.lookForBestTrip(vsId, veId, at, te, max));
+              cbc.success(CheminotLib.lookForBestTrip(DBPATH, vsId, veId, at, te, max));
             } catch (JSONException e) {
               cbc.error("Unable to perform `lookForBestTrip`: " + e.getMessage());
             }
@@ -252,7 +255,7 @@ public class Cheminot extends CordovaPlugin {
               String veId = args.getString(1);
               int at = args.getInt(2);
               int te = args.getInt(3);
-              cbc.success(CheminotLib.lookForBestDirectTrip(vsId, veId, at, te));
+              cbc.success(CheminotLib.lookForBestDirectTrip(DBPATH, vsId, veId, at, te));
             } catch (JSONException e) {
               cbc.error("Unable to perform `lookForBestDirectTrip`: " + e.getMessage());
             }
@@ -263,7 +266,7 @@ public class Cheminot extends CordovaPlugin {
   private void abort(final CallbackContext cbc) {
     this.cordova.getThreadPool().execute(new Runnable() {
       public void run() {
-        CheminotLib.abort();
+        CheminotLib.abort(DBPATH);
         cbc.success();
       }
     });
@@ -272,7 +275,7 @@ public class Cheminot extends CordovaPlugin {
   private void trace(final JSONArray args, final CallbackContext cbc) {
     this.cordova.getThreadPool().execute(new Runnable() {
       public void run() {
-        cbc.success(CheminotLib.trace());
+        cbc.success(CheminotLib.trace(DBPATH));
       };
     });
   };
