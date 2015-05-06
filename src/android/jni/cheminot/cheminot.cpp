@@ -1,5 +1,4 @@
 #include <jni.h>
-//#include <android/log.h>
 #include <string>
 #include <map>
 #include <list>
@@ -8,20 +7,17 @@
 #include <ctime>
 #include <cheminotc.h>
 
-//#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,"Cheminot", __VA_ARGS__)
-
 static cheminotc::Graph graph;
 static cheminotc::CalendarDates calendarDates;
-static sqlite3* connection = NULL;
-
+static cheminotc::CheminotDb connection;
 static cheminotc::Cache cache;
 
 extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
-  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax);
-  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte);
-  JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz);
-  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte);
+  JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz, jstring jdbPath);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz, jstring jdbPath);
 };
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath) {
@@ -30,6 +26,7 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *en
   const char *calendarDatesPath = env->GetStringUTFChars(jcalendarDatesPath, (jboolean *)0);
 
   connection = cheminotc::openConnection(dbPath);
+
   Json::Value meta = cheminotc::getMeta(connection);
 
   if(calendarDates.empty()) {
@@ -48,24 +45,18 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *en
   return env->NewStringUTF(writer->write(meta).c_str());
 }
 
-JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax) {
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax) {
   const char* vsId = env->GetStringUTFChars(jvsId, (jboolean *)0);
   const char* veId = env->GetStringUTFChars(jveId, (jboolean *)0);
   tm at = cheminotc::asDateTime((int)jat);
   tm te = cheminotc::asDateTime((int)jte);
   int max = (int)jmax;
 
-  //long unsigned int a = graph.size();
-  //long unsigned int b = calendarDates.size();
-  //LOGD("###> lookForBestTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
-
   cheminotc::resetTrace(connection);
   cheminotc::unlock(connection);
   auto result = cheminotc::lookForBestTrip(connection, &graph, &cache, &calendarDates, vsId, veId, at, te, max);
   std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
   bool locked = result.first;
-  //long unsigned int c = arrivalTimes.size();
-  //LOGD("######> DONE %lu", c);
 
   env->ReleaseStringUTFChars(jvsId, vsId);
   env->ReleaseStringUTFChars(jveId, veId);
@@ -81,22 +72,15 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip
   }
 }
 
-JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jvsId, jstring jveId, jint jat, jint jte) {
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte) {
   const char* vsId = env->GetStringUTFChars(jvsId, (jboolean *)0);
   const char* veId = env->GetStringUTFChars(jveId, (jboolean *)0);
   tm at = cheminotc::asDateTime((int)jat);
   tm te = cheminotc::asDateTime((int)jte);
 
-  //long unsigned int a = graph.size();
-  //long unsigned int b = calendarDates.size();
-  //LOGD("###> lookForBestDirectTrip %s %s %s %s", vsId, veId, cheminotc::formatDateTime(at).c_str(), cheminotc::formatDateTime(te).c_str());
-
   cheminotc::unlock(connection);
   std::pair<bool, std::list<cheminotc::ArrivalTime>> result = lookForBestDirectTrip(connection, &graph, &cache, &calendarDates, vsId, veId, at, te);
   std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
-
-  //long unsigned int c = arrivalTimes.size();
-  //LOGD("######> DONE %lu", c);
 
   env->ReleaseStringUTFChars(jvsId, vsId);
   env->ReleaseStringUTFChars(jveId, veId);
@@ -109,15 +93,11 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDire
   return env->NewStringUTF(writer->write(json).c_str());
 }
 
-JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz) {
+JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz, jstring jdbPath) {
   cheminotc::lock(connection);
-  //LOGD("ABORTED");
 }
 
-JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz) {
-  //LOGD("TRACE");
-  Json::Value trace = cheminotc::getLastTrace(connection);
-  //LOGD("%s \n", trace.toStyledString().c_str());
-  Json::FastWriter* writer = new Json::FastWriter();
-  return env->NewStringUTF(writer->write(trace).c_str());
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz, jstring jdbPath) {
+  std::string trace = cheminotc::getLastTrace(connection);
+  return env->NewStringUTF(trace.c_str());
 }

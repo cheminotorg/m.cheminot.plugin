@@ -9,11 +9,11 @@ public class CheminotLib {
 
   public static native String init(String dbPath, String graphPath, String calendarDatesPath);
 
-  public static native String lookForBestTrip(String vsId, String veId, int at, int te, int max);
+  public static native String lookForBestTrip(String dbPath, String vsId, String veId, int at, int te, int max);
 
-  public static native String lookForBestDirectTrip(String vsId, String veId, int at, int te);
+  public static native String lookForBestDirectTrip(String dbPath, String vsId, String veId, int at, int te);
 
-  public static native void abort();
+  public static native void abort(String dbPath);
 
-  public static native String trace();
+  public static native String trace(String dbPath);
 }
