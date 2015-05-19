@@ -32,7 +32,7 @@ public class Cheminot extends CordovaPlugin {
   private static String DBPATH;
 
   enum CheminotAction {
-    unknown, init, lookForBestTrip, lookForBestDirectTrip, abort, trace
+    unknown, init, lookForBestTrip, lookForBestDirectTrip, abort, trace, getStop
   }
 
   static class CheminotDB {
@@ -117,6 +117,9 @@ public class Cheminot extends CordovaPlugin {
     case trace:
       this.trace(args, cbc);
       break;
+
+    case getStop:
+      this.getStop(args, cbc);
 
     default:
       cbc.error("Unknown action: " + action);
@@ -276,6 +279,19 @@ public class Cheminot extends CordovaPlugin {
     this.cordova.getThreadPool().execute(new Runnable() {
       public void run() {
         cbc.success(CheminotLib.trace(DBPATH));
+      };
+    });
+  };
+
+  private void getStop(final JSONArray args, final CallbackContext cbc) {
+    this.cordova.getThreadPool().execute(new Runnable() {
+      public void run() {
+        try {
+          String stopId = args.getString(0);
+          cbc.success(CheminotLib.getStop(stopId));
+        } catch (JSONException e) {
+          cbc.error("Unable to perform `getStop`: " + e.getMessage());
+        }
       };
     });
   };

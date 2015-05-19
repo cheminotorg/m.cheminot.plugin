@@ -73,4 +73,15 @@ Cheminot.trace = function(success, fail) {
   }, fail, "Cheminot", "trace", []);
 };
 
+Cheminot.getStop = function(stopId, success, fail) {
+  exec(function(result) {
+    try {
+      result = JSON.parse(result);
+      success && success(result);
+    } catch(e) {
+      fail && fail(e);
+    }
+  }, fail, "Cheminot", "getStop", [stopId]);
+};
+
 module.exports = Cheminot;

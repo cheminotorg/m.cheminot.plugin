@@ -16,4 +16,6 @@ public class CheminotLib {
   public static native void abort(String dbPath);
 
   public static native String trace(String dbPath);
+
+  public static native String getStop(String id);
 }

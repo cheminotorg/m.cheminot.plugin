@@ -18,6 +18,7 @@ extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte);
   JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_abort(JNIEnv *env, jclass clazz, jstring jdbPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz, jstring jdbPath);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_getStop(JNIEnv *env, jclass clazz, jstring jstopId);
 };
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath) {
@@ -125,4 +126,22 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *e
   std::string trace = cheminotc::getLastTrace(connection);
   env->ReleaseStringUTFChars(jdbPath, dbPath);
   return env->NewStringUTF(trace.c_str());
+}
+
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_getStop(JNIEnv *env, jclass clazz, jstring jstopId) {
+  const char *stopId = env->GetStringUTFChars(jstopId, (jboolean *)0);
+  std::string stop = "null";
+  if(cheminotc::verticeExists(&graph, &cache, stopId))
+  {
+      cheminotc::Vertice vertice = cheminotc::getVerticeFromGraph(NULL, &graph, &cache, stopId);
+      Json::Value json;
+      json["id"] = vertice.id;
+      json["name"] = vertice.name;
+      json["lat"] = vertice.lat;
+      json["lng"] = vertice.lng;
+      env->ReleaseStringUTFChars(jstopId, stopId);
+      Json::FastWriter* writer = new Json::FastWriter();
+      stop = writer->write(json).c_str();
+  }
+  return env->NewStringUTF(stop.c_str());
 }
