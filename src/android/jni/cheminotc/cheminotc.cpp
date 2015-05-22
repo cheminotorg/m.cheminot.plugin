@@ -273,6 +273,8 @@ namespace cheminotc
         json["departure"] = departure;
         json["tripId"] = arrivalTime.tripId;
         json["pos"] = arrivalTime.pos;
+        json["lat"] = arrivalTime.lat;
+        json["lng"] = arrivalTime.lng;
         return json;
     }
 
@@ -458,6 +460,20 @@ namespace cheminotc
         return stopTimesAt;
     }
 
+    bool verticeExists(Graph *graph, Cache *cache, std::string id)
+    {
+        auto cacheIt = cache->vertices.find(id);
+        if(cacheIt != cache->vertices.end())
+        {
+            return true;
+        }
+        else
+        {
+            auto it = graph->find(id);
+            return it != graph->end();
+        }
+    }
+
     Vertice getVerticeFromGraph(const tm *dateref, Graph *graph, Cache *cache, std::string id)
     {
         auto it = cache->vertices.find(id);
@@ -482,8 +498,9 @@ namespace cheminotc
             if(dateref != NULL)
             {
                 vertice->stopTimes = parseStopTimes(dateref, verticeBuf.stoptimes());
+                cache->vertices[id] = vertice;
             }
-            cache->vertices[id] = vertice;
+
             return *vertice;
         }
     }
@@ -965,6 +982,8 @@ namespace cheminotc
             gs.stopId = vs->id;
             gs.departure = departureTime;
             gs.arrival = departureTime;
+            gs.lat = vs->lat;
+            gs.lng = vs->lng;
             gsFunc[asTimestamp(departureTime)] = gs;
         }
 
@@ -1056,14 +1075,16 @@ namespace cheminotc
         }
     }
 
-    ArrivalTime stopTime2ArrivalTime(std::string stopId, const StopTime *stopTime)
+    ArrivalTime stopTime2ArrivalTime(const Vertice *vertice, const StopTime *stopTime)
     {
         ArrivalTime arrivalTime;
-        arrivalTime.stopId = stopId;
+        arrivalTime.stopId = vertice->id;
         arrivalTime.arrival = stopTime->arrival;
         arrivalTime.departure = stopTime->departure;
         arrivalTime.tripId = stopTime->tripId;
         arrivalTime.pos = stopTime->pos;
+        arrivalTime.lat = vertice->lat;
+        arrivalTime.lng = vertice->lng;
         return arrivalTime;
     }
 
@@ -1147,19 +1168,19 @@ namespace cheminotc
                 {
                     if(datetimeIsBeforeNotEq(vjStopTime.arrival, currentGj->second.arrival))   // UPDATING IF BETTER FOUND
                     {
-                        gjFunc[t] = stopTime2ArrivalTime(vj->id, &vjStopTime);
+                        gjFunc[t] = stopTime2ArrivalTime(vj, &vjStopTime);
                         done(vjStopTime);
                     }
                 }
                 else
                 {
-                    gjFunc[t] = stopTime2ArrivalTime(vj->id, &vjStopTime); // NEW VALUE
+                    gjFunc[t] = stopTime2ArrivalTime(vj, &vjStopTime); // NEW VALUE
                     done(vjStopTime);
                 }
             }
             else
             {
-                gjFunc[t] = stopTime2ArrivalTime(vj->id, &vjStopTime); // NEW FUNC
+                gjFunc[t] = stopTime2ArrivalTime(vj, &vjStopTime); // NEW FUNC
                 (*arrivalTimesFunc)[vj->id] = gjFunc;
                 done(vjStopTime);
             }
@@ -1176,9 +1197,14 @@ namespace cheminotc
         return addSeconds(gj, durationVjVe);
     }
 
+    std::string tdspHash(std::string vsId, std::string veId, tm ts, tm te, int max)
+    {
+        return vsId + "|" + veId + "|" + to_string(asTimestamp(ts) * 1000) + "|" + to_string(asTimestamp(te) * 1000) + "|" + to_string(max);
+    }
+
     std::tuple<bool, ArrivalTimesFunc, std::string> refineArrivalTimes(const CheminotDb &connection, Graph *graph, Cache *cache, CalendarDates *calendarDates, std::string vsId, std::string veId, tm ts, tm te, int max)
     {
-        std::string tdsp = vsId + veId + to_string(asTimestamp(ts)) + to_string(asTimestamp(te)) + to_string(max);
+        std::string tdsp = tdspHash(vsId, veId, ts, te, max);
 
         Queue queue;
         ArrivalTimesFunc arrivalTimesFunc;
@@ -1372,6 +1398,7 @@ namespace cheminotc
         std::list<std::shared_ptr<Trip>> trips = getDirectTrips(connection, cache, vsId, veId);
         std::pair<std::shared_ptr<Trip>, tm> bestTrip;
         bool hasBestTrip = false;
+
         for(auto iterator = trips.begin(), end = trips.end(); iterator != end; ++iterator)
         {
             std::shared_ptr<Trip> trip = *iterator;
@@ -1416,7 +1443,7 @@ namespace cheminotc
             if(it != vi.stopTimes.end())
             {
                 StopTime stopTime = *it;
-                *arrivalTime = stopTime2ArrivalTime(viId, &stopTime);
+                *arrivalTime = stopTime2ArrivalTime(&vi, &stopTime);
                 return true;
             }
             return false;

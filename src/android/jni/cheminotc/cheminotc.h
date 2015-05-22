@@ -43,6 +43,8 @@ namespace cheminotc
         tm departure;
         std::string tripId;
         int pos;
+        double lat;
+        double lng;
     };
 
     struct CalendarDate
@@ -148,6 +150,8 @@ namespace cheminotc
     tm addHours(tm datetime, int n);
 
     Json::Value serializeArrivalTimes(Graph *graph, Cache *cache, std::list<ArrivalTime> arrivalTimes);
+
+    bool verticeExists(Graph *graph, Cache *cache, std::string id);
 
     Vertice getVerticeFromGraph(const tm *dateref, Graph *graph, Cache *cache, std::string id);
 
