@@ -13,6 +13,8 @@ static cheminotc::CalendarDates calendarDates;
 static cheminotc::Cache cache;
 
 extern "C" {
+  JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_load(JNIEnv *env, jclass clazz, jstring jgraphPath, jstring jcalendarDatesPath);
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_openConnection(JNIEnv *env, jclass clazz, jstring jdbPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte);
@@ -20,6 +22,47 @@ extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz, jstring jdbPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_getStop(JNIEnv *env, jclass clazz, jstring jstopId);
 };
+
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_openConnection(JNIEnv *env, jclass clazz, jstring jdbPath) {
+  const char *dbPath = env->GetStringUTFChars(jdbPath, (jboolean *)0);
+
+  cheminotc::CheminotDb connection;
+  auto existingConnectionIt = connections.find(dbPath);
+
+  if(existingConnectionIt == connections.end())
+  {
+    connection = cheminotc::openConnection(dbPath);
+    connections[dbPath] = connection;
+  }
+  else
+  {
+    connection = existingConnectionIt->second;
+  }
+
+  Json::Value meta = cheminotc::getMeta(connection);
+
+  env->ReleaseStringUTFChars(jdbPath, dbPath);
+
+  Json::FastWriter* writer = new Json::FastWriter();
+  return env->NewStringUTF(writer->write(meta).c_str());
+}
+
+JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_load(JNIEnv *env, jclass clazz, jstring jgraphPath, jstring jcalendarDatesPath) {
+
+  const char *graphPath = env->GetStringUTFChars(jgraphPath, (jboolean *)0);
+  const char *calendarDatesPath = env->GetStringUTFChars(jcalendarDatesPath, (jboolean *)0);
+
+  if(calendarDates.empty()) {
+    cheminotc::parseCalendarDates(calendarDatesPath, &calendarDates);
+  }
+
+  if(graph.empty()) {
+    cheminotc::parseGraph(graphPath, &graph);
+  }
+
+  env->ReleaseStringUTFChars(jgraphPath, graphPath);
+  env->ReleaseStringUTFChars(jcalendarDatesPath, calendarDatesPath);
+}
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath) {
   const char *dbPath = env->GetStringUTFChars(jdbPath, (jboolean *)0);
