@@ -60,6 +60,8 @@ JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_load(JNIEnv *env, 
     cheminotc::parseGraph(graphPath, &graph);
   }
 
+  cheminotc::fillCache(&cache, &calendarDates, &graph);
+
   env->ReleaseStringUTFChars(jgraphPath, graphPath);
   env->ReleaseStringUTFChars(jcalendarDatesPath, calendarDatesPath);
 }
@@ -176,7 +178,7 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_getStop(JNIEnv 
   std::string stop = "null";
   if(cheminotc::verticeExists(&graph, &cache, stopId))
   {
-      cheminotc::Vertice vertice = cheminotc::getVerticeFromGraph(NULL, &graph, &cache, stopId);
+      cheminotc::Vertice vertice = cheminotc::getVerticeFromGraph(&graph, &cache, stopId, NULL, false);
       Json::Value json;
       json["id"] = vertice.id;
       json["name"] = vertice.name;
