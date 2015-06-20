@@ -82,6 +82,7 @@ namespace cheminotc
 
     struct Cache
     {
+        bool readonly;
         VerticesCache vertices;
         CalendarDatesCache calendarDates;
         TripsCache trips;
@@ -153,9 +154,11 @@ namespace cheminotc
 
     bool verticeExists(Graph *graph, Cache *cache, std::string id);
 
-    Vertice getVerticeFromGraph(const tm *dateref, Graph *graph, Cache *cache, std::string id);
+    Vertice getVerticeFromGraph(Graph *graph, Cache *cache, std::string id, const tm *dateref, bool withStopTimes = true);
 
     Json::Value getMeta(const CheminotDb &connection);
+
+    void fillCache(Cache *cache, CalendarDates *calendarDates, Graph *graph);
 
 // -- PARIS
     static std::string parisStopId = "StopPoint:OCETrain TER-PARISXXX";
