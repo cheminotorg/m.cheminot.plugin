@@ -5,6 +5,8 @@ include $(CLEAR_VARS)
 CC_LITE_SRC_FILES := \
     google/protobuf/stubs/common.cc                              \
     google/protobuf/stubs/once.cc                                \
+    google/protobuf/stubs/status.cc                              \
+    google/protobuf/any.cc                                       \
     google/protobuf/extension_set.cc                             \
     google/protobuf/generated_message_util.cc                    \
     google/protobuf/message_lite.cc                              \
@@ -43,7 +45,7 @@ protobuf_cc_full_src_files := \
     google/protobuf/arenastring.cc                               \
     google/protobuf/io/strtod.cc                                 \
     google/protobuf/stubs/atomicops_internals_x86_gcc.cc
-    
+
 
 LOCAL_MODULE := protobuf
 LOCAL_CPP_EXTENSION := .cc

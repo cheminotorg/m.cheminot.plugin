@@ -48,6 +48,26 @@
 #include <stdint.h>
 #endif
 
+#undef PROTOBUF_LITTLE_ENDIAN
+#ifdef _MSC_VER
+  // Assuming windows is always little-endian.
+  #if !defined(PROTOBUF_DISABLE_LITTLE_ENDIAN_OPT_FOR_TEST)
+    #define PROTOBUF_LITTLE_ENDIAN 1
+  #endif
+  #if _MSC_VER >= 1300
+    // If MSVC has "/RTCc" set, it will complain about truncating casts at
+    // runtime.  This file contains some intentional truncating casts.
+    #pragma runtime_checks("c", off)
+  #endif
+#else
+  #include <sys/param.h>   // __BYTE_ORDER
+  #if ((defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) || \
+         (defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN)) && \
+      !defined(PROTOBUF_DISABLE_LITTLE_ENDIAN_OPT_FOR_TEST)
+    #define PROTOBUF_LITTLE_ENDIAN 1
+  #endif
+#endif
+
 #ifndef PROTOBUF_USE_EXCEPTIONS
 #if defined(_MSC_VER) && defined(_CPPUNWIND)
   #define PROTOBUF_USE_EXCEPTIONS 1
@@ -60,6 +80,16 @@
 
 #if PROTOBUF_USE_EXCEPTIONS
 #include <exception>
+#endif
+
+#include <google/protobuf/stubs/platform_macros.h>
+
+#if defined(__APPLE__)
+#include <TargetConditionals.h>  // for TARGET_OS_IPHONE
+#endif
+
+#if defined(__ANDROID__) || defined(GOOGLE_PROTOBUF_OS_ANDROID) || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) || defined(GOOGLE_PROTOBUF_OS_IPHONE)
+#include <pthread.h>
 #endif
 
 #if defined(_WIN32) && defined(GetMessage)
@@ -88,6 +118,12 @@ namespace protobuf {
 #undef GOOGLE_DISALLOW_EVIL_CONSTRUCTORS
 #define GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(TypeName)    \
   TypeName(const TypeName&);                           \
+  void operator=(const TypeName&)
+
+#undef GOOGLE_DISALLOW_IMPLICIT_CONSTRUCTORS
+#define GOOGLE_DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName) \
+  TypeName();                                           \
+  TypeName(const TypeName&);                            \
   void operator=(const TypeName&)
 
 #if defined(_MSC_VER) && defined(PROTOBUF_USE_DLLS)
@@ -157,7 +193,7 @@ std::string LIBPROTOBUF_EXPORT VersionString(int version);
 typedef unsigned int uint;
 
 #ifdef _MSC_VER
-typedef __int8  int8;
+typedef signed __int8  int8;
 typedef __int16 int16;
 typedef __int32 int32;
 typedef __int64 int64;
@@ -250,7 +286,7 @@ static const uint64 kuint64max = GOOGLE_ULONGLONG(0xFFFFFFFFFFFFFFFF);
 #ifndef GOOGLE_PREDICT_FALSE
 #ifdef __GNUC__
 // Provided at least since GCC 3.0.
-#define GOOGLE_PREDICT_FALSE(x) (__builtin_expect(!!(x), 1))
+#define GOOGLE_PREDICT_FALSE(x) (__builtin_expect(x, 0))
 #else
 #define GOOGLE_PREDICT_FALSE
 #endif
@@ -650,6 +686,10 @@ enum LogLevel {
 #endif
 };
 
+class StringPiece;
+namespace util {
+class Status;
+}
 namespace internal {
 
 class LogFinisher;
@@ -663,11 +703,15 @@ class LIBPROTOBUF_EXPORT LogMessage {
   LogMessage& operator<<(const char* value);
   LogMessage& operator<<(char value);
   LogMessage& operator<<(int value);
-  LogMessage& operator<<(uint value);
+  LogMessage& operator<<(unsigned int value);
   LogMessage& operator<<(long value);
   LogMessage& operator<<(unsigned long value);
+  LogMessage& operator<<(long long value);
+  LogMessage& operator<<(unsigned long long value);
   LogMessage& operator<<(double value);
   LogMessage& operator<<(void* value);
+  LogMessage& operator<<(const StringPiece& value);
+  LogMessage& operator<<(const ::google::protobuf::util::Status& status);
 
  private:
   friend class LogFinisher;
@@ -685,6 +729,11 @@ class LIBPROTOBUF_EXPORT LogFinisher {
  public:
   void operator=(LogMessage& other);
 };
+
+template<typename T>
+bool IsOk(T status) { return status.ok(); }
+template<>
+inline bool IsOk(bool status) { return status; }
 
 }  // namespace internal
 
@@ -707,6 +756,7 @@ class LIBPROTOBUF_EXPORT LogFinisher {
 
 #undef GOOGLE_DLOG
 #undef GOOGLE_DCHECK
+#undef GOOGLE_DCHECK_OK
 #undef GOOGLE_DCHECK_EQ
 #undef GOOGLE_DCHECK_NE
 #undef GOOGLE_DCHECK_LT
@@ -723,7 +773,7 @@ class LIBPROTOBUF_EXPORT LogFinisher {
 
 #define GOOGLE_CHECK(EXPRESSION) \
   GOOGLE_LOG_IF(FATAL, !(EXPRESSION)) << "CHECK failed: " #EXPRESSION ": "
-#define GOOGLE_CHECK_OK(A) GOOGLE_CHECK(A)
+#define GOOGLE_CHECK_OK(A) GOOGLE_CHECK(::google::protobuf::internal::IsOk(A))
 #define GOOGLE_CHECK_EQ(A, B) GOOGLE_CHECK((A) == (B))
 #define GOOGLE_CHECK_NE(A, B) GOOGLE_CHECK((A) != (B))
 #define GOOGLE_CHECK_LT(A, B) GOOGLE_CHECK((A) <  (B))
@@ -750,6 +800,7 @@ T* CheckNotNull(const char* /* file */, int /* line */,
 #define GOOGLE_DLOG GOOGLE_LOG_IF(INFO, false)
 
 #define GOOGLE_DCHECK(EXPRESSION) while(false) GOOGLE_CHECK(EXPRESSION)
+#define GOOGLE_DCHECK_OK(E) GOOGLE_DCHECK(::google::protobuf::internal::IsOk(E))
 #define GOOGLE_DCHECK_EQ(A, B) GOOGLE_DCHECK((A) == (B))
 #define GOOGLE_DCHECK_NE(A, B) GOOGLE_DCHECK((A) != (B))
 #define GOOGLE_DCHECK_LT(A, B) GOOGLE_DCHECK((A) <  (B))
@@ -762,6 +813,7 @@ T* CheckNotNull(const char* /* file */, int /* line */,
 #define GOOGLE_DLOG GOOGLE_LOG
 
 #define GOOGLE_DCHECK    GOOGLE_CHECK
+#define GOOGLE_DCHECK_OK GOOGLE_CHECK_OK
 #define GOOGLE_DCHECK_EQ GOOGLE_CHECK_EQ
 #define GOOGLE_DCHECK_NE GOOGLE_CHECK_NE
 #define GOOGLE_DCHECK_LT GOOGLE_CHECK_LT
@@ -871,6 +923,30 @@ class LIBPROTOBUF_EXPORT Closure {
 
  private:
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(Closure);
+};
+
+template<typename R, typename A1>
+class LIBPROTOBUF_EXPORT ResultCallback1 {
+ public:
+  ResultCallback1() {}
+  virtual ~ResultCallback1() {}
+
+  virtual R Run(A1) = 0;
+
+ private:
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(ResultCallback1);
+};
+
+template<typename R, typename A1, typename A2>
+class LIBPROTOBUF_EXPORT ResultCallback2 {
+ public:
+  ResultCallback2() {}
+  virtual ~ResultCallback2() {}
+
+  virtual R Run(A1,A2) = 0;
+
+ private:
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(ResultCallback2);
 };
 
 namespace internal {
@@ -1011,6 +1087,96 @@ class MethodClosure2 : public Closure {
   Arg2 arg2_;
 };
 
+template<typename R, typename Arg1>
+class FunctionResultCallback_0_1 : public ResultCallback1<R, Arg1> {
+ public:
+  typedef R (*FunctionType)(Arg1 arg1);
+
+  FunctionResultCallback_0_1(FunctionType function, bool self_deleting)
+      : function_(function), self_deleting_(self_deleting) {}
+  ~FunctionResultCallback_0_1() {}
+
+  R Run(Arg1 a1) {
+    bool needs_delete = self_deleting_;  // read in case callback deletes
+    R result = function_(a1);
+    if (needs_delete) delete this;
+    return result;
+  }
+
+ private:
+  FunctionType function_;
+  bool self_deleting_;
+};
+
+template<typename R, typename P1, typename A1>
+class FunctionResultCallback_1_1 : public ResultCallback1<R, A1> {
+ public:
+  typedef R (*FunctionType)(P1, A1);
+
+  FunctionResultCallback_1_1(FunctionType function, bool self_deleting,
+                             P1 p1)
+      : function_(function), self_deleting_(self_deleting), p1_(p1) {}
+  ~FunctionResultCallback_1_1() {}
+
+  R Run(A1 a1) {
+    bool needs_delete = self_deleting_;  // read in case callback deletes
+    R result = function_(p1_, a1);
+    if (needs_delete) delete this;
+    return result;
+  }
+
+ private:
+  FunctionType function_;
+  bool self_deleting_;
+  P1 p1_;
+};
+
+// Duplicate this again in the type_traits.h, due to dependency problems.
+template <class T> struct internal_remove_reference;
+template<typename T> struct internal_remove_reference { typedef T type; };
+template<typename T> struct internal_remove_reference<T&> { typedef T type; };
+
+template <typename T>
+struct InternalConstRef {
+  typedef typename internal_remove_reference<T>::type base_type;
+  typedef const base_type& type;
+};
+
+template <typename R, typename T, typename P1, typename P2, typename P3,
+          typename P4, typename P5, typename A1, typename A2>
+class MethodResultCallback_5_2 : public ResultCallback2<R, A1, A2> {
+ public:
+  typedef R (T::*MethodType)(P1, P2, P3, P4, P5, A1, A2);
+  MethodResultCallback_5_2(T* object, MethodType method, bool self_deleting,
+                           P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+      : object_(object),
+        method_(method),
+        self_deleting_(self_deleting),
+        p1_(p1),
+        p2_(p2),
+        p3_(p3),
+        p4_(p4),
+        p5_(p5) {}
+  ~MethodResultCallback_5_2() {}
+
+  R Run(A1 a1, A2 a2) {
+    bool needs_delete = self_deleting_;
+    R result = (object_->*method_)(p1_, p2_, p3_, p4_, p5_, a1, a2);
+    if (needs_delete) delete this;
+    return result;
+  }
+
+ private:
+  T* object_;
+  MethodType method_;
+  bool self_deleting_;
+  typename internal_remove_reference<P1>::type p1_;
+  typename internal_remove_reference<P2>::type p2_;
+  typename internal_remove_reference<P3>::type p3_;
+  typename internal_remove_reference<P4>::type p4_;
+  typename internal_remove_reference<P5>::type p5_;
+};
+
 }  // namespace internal
 
 // See Closure.
@@ -1096,6 +1262,48 @@ inline Closure* NewPermanentCallback(
     object, method, false, arg1, arg2);
 }
 
+// See ResultCallback1
+template<typename R, typename A1>
+inline ResultCallback1<R, A1>* NewCallback(R (*function)(A1)) {
+  return new internal::FunctionResultCallback_0_1<R, A1>(function, true);
+}
+
+// See ResultCallback1
+template<typename R, typename A1>
+inline ResultCallback1<R, A1>* NewPermanentCallback(R (*function)(A1)) {
+  return new internal::FunctionResultCallback_0_1<R, A1>(function, false);
+}
+
+// See ResultCallback1
+template<typename R, typename P1, typename A1>
+inline ResultCallback1<R, A1>* NewCallback(R (*function)(P1, A1), P1 p1) {
+  return new internal::FunctionResultCallback_1_1<R, P1, A1>(
+      function, true, p1);
+}
+
+// See ResultCallback1
+template<typename R, typename P1, typename A1>
+inline ResultCallback1<R, A1>* NewPermanentCallback(
+    R (*function)(P1, A1), P1 p1) {
+  return new internal::FunctionResultCallback_1_1<R, P1, A1>(
+      function, false, p1);
+}
+
+// See MethodResultCallback_5_2
+template <typename R, typename T, typename P1, typename P2, typename P3,
+          typename P4, typename P5, typename A1, typename A2>
+inline ResultCallback2<R, A1, A2>* NewPermanentCallback(
+    T* object, R (T::*function)(P1, P2, P3, P4, P5, A1, A2),
+    typename internal::InternalConstRef<P1>::type p1,
+    typename internal::InternalConstRef<P2>::type p2,
+    typename internal::InternalConstRef<P3>::type p3,
+    typename internal::InternalConstRef<P4>::type p4,
+    typename internal::InternalConstRef<P5>::type p5) {
+  return new internal::MethodResultCallback_5_2<R, T, P1, P2, P3, P4, P5, A1,
+                                                A2>(object, function, false, p1,
+                                                    p2, p3, p4, p5);
+}
+
 // A function which does nothing.  Useful for creating no-op callbacks, e.g.:
 //   Closure* nothing = NewCallback(&DoNothing);
 void LIBPROTOBUF_EXPORT DoNothing();
@@ -1133,6 +1341,14 @@ class LIBPROTOBUF_EXPORT Mutex {
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(Mutex);
 };
 
+// Undefine the macros  to workaround the conflicts with Google internal
+// MutexLock implementation.
+// TODO(liujisi): Remove the undef once internal macros are removed.
+#undef MutexLock
+#undef ReaderMutexLock
+#undef WriterMutexLock
+#undef MutexLockMaybe
+
 // MutexLock(mu) acquires mu when constructed and releases it when destroyed.
 class LIBPROTOBUF_EXPORT MutexLock {
  public:
@@ -1158,6 +1374,34 @@ class LIBPROTOBUF_EXPORT MutexLockMaybe {
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(MutexLockMaybe);
 };
 
+#if defined(GOOGLE_PROTOBUF_NO_THREADLOCAL)
+template<typename T>
+class ThreadLocalStorage {
+ public:
+  ThreadLocalStorage() {
+    pthread_key_create(&key_, &ThreadLocalStorage::Delete);
+  }
+  ~ThreadLocalStorage() {
+    pthread_key_delete(key_);
+  }
+  T* Get() {
+    T* result = static_cast<T*>(pthread_getspecific(key_));
+    if (result == NULL) {
+      result = new T();
+      pthread_setspecific(key_, result);
+    }
+    return result;
+  }
+ private:
+  static void Delete(void* value) {
+    delete static_cast<T*>(value);
+  }
+  pthread_key_t key_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(ThreadLocalStorage);
+};
+#endif
+
 }  // namespace internal
 
 // We made these internal so that they would show up as such in the docs,
@@ -1180,8 +1424,113 @@ LIBPROTOBUF_EXPORT bool IsStructurallyValidUTF8(const char* buf, int len);
 }  // namespace internal
 
 // ===================================================================
+// from google3/base/port.h
+
+// The following guarantees declaration of the byte swap functions, and
+// defines __BYTE_ORDER for MSVC
+#ifdef _MSC_VER
+#include <stdlib.h>  // NOLINT(build/include)
+#define __BYTE_ORDER __LITTLE_ENDIAN
+#define bswap_16(x) _byteswap_ushort(x)
+#define bswap_32(x) _byteswap_ulong(x)
+#define bswap_64(x) _byteswap_uint64(x)
+
+#elif defined(__APPLE__)
+// Mac OS X / Darwin features
+#include <libkern/OSByteOrder.h>
+#define bswap_16(x) OSSwapInt16(x)
+#define bswap_32(x) OSSwapInt32(x)
+#define bswap_64(x) OSSwapInt64(x)
+
+#elif defined(__GLIBC__) || defined(__CYGWIN__)
+#include <byteswap.h>  // IWYU pragma: export
+
+#else
+
+static inline uint16 bswap_16(uint16 x) {
+  return static_cast<uint16>(((x & 0xFF) << 8) | ((x & 0xFF00) >> 8));
+}
+#define bswap_16(x) bswap_16(x)
+static inline uint32 bswap_32(uint32 x) {
+  return (((x & 0xFF) << 24) |
+          ((x & 0xFF00) << 8) |
+          ((x & 0xFF0000) >> 8) |
+          ((x & 0xFF000000) >> 24));
+}
+#define bswap_32(x) bswap_32(x)
+static inline uint64 bswap_64(uint64 x) {
+  return (((x & GG_ULONGLONG(0xFF)) << 56) |
+          ((x & GG_ULONGLONG(0xFF00)) << 40) |
+          ((x & GG_ULONGLONG(0xFF0000)) << 24) |
+          ((x & GG_ULONGLONG(0xFF000000)) << 8) |
+          ((x & GG_ULONGLONG(0xFF00000000)) >> 8) |
+          ((x & GG_ULONGLONG(0xFF0000000000)) >> 24) |
+          ((x & GG_ULONGLONG(0xFF000000000000)) >> 40) |
+          ((x & GG_ULONGLONG(0xFF00000000000000)) >> 56));
+}
+#define bswap_64(x) bswap_64(x)
+
+#endif
+
+// ===================================================================
 // from google3/util/endian/endian.h
 LIBPROTOBUF_EXPORT uint32 ghtonl(uint32 x);
+
+class BigEndian {
+ public:
+#ifdef PROTOBUF_LITTLE_ENDIAN
+
+  static uint16 FromHost16(uint16 x) { return bswap_16(x); }
+  static uint16 ToHost16(uint16 x) { return bswap_16(x); }
+
+  static uint32 FromHost32(uint32 x) { return bswap_32(x); }
+  static uint32 ToHost32(uint32 x) { return bswap_32(x); }
+
+  static uint64 FromHost64(uint64 x) { return bswap_64(x); }
+  static uint64 ToHost64(uint64 x) { return bswap_64(x); }
+
+  static bool IsLittleEndian() { return true; }
+
+#else
+
+  static uint16 FromHost16(uint16 x) { return x; }
+  static uint16 ToHost16(uint16 x) { return x; }
+
+  static uint32 FromHost32(uint32 x) { return x; }
+  static uint32 ToHost32(uint32 x) { return x; }
+
+  static uint64 FromHost64(uint64 x) { return x; }
+  static uint64 ToHost64(uint64 x) { return x; }
+
+  static bool IsLittleEndian() { return false; }
+
+#endif /* ENDIAN */
+
+  // Functions to do unaligned loads and stores in big-endian order.
+  static uint16 Load16(const void *p) {
+    return ToHost16(GOOGLE_UNALIGNED_LOAD16(p));
+  }
+
+  static void Store16(void *p, uint16 v) {
+    GOOGLE_UNALIGNED_STORE16(p, FromHost16(v));
+  }
+
+  static uint32 Load32(const void *p) {
+    return ToHost32(GOOGLE_UNALIGNED_LOAD32(p));
+  }
+
+  static void Store32(void *p, uint32 v) {
+    GOOGLE_UNALIGNED_STORE32(p, FromHost32(v));
+  }
+
+  static uint64 Load64(const void *p) {
+    return ToHost64(GOOGLE_UNALIGNED_LOAD64(p));
+  }
+
+  static void Store64(void *p, uint64 v) {
+    GOOGLE_UNALIGNED_STORE64(p, FromHost64(v));
+  }
+};
 
 // ===================================================================
 // Shutdown support.

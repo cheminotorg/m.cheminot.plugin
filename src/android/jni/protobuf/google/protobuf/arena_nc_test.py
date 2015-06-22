@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 #
 # Protocol Buffers - Google's data interchange format
 # Copyright 2008 Google Inc.  All rights reserved.
@@ -35,6 +35,7 @@
 import unittest
 
 from google3.testing.pybase import fake_target_util
+import unittest
 
 
 class ArenaNcTest(unittest.TestCase):

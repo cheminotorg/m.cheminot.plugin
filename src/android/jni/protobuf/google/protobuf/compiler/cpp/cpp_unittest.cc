@@ -55,6 +55,7 @@
 #include <google/protobuf/unittest.pb.h>
 #include <google/protobuf/unittest_optimize_for.pb.h>
 #include <google/protobuf/unittest_embed_optimize_for.pb.h>
+#include <google/protobuf/unittest_enormous_descriptor.pb.h>
 #include <google/protobuf/unittest_no_generic_services.pb.h>
 #include <google/protobuf/test_util.h>
 #include <google/protobuf/compiler/cpp/cpp_helpers.h>
@@ -128,6 +129,17 @@ TEST(GeneratedDescriptorTest, IdenticalDescriptors) {
 
   EXPECT_EQ(parsed_descriptor_proto.DebugString(),
             generated_decsriptor_proto.DebugString());
+}
+
+// Test that generated code has proper descriptors:
+// Touch a descriptor generated from an enormous message to validate special
+// handling for descriptors exceeding the C++ standard's recommended minimum
+// limit for string literal size
+TEST(GeneratedDescriptorTest, EnormousDescriptor) {
+  const Descriptor* generated_descriptor =
+    TestEnormousDescriptor::descriptor();
+
+  EXPECT_TRUE(generated_descriptor != NULL);
 }
 
 #endif  // !PROTOBUF_TEST_NO_DESCRIPTORS
@@ -941,6 +953,22 @@ TEST(GeneratedMessageTest, ExtensionConstantValues) {
   EXPECT_EQ(unittest::kRepeatedNestedEnumExtensionFieldNumber, 51);
 }
 
+TEST(GeneratedMessageTest, ParseFromTruncated) {
+  const string long_string = string(128, 'q');
+  FileDescriptorProto p;
+  p.add_extension()->set_name(long_string);
+  const string msg = p.SerializeAsString();
+  int successful_count = 0;
+  for (int i = 0; i <= msg.size(); i++) {
+    if (p.ParseFromArray(msg.c_str(), i)) {
+      ++successful_count;
+    }
+  }
+  // We don't really care about how often we succeeded.
+  // As long as we didn't crash, we're happy.
+  EXPECT_GE(successful_count, 1);
+}
+
 // ===================================================================
 
 TEST(GeneratedEnumTest, EnumValuesAsSwitchCases) {
@@ -1392,6 +1420,12 @@ class OneofTest : public testing::Test {
       case unittest::TestOneof2::kFooString:
         EXPECT_TRUE(message.has_foo_string());
         break;
+      case unittest::TestOneof2::kFooCord:
+        EXPECT_TRUE(message.has_foo_cord());
+        break;
+      case unittest::TestOneof2::kFooStringPiece:
+        EXPECT_TRUE(message.has_foo_string_piece());
+        break;
       case unittest::TestOneof2::kFooBytes:
         EXPECT_TRUE(message.has_foo_bytes());
         break;
@@ -1403,6 +1437,9 @@ class OneofTest : public testing::Test {
         break;
       case unittest::TestOneof2::kFoogroup:
         EXPECT_TRUE(message.has_foogroup());
+        break;
+      case unittest::TestOneof2::kFooLazyMessage:
+        EXPECT_TRUE(message.has_foo_lazy_message());
         break;
       case unittest::TestOneof2::FOO_NOT_SET:
         break;
