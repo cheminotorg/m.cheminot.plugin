@@ -7,6 +7,8 @@ public class CheminotLib {
     System.loadLibrary("cheminot");
   }
 
+  public static native String gitVersion();
+
   public static native void load(String graphPath, String calendarDatesPath);
 
   public static native String openConnection(String dbPath);

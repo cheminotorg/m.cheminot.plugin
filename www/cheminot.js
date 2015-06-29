@@ -3,6 +3,12 @@ var exec = require('cordova/exec');
 var Cheminot = function() {
 };
 
+Cheminot.gitVersion = function(success, fail) {
+  exec(function(sha) {
+    success && success(sha);
+  }, fail, "Cheminot", "gitVersion", []);
+};
+
 Cheminot.init = function(success, fail) {
   exec(function(result) {
     try {

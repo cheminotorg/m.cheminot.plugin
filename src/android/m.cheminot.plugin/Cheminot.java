@@ -32,7 +32,7 @@ public class Cheminot extends CordovaPlugin {
   private static String DBPATH;
 
   enum CheminotAction {
-    unknown, init, lookForBestTrip, lookForBestDirectTrip, abort, trace, getStop
+    unknown, gitVersion, init, lookForBestTrip, lookForBestDirectTrip, abort, trace, getStop
   }
 
   static class CheminotDB {
@@ -98,6 +98,10 @@ public class Cheminot extends CordovaPlugin {
 
     switch(name) {
 
+    case gitVersion:
+      this.gitVersion(cbc);
+      break;
+
     case init:
       this.init(cbc);
       break;
@@ -126,6 +130,10 @@ public class Cheminot extends CordovaPlugin {
     }
 
     return true;
+  }
+
+  private void gitVersion(final CallbackContext cbc) {
+    cbc.success(CheminotLib.gitVersion());
   }
 
   private void init(final CallbackContext cbc) {

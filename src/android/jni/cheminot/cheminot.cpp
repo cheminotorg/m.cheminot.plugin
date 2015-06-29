@@ -6,6 +6,7 @@
 #include <sqlite3.h>
 #include <ctime>
 #include <cheminotc.h>
+#include <settings.h>
 
 static std::unordered_map<std::string, cheminotc::CheminotDb> connections;
 static cheminotc::Graph graph;
@@ -13,6 +14,7 @@ static cheminotc::CalendarDates calendarDates;
 static cheminotc::Cache cache;
 
 extern "C" {
+  JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_gitVersion(JNIEnv *env, jclass clazz);
   JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_load(JNIEnv *env, jclass clazz, jstring jgraphPath, jstring jcalendarDatesPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_openConnection(JNIEnv *env, jclass clazz, jstring jdbPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
@@ -22,6 +24,10 @@ extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_trace(JNIEnv *env, jclass clazz, jstring jdbPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_getStop(JNIEnv *env, jclass clazz, jstring jstopId);
 };
+
+JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_gitVersion(JNIEnv *env, jclass clazz) {
+  return env->NewStringUTF(cheminotc::gitVersion.c_str());
+}
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_openConnection(JNIEnv *env, jclass clazz, jstring jdbPath) {
   const char *dbPath = env->GetStringUTFChars(jdbPath, (jboolean *)0);
