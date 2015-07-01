@@ -17,6 +17,7 @@ extern "C" {
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_gitVersion(JNIEnv *env, jclass clazz);
   JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_load(JNIEnv *env, jclass clazz, jstring jgraphPath, jstring jcalendarDatesPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_openConnection(JNIEnv *env, jclass clazz, jstring jdbPath);
+  JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_closeConnection(JNIEnv *env, jclass clazz, jstring jdbPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jgraphPath, jstring jcalendarDatesPath);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte, jint jmax);
   JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDirectTrip(JNIEnv *env, jclass clazz, jstring jdbPath, jstring jvsId, jstring jveId, jint jat, jint jte);
@@ -27,6 +28,18 @@ extern "C" {
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_gitVersion(JNIEnv *env, jclass clazz) {
   return env->NewStringUTF(cheminotc::gitVersion.c_str());
+}
+
+JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_closeConnection(JNIEnv *env, jclass clazz, jstring jdbPath) {
+  const char *dbPath = env->GetStringUTFChars(jdbPath, (jboolean *)0);
+
+  auto connectionIt = connections.find(dbPath);
+  if(connectionIt != connections.end())
+  {
+    cheminotc::CheminotDb connection = connectionIt->second;
+    cheminotc::closeConnection(connection);
+    connections.erase(dbPath);
+  }
 }
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_openConnection(JNIEnv *env, jclass clazz, jstring jdbPath) {

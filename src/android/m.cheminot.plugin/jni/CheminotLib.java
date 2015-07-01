@@ -11,6 +11,8 @@ public class CheminotLib {
 
   public static native void load(String graphPath, String calendarDatesPath);
 
+  public static native void closeConnection(String dbPath);
+
   public static native String openConnection(String dbPath);
 
   public static native String init(String dbPath, String graphPath, String calendarDatesPath);
