@@ -1,1 +1,1 @@
-namespace cheminotc { static std::string gitVersion = "9f6735b"; }
+namespace cheminotc { static std::string gitVersion = "c7fd75f"; }

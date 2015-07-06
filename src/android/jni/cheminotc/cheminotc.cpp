@@ -112,28 +112,28 @@ namespace cheminotc
 
     time_t asTimestamp(tm a)
     {
-        time_t timestamp = timelocal(&a);
+        time_t timestamp = mktime(&a);
         return timestamp;
     }
 
     tm addSeconds(tm datetime, int n)
     {
         datetime.tm_sec += n;
-        timelocal(&datetime);
+        mktime(&datetime);
         return datetime;
     }
 
     tm minusHours(tm datetime, int n)
     {
         datetime.tm_hour -= n;
-        timelocal(&datetime);
+        mktime(&datetime);
         return datetime;
     }
 
     tm addHours(tm datetime, int n)
     {
         datetime.tm_hour += n;
-        timelocal(&datetime);
+        mktime(&datetime);
         return datetime;
     }
 
@@ -141,7 +141,7 @@ namespace cheminotc
     tm addDays(tm datetime, int n)
     {
         datetime.tm_mday += n;
-        timelocal(&datetime);
+        mktime(&datetime);
         return datetime;
     }
 
@@ -602,6 +602,12 @@ namespace cheminotc
         executeQuery(inmemory, "CREATE TABLE trace (id INTEGER PRIMARY KEY, value TEXT)");
 
         return { file, inmemory };
+    }
+
+    void closeConnection(CheminotDb cheminotDb)
+    {
+        sqlite3_close(cheminotDb.inmemory);
+        sqlite3_close(cheminotDb.file);
     }
 
     void parseGraph(std::string path, Graph *graph)
