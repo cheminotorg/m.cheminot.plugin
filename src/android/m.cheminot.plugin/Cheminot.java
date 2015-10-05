@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -24,8 +25,6 @@ import org.json.JSONException;
 import android.app.Activity;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.util.JsonReader;
-import android.util.Log;
 
 public class Cheminot extends CordovaPlugin {
 
@@ -35,28 +34,15 @@ public class Cheminot extends CordovaPlugin {
     unknown, gitVersion, init, lookForBestTrip, lookForBestDirectTrip, abort, trace, getStop
   }
 
-  static class CheminotDB {
-    private String db;
+  static class Subset {
     private String graph;
     private String calendarDates;
-    private Date date;
 
-    static Pattern pattern = Pattern.compile("(\\w+)-(\\d+)(\\.db)?");
-    static SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.FRANCE);
-
-    public CheminotDB() {
+    public Subset() {
     }
 
     public boolean isValid() {
-      return this.db != null && this.graph != null && this.calendarDates != null;
-    }
-
-    public boolean isMoreRecent(CheminotDB other) {
-      return this.date.getTime() > other.getDate().getTime();
-    }
-
-    public String getDb() {
-      return this.db;
+      return this.graph != null && this.calendarDates != null;
     }
 
     public String getGraph() {
@@ -67,24 +53,67 @@ public class Cheminot extends CordovaPlugin {
       return this.calendarDates;
     }
 
-    public Date getDate() {
-      return this.date;
-    }
-
-    public void setDb(String db) {
-      this.db = db;
-    }
-
     public void setGraph(String graph) {
       this.graph = graph;
     }
 
     public void setCalendarDates(String calendarDates) {
       this.calendarDates = calendarDates;
+   }
+  }
+
+  static class CheminotDB {
+    private String db;
+    private Subset ter;
+    private Subset trans;
+    private Date date;
+
+    static Pattern pattern = Pattern.compile("((\\w+)-)?(\\w+)-(\\d+)(\\.db)?");
+    static SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.FRANCE);
+
+    public CheminotDB() {
+      this.ter = new Subset();
+      this.trans = new Subset();
+    }
+
+    public boolean isValid() {
+      return this.db != null && this.trans.isValid() && this.ter.isValid();
+    }
+
+    public boolean isMoreRecent(CheminotDB other) {
+      return this.date.getTime() > other.getDate().getTime();
+    }
+
+    public String getDb() {
+      return this.db;
+    }
+
+    public Date getDate() {
+      return this.date;
+    }
+
+    public Subset getTrans() {
+      return this.trans;
+    }
+
+    public Subset getTer() {
+      return this.ter;
+    }
+
+    public void setDb(String db) {
+      this.db = db;
     }
 
     public void setDate(Date date) {
       this.date = date;
+    }
+
+    public void setTer(Subset ter) {
+      this.ter = ter;
+    }
+
+    public void setTrans(Subset trans) {
+      this.trans = trans;
     }
   }
 
@@ -144,11 +173,27 @@ public class Cheminot extends CordovaPlugin {
             final CheminotDB cheminotDB = getMostRecentDB(activity);
             if(cheminotDB != null) {
               File dbFile = copyFromAssets(activity, cheminotDB.getDb(), 4096);
-              File graphFile = copyFromAssets(activity, cheminotDB.getGraph(), 4096);
-              File calendarDatesFile = copyFromAssets(activity, cheminotDB.getCalendarDates(), 1024);
+              File terGraphFile = copyFromAssets(activity, cheminotDB.getTer().getGraph(), 4096);
+              File terCalendarDatesFile = copyFromAssets(activity, cheminotDB.getTer().getCalendarDates(), 1024);
+              File transGraphFile = copyFromAssets(activity, cheminotDB.getTrans().getGraph(), 4096);
+              File transCalendarDatesFile = copyFromAssets(activity, cheminotDB.getTrans().getCalendarDates(), 1024);
               cleanDbDirectory(new File(dbFile.getParent()), cheminotDB);
               DBPATH = dbFile.getAbsolutePath();
-              cbc.success(CheminotLib.init(dbFile.getAbsolutePath(), graphFile.getAbsolutePath(), calendarDatesFile.getAbsolutePath()));
+
+              ArrayList<String> graphPaths = new ArrayList<String>();
+              graphPaths.add(terGraphFile.getAbsolutePath());
+              //graphPaths.add(transGraphFile.getAbsolutePath());
+
+              ArrayList<String> calendarDatesPaths = new ArrayList<String>();
+              calendarDatesPaths.add(terCalendarDatesFile.getAbsolutePath());
+              //calendarDatesPaths.add(transCalendarDatesFile.getAbsolutePath());
+
+              android.util.Log.d("Cheminot", terGraphFile.getAbsolutePath());
+              android.util.Log.d("Cheminot", transGraphFile.getAbsolutePath());
+              android.util.Log.d("Cheminot", terCalendarDatesFile.getAbsolutePath());
+              android.util.Log.d("Cheminot", transCalendarDatesFile.getAbsolutePath());
+              String result = CheminotLib.init(dbFile.getAbsolutePath(), graphPaths, calendarDatesPaths);
+              cbc.success(result);
             } else {
               cbc.error("Unable to find the most recent db");
             }
@@ -182,7 +227,7 @@ public class Cheminot extends CordovaPlugin {
       File file = new File(dbDir.getAbsolutePath() + "/" + name);
       Matcher matcher = CheminotDB.pattern.matcher(name);
       if(matcher.matches()) {
-        String version = matcher.group(2);
+        String version = matcher.group(4);
         try {
           Date date = CheminotDB.format.parse(version);
           if(date.getTime() < cheminotDB.getDate().getTime()) {
@@ -209,8 +254,10 @@ public class Cheminot extends CordovaPlugin {
       for(String file : files) {
         Matcher matcher = CheminotDB.pattern.matcher(file);
         if(matcher.matches()) {
-          String name = matcher.group(1);
-          String version = matcher.group(2);
+          String id = matcher.group(2);
+          String name = matcher.group(3);
+          String version = matcher.group(4);
+          android.util.Log.d("cheminot", name);
           try {
             Date date = CheminotDB.format.parse(version);
             if(dbByVersion.get(version) == null) {
@@ -221,9 +268,17 @@ public class Cheminot extends CordovaPlugin {
             if(name.equals("cheminot")) {
               cheminotDB.setDb(file);
             } else if(name.equals("graph")) {
-              cheminotDB.setGraph(file);
+              if(id.equals("ter")) {
+                cheminotDB.getTer().setGraph(file);
+              } else if(id.equals("trans")) {
+                cheminotDB.getTrans().setGraph(file);
+              }
             } else if(name.equals("calendardates")) {
-              cheminotDB.setCalendarDates(file);
+              if(id.equals("ter")) {
+                cheminotDB.getTer().setCalendarDates(file);
+              } else if(id.equals("trans")) {
+                cheminotDB.getTrans().setCalendarDates(file);
+              }
             }
           } catch (ParseException e) {}
         }
