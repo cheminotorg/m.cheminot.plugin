@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -67,6 +68,7 @@ public class Cheminot extends CordovaPlugin {
     private Subset ter;
     private Subset trans;
     private Date date;
+    private boolean force;
 
     static Pattern pattern = Pattern.compile("((\\w+)-)?(\\w+)-(\\d+)(\\.db)?");
     static SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.FRANCE);
@@ -74,6 +76,7 @@ public class Cheminot extends CordovaPlugin {
     public CheminotDB() {
       this.ter = new Subset();
       this.trans = new Subset();
+      this.force = false;
     }
 
     public boolean isValid() {
@@ -81,7 +84,7 @@ public class Cheminot extends CordovaPlugin {
     }
 
     public boolean isMoreRecent(CheminotDB other) {
-      return this.date.getTime() > other.getDate().getTime();
+      return this.force || (this.date.getTime() > other.getDate().getTime());
     }
 
     public String getDb() {
@@ -108,12 +111,12 @@ public class Cheminot extends CordovaPlugin {
       this.date = date;
     }
 
-    public void setTer(Subset ter) {
-      this.ter = ter;
+    public void setForce(Boolean force) {
+      this.force = force;
     }
 
-    public void setTrans(Subset trans) {
-      this.trans = trans;
+    public boolean isForce() {
+      return this.force;
     }
   }
 
@@ -170,14 +173,20 @@ public class Cheminot extends CordovaPlugin {
       this.cordova.getThreadPool().execute(new Runnable() {
         public void run() {
           try {
-            final CheminotDB cheminotDB = getMostRecentDB(activity);
-            if(cheminotDB != null) {
-              File dbFile = copyFromAssets(activity, cheminotDB.getDb(), 4096);
-              File terGraphFile = copyFromAssets(activity, cheminotDB.getTer().getGraph(), 4096);
-              File terCalendarDatesFile = copyFromAssets(activity, cheminotDB.getTer().getCalendarDates(), 1024);
-              File transGraphFile = copyFromAssets(activity, cheminotDB.getTrans().getGraph(), 4096);
-              File transCalendarDatesFile = copyFromAssets(activity, cheminotDB.getTrans().getCalendarDates(), 1024);
-              cleanDbDirectory(new File(dbFile.getParent()), cheminotDB);
+            final CheminotDB mostRecentDBInAssets = getMostRecentDBInAssets(activity);
+            if (mostRecentDBInAssets != null) {
+              final CheminotDB currentDB = getCurrentDB(activity);
+              final CheminotDB electedDB = (currentDB == null || mostRecentDBInAssets.isMoreRecent(currentDB)) ? mostRecentDBInAssets : currentDB;
+
+              android.util.Log.d("Cheminot", "Most recent DB: " + electedDB.getDate().toString());
+
+              File dbFile = copyFromAssets(activity, electedDB.getDb(), 4096, electedDB.isForce());
+              File terGraphFile = copyFromAssets(activity, electedDB.getTer().getGraph(), 4096, electedDB.isForce());
+              File terCalendarDatesFile = copyFromAssets(activity, electedDB.getTer().getCalendarDates(), 1024, electedDB.isForce());
+              File transGraphFile = copyFromAssets(activity, mostRecentDBInAssets.getTrans().getGraph(), 4096, mostRecentDBInAssets.isForce());
+              File transCalendarDatesFile = copyFromAssets(activity, mostRecentDBInAssets.getTrans().getCalendarDates(), 1024, mostRecentDBInAssets.isForce());
+
+              cleanDbDirectory(new File(dbFile.getParent()), electedDB);
               DBPATH = dbFile.getAbsolutePath();
 
               ArrayList<String> graphPaths = new ArrayList<String>();
@@ -187,11 +196,6 @@ public class Cheminot extends CordovaPlugin {
               ArrayList<String> calendarDatesPaths = new ArrayList<String>();
               calendarDatesPaths.add(terCalendarDatesFile.getAbsolutePath());
               //calendarDatesPaths.add(transCalendarDatesFile.getAbsolutePath());
-
-              android.util.Log.d("Cheminot", terGraphFile.getAbsolutePath());
-              android.util.Log.d("Cheminot", transGraphFile.getAbsolutePath());
-              android.util.Log.d("Cheminot", terCalendarDatesFile.getAbsolutePath());
-              android.util.Log.d("Cheminot", transCalendarDatesFile.getAbsolutePath());
               String result = CheminotLib.init(dbFile.getAbsolutePath(), graphPaths, calendarDatesPaths);
               cbc.success(result);
             } else {
@@ -204,11 +208,14 @@ public class Cheminot extends CordovaPlugin {
       });
   }
 
-  private static File copyFromAssets(Activity activity, String file, int bufsize) throws IOException {
+  private static File copyFromAssets(Activity activity, String file, int bufsize, boolean force) throws IOException {
     File dbFile = activity.getDatabasePath(file);
-    if(!dbFile.exists()) {
-      File dbDirectory = new File(dbFile.getParent());
-      dbDirectory.mkdirs();
+    if(!dbFile.exists() || force) {
+      if(dbFile.exists() && force) {
+        android.util.Log.d("Cheminot", "Force update of " + file);
+        dbFile.delete();
+      }
+      File dbDirectory = getDBDirectory(activity);
       InputStream in = activity.getApplicationContext().getAssets().open(file);
       OutputStream out = new FileOutputStream(dbFile);
       byte[] buf = new byte[bufsize];
@@ -218,6 +225,8 @@ public class Cheminot extends CordovaPlugin {
       }
       in.close();
       out.close();
+    } else {
+      android.util.Log.d("Cheminot", "No update for " + file);
     }
     return activity.getDatabasePath(file);
   }
@@ -231,67 +240,96 @@ public class Cheminot extends CordovaPlugin {
         try {
           Date date = CheminotDB.format.parse(version);
           if(date.getTime() < cheminotDB.getDate().getTime()) {
+            android.util.Log.d("Cheminot", "Deleting " + file.getAbsolutePath());
             file.delete();
           }
-        } catch (ParseException e) {
-          file.delete();
-        }
+        } catch (ParseException e) {}
       } else {
         file.delete();
+        android.util.Log.d("Cheminot", "Deleting " + file.getAbsolutePath());
       }
     }
   }
 
-  private static CheminotDB getMostRecentDB(Activity activity) {
+  private static File getDBDirectory(Activity activity) {
+    File dbFile = activity.getDatabasePath("xxx");
+    File dbDirectory = new File(dbFile.getParent());
+    dbDirectory.mkdirs();
+    return dbDirectory;
+  }
+
+  private static CheminotDB getCurrentDB(Activity activity) {
+    File dbDir = getDBDirectory(activity);
+    String[] files = dbDir.list();
+    return getMostRecentDB(files != null ? files : new String[0]);
+  }
+
+  private static CheminotDB getMostRecentDBInAssets(Activity activity) {
     Resources ressources = activity.getResources();
     AssetManager assetManager = ressources.getAssets();
-    CheminotDB mostRecentDB = null;
-
     try {
       String[] files = assetManager.list("");
+      return getMostRecentDB(files);
+    } catch (IOException e) {
+      return null;
+    }
+  }
 
-      Map<String, CheminotDB> dbByVersion = new HashMap<String, CheminotDB>();
-      for(String file : files) {
-        Matcher matcher = CheminotDB.pattern.matcher(file);
-        if(matcher.matches()) {
-          String id = matcher.group(2);
-          String name = matcher.group(3);
-          String version = matcher.group(4);
-          android.util.Log.d("cheminot", name);
-          try {
-            Date date = CheminotDB.format.parse(version);
-            if(dbByVersion.get(version) == null) {
-              dbByVersion.put(version, new CheminotDB());
-            }
-            CheminotDB cheminotDB = dbByVersion.get(version);
-            cheminotDB.setDate(date);
-            if(name.equals("cheminot")) {
-              cheminotDB.setDb(file);
-            } else if(name.equals("graph")) {
-              if(id.equals("ter")) {
-                cheminotDB.getTer().setGraph(file);
-              } else if(id.equals("trans")) {
-                cheminotDB.getTrans().setGraph(file);
-              }
-            } else if(name.equals("calendardates")) {
-              if(id.equals("ter")) {
-                cheminotDB.getTer().setCalendarDates(file);
-              } else if(id.equals("trans")) {
-                cheminotDB.getTrans().setCalendarDates(file);
-              }
-            }
-          } catch (ParseException e) {}
-        }
-      }
-
-      for(CheminotDB cheminotDB : dbByVersion.values()) {
-        if(mostRecentDB == null || cheminotDB.isMoreRecent(mostRecentDB)) {
-          if(cheminotDB.isValid()) {
-            mostRecentDB = cheminotDB;
+  private static CheminotDB getMostRecentDB(String[] files) {
+    Map<String, CheminotDB> dbByVersion = new HashMap<String, CheminotDB>();
+    for(String file : files) {
+      Matcher matcher = CheminotDB.pattern.matcher(file);
+      if(matcher.matches()) {
+        String id = matcher.group(2);
+        String name = matcher.group(3);
+        String version = matcher.group(4);
+        try {
+          Date date = CheminotDB.format.parse(version);
+          if(dbByVersion.get(version) == null) {
+            dbByVersion.put(version, new CheminotDB());
           }
+          CheminotDB cheminotDB = dbByVersion.get(version);
+          cheminotDB.setDate(date);
+          if(name.equals("cheminot")) {
+            cheminotDB.setDb(file);
+          } else if(name.equals("graph")) {
+            if(id.equals("ter")) {
+              cheminotDB.getTer().setGraph(file);
+            } else if(id.equals("trans")) {
+              cheminotDB.getTrans().setGraph(file);
+            }
+          } else if(name.equals("calendardates")) {
+            if(id.equals("ter")) {
+              cheminotDB.getTer().setCalendarDates(file);
+            } else if(id.equals("trans")) {
+              cheminotDB.getTrans().setCalendarDates(file);
+            }
+          }
+        } catch (ParseException e) {}
+      } else {
+        try {
+          String version = file;
+          CheminotDB.format.parse(version);
+          CheminotDB cheminotDB = dbByVersion.get(version);
+          if(cheminotDB == null) {
+            cheminotDB = new CheminotDB();
+            dbByVersion.put(version, cheminotDB);
+          }
+          if(!cheminotDB.isForce()) {
+            cheminotDB.setForce(true);
+          }
+        } catch (ParseException e) {}
+      }
+    }
+
+    CheminotDB mostRecentDB = null;
+    for(CheminotDB cheminotDB : dbByVersion.values()) {
+      if(mostRecentDB == null || cheminotDB.isForce() || cheminotDB.isMoreRecent(mostRecentDB)) {
+        if(cheminotDB.isValid()) {
+          mostRecentDB = cheminotDB;
         }
       }
-    } catch (IOException e) {}
+    }
 
     return mostRecentDB;
   }
@@ -321,6 +359,7 @@ public class Cheminot extends CordovaPlugin {
               String veId = args.getString(1);
               int at = args.getInt(2);
               int te = args.getInt(3);
+              String[] files = new File(new File(DBPATH).getParent()).list();
               cbc.success(CheminotLib.lookForBestDirectTrip(DBPATH, vsId, veId, at, te));
             } catch (JSONException e) {
               cbc.error("Unable to perform `lookForBestDirectTrip`: " + e.getMessage());

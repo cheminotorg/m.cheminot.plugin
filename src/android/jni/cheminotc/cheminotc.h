@@ -89,7 +89,7 @@ namespace cheminotc
                     return it->second;
                 }
             }
-            throw std::runtime_error("Unable to find calendar expcetions for " + key);
+            throw std::runtime_error("Unable to find calendar exceptions for " + key);
         }
 
         void foreach(std::function<void(const std::string&, const m::cheminot::data::CalendarExceptions&)> loop) {
@@ -242,7 +242,7 @@ namespace cheminotc
 
     std::tuple<bool, ArrivalTimesFunc, std::string> refineArrivalTimes(const CheminotDb &connection, Graph *graph, Cache *cache, CalendarDates *calendarDates, std::string vsId, std::string veId, tm ts, tm te, int max);
 
-    std::pair<bool, std::list<ArrivalTime>> lookForBestDirectTrip(const CheminotDb &connection, Graph &graph, Cache &cache, CalendarDates &calendarDates, const std::string &vsId, const std::string &veId, const tm &ts, const tm &te);
+    std::pair<bool, std::list<ArrivalTime>> lookForBestDirectTrip(const CheminotDb &connection, const std::list<std::string> &subsets, Graph &graph, Cache &cache, CalendarDates &calendarDates, const std::string &vsId, const std::string &veId, const tm &ts, const tm &te);
 
     std::pair<bool, std::list<ArrivalTime>> lookForBestTrip(const CheminotDb &connection, Graph &graph, Cache &cache, CalendarDates &calendarDates, const std::string &vsId, const std::string &veId, const tm &ts, const tm &te, int max);
 
@@ -283,11 +283,11 @@ namespace cheminotc
     void fillCache(Cache &cache, CalendarDates &calendarDates, Graph &graph);
 
 // -- PARIS
-    static std::string parisStopId = "StopPoint:OCETrain TER-PARISXXX";
+    static std::string PARIS_STOP_ID = "StopPoint:OCETrain TER-PARISXXX";
 
-    static std::list<std::string> parisStopIds =
+    static std::list<std::string> PARIS_STOP_IDS =
     {
-        parisStopId,
+        PARIS_STOP_ID,
         "StopPoint:OCETrain TER-87391102",
         "StopPoint:OCETrain TER-87391003",
         "StopPoint:OCETrain TER-87686667",

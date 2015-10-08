@@ -8,6 +8,11 @@
 #include <cheminotc.h>
 #include <settings.h>
 
+#include <android/log.h>
+
+#define  LOG_TAG    "foo"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+
 static std::unordered_map<std::string, cheminotc::CheminotDb> connections;
 
 static cheminotc::Graph graph;
@@ -85,15 +90,15 @@ JNIEXPORT void JNICALL Java_m_cheminot_plugin_jni_CheminotLib_load(JNIEnv *env, 
 
   if(graph.empty()) {
     std::list<std::string> graphPaths = jListToList(env, jGraphPaths);
-    cheminotc::parseGraphFiles(graphPaths, &graph);
+    cheminotc::parseGraphFiles(graphPaths, graph);
   }
 
   if(calendarDates.empty()) {
     std::list<std::string> calendarDatesPaths = jListToList(env, jCalendarDatesPaths);
-    cheminotc::parseCalendarDatesFiles(calendarDatesPaths, &calendarDates);
+    cheminotc::parseCalendarDatesFiles(calendarDatesPaths, calendarDates);
   }
 
-  cheminotc::fillCache(&cache, &calendarDates, &graph);
+  cheminotc::fillCache(cache, calendarDates, graph);
 }
 
 JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *env, jclass clazz, jstring jdbPath, jobject jGraphPaths, jobject jCalendarDatesPaths) {
@@ -116,17 +121,20 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *en
 
   if(graph.empty()) {
     std::list<std::string> graphPaths = jListToList(env, jGraphPaths);
-    cheminotc::parseGraphFiles(graphPaths, &graph);
+    cheminotc::parseGraphFiles(graphPaths, graph);
   }
 
   if(calendarDates.empty()) {
     std::list<std::string> calendarDatesPaths = jListToList(env, jCalendarDatesPaths);
-    cheminotc::parseCalendarDatesFiles(calendarDatesPaths, &calendarDates);
+    cheminotc::parseCalendarDatesFiles(calendarDatesPaths, calendarDates);
   }
 
   env->ReleaseStringUTFChars(jdbPath, dbPath);
 
   Json::FastWriter* writer = new Json::FastWriter();
+
+  LOGI("#######>>>> %s", writer->write(meta).c_str());
+
   return env->NewStringUTF(writer->write(meta).c_str());
 }
 
@@ -171,7 +179,7 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDire
   cheminotc::CheminotDb connection = connections[dbPath];
 
   cheminotc::unlock(connection);
-  std::pair<bool, std::list<cheminotc::ArrivalTime>> result = lookForBestDirectTrip(connection, graph, cache, calendarDates, vsId, veId, at, te);
+  std::pair<bool, std::list<cheminotc::ArrivalTime>> result = lookForBestDirectTrip(connection, { "TER" }, graph, cache, calendarDates, vsId, veId, at, te);
   std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
 
   env->ReleaseStringUTFChars(jdbPath, dbPath);
