@@ -8,11 +8,6 @@
 #include <cheminotc.h>
 #include <settings.h>
 
-#include <android/log.h>
-
-#define  LOG_TAG    "foo"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-
 static std::unordered_map<std::string, cheminotc::CheminotDb> connections;
 
 static cheminotc::Graph graph;
@@ -132,8 +127,6 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_init(JNIEnv *en
   env->ReleaseStringUTFChars(jdbPath, dbPath);
 
   Json::FastWriter* writer = new Json::FastWriter();
-
-  LOGI("#######>>>> %s", writer->write(meta).c_str());
 
   return env->NewStringUTF(writer->write(meta).c_str());
 }
