@@ -290,19 +290,21 @@ public class Cheminot extends CordovaPlugin {
           }
           CheminotDB cheminotDB = dbByVersion.get(version);
           cheminotDB.setDate(date);
-          if(name.equals("cheminot")) {
-            cheminotDB.setDb(file);
-          } else if(name.equals("graph")) {
-            if(id.equals("ter")) {
-              cheminotDB.getTer().setGraph(file);
-            } else if(id.equals("trans")) {
-              cheminotDB.getTrans().setGraph(file);
-            }
-          } else if(name.equals("calendardates")) {
-            if(id.equals("ter")) {
-              cheminotDB.getTer().setCalendarDates(file);
-            } else if(id.equals("trans")) {
-              cheminotDB.getTrans().setCalendarDates(file);
+          if(id != null && name != null && version != null || (name != null && name.equals("cheminot"))) {
+            if(name.equals("cheminot")) {
+              cheminotDB.setDb(file);
+            } else if(name.equals("graph")) {
+              if(id.equals("ter")) {
+                cheminotDB.getTer().setGraph(file);
+              } else if(id.equals("trans")) {
+                cheminotDB.getTrans().setGraph(file);
+              }
+            } else if(name.equals("calendardates")) {
+              if(id.equals("ter")) {
+                cheminotDB.getTer().setCalendarDates(file);
+              } else if(id.equals("trans")) {
+                cheminotDB.getTrans().setCalendarDates(file);
+              }
             }
           }
         } catch (ParseException e) {}
