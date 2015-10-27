@@ -6,6 +6,7 @@ CC_LITE_SRC_FILES := \
     google/protobuf/stubs/common.cc                              \
     google/protobuf/stubs/once.cc                                \
     google/protobuf/stubs/status.cc                              \
+    google/protobuf/stubs/int128.cc                              \
     google/protobuf/any.cc                                       \
     google/protobuf/extension_set.cc                             \
     google/protobuf/generated_message_util.cc                    \

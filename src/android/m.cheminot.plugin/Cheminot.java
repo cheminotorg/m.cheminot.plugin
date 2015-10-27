@@ -67,6 +67,7 @@ public class Cheminot extends CordovaPlugin {
     private String db;
     private Subset ter;
     private Subset trans;
+    private Subset inter;
     private Date date;
     private boolean force;
 
@@ -76,11 +77,12 @@ public class Cheminot extends CordovaPlugin {
     public CheminotDB() {
       this.ter = new Subset();
       this.trans = new Subset();
+      this.inter = new Subset();
       this.force = false;
     }
 
     public boolean isValid() {
-      return this.db != null && this.trans.isValid() && this.ter.isValid();
+      return this.db != null && this.trans.isValid() && this.ter.isValid() && this.inter.isValid();
     }
 
     public boolean isMoreRecent(CheminotDB other) {
@@ -101,6 +103,10 @@ public class Cheminot extends CordovaPlugin {
 
     public Subset getTer() {
       return this.ter;
+    }
+
+    public Subset getInter() {
+      return this.inter;
     }
 
     public void setDb(String db) {
@@ -178,24 +184,33 @@ public class Cheminot extends CordovaPlugin {
               final CheminotDB currentDB = getCurrentDB(activity);
               final CheminotDB electedDB = (currentDB == null || mostRecentDBInAssets.isMoreRecent(currentDB)) ? mostRecentDBInAssets : currentDB;
 
+              android.util.Log.d("Cheminot", "asset: " + mostRecentDBInAssets.getDate().toString());
               android.util.Log.d("Cheminot", "Most recent DB: " + electedDB.getDate().toString());
 
               File dbFile = copyFromAssets(activity, electedDB.getDb(), 4096, electedDB.isForce());
+
               File terGraphFile = copyFromAssets(activity, electedDB.getTer().getGraph(), 4096, electedDB.isForce());
               File terCalendarDatesFile = copyFromAssets(activity, electedDB.getTer().getCalendarDates(), 1024, electedDB.isForce());
+
               File transGraphFile = copyFromAssets(activity, mostRecentDBInAssets.getTrans().getGraph(), 4096, mostRecentDBInAssets.isForce());
               File transCalendarDatesFile = copyFromAssets(activity, mostRecentDBInAssets.getTrans().getCalendarDates(), 1024, mostRecentDBInAssets.isForce());
+
+              File interGraphFile = copyFromAssets(activity, mostRecentDBInAssets.getInter().getGraph(), 4096, mostRecentDBInAssets.isForce());
+              File interCalendarDatesFile = copyFromAssets(activity, mostRecentDBInAssets.getInter().getCalendarDates(), 1024, mostRecentDBInAssets.isForce());
 
               cleanDbDirectory(new File(dbFile.getParent()), electedDB);
               DBPATH = dbFile.getAbsolutePath();
 
               ArrayList<String> graphPaths = new ArrayList<String>();
               graphPaths.add(terGraphFile.getAbsolutePath());
-              //graphPaths.add(transGraphFile.getAbsolutePath());
+              graphPaths.add(transGraphFile.getAbsolutePath());
+              graphPaths.add(interGraphFile.getAbsolutePath());
 
               ArrayList<String> calendarDatesPaths = new ArrayList<String>();
               calendarDatesPaths.add(terCalendarDatesFile.getAbsolutePath());
-              //calendarDatesPaths.add(transCalendarDatesFile.getAbsolutePath());
+              calendarDatesPaths.add(transCalendarDatesFile.getAbsolutePath());
+              calendarDatesPaths.add(interCalendarDatesFile.getAbsolutePath());
+
               String result = CheminotLib.init(dbFile.getAbsolutePath(), graphPaths, calendarDatesPaths);
               cbc.success(result);
             } else {
@@ -298,12 +313,16 @@ public class Cheminot extends CordovaPlugin {
                 cheminotDB.getTer().setGraph(file);
               } else if(id.equals("trans")) {
                 cheminotDB.getTrans().setGraph(file);
+              } else if(id.equals("inter")) {
+                cheminotDB.getInter().setGraph(file);
               }
             } else if(name.equals("calendardates")) {
               if(id.equals("ter")) {
                 cheminotDB.getTer().setCalendarDates(file);
               } else if(id.equals("trans")) {
                 cheminotDB.getTrans().setCalendarDates(file);
+              } else if(id.equals("inter")) {
+                cheminotDB.getInter().setCalendarDates(file);
               }
             }
           }
