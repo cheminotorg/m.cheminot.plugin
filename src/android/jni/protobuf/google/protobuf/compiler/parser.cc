@@ -44,6 +44,7 @@
 #include <google/protobuf/descriptor.pb.h>
 #include <google/protobuf/wire_format.h>
 #include <google/protobuf/io/tokenizer.h>
+#include <google/protobuf/stubs/logging.h>
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/strutil.h>
 #include <google/protobuf/stubs/map_util.h>
@@ -938,6 +939,42 @@ void Parser::GenerateMapEntry(const MapField& map_field,
   } else {
     value_field->set_type_name(map_field.value_type_name);
   }
+  // Propagate the "enforce_utf8" option to key and value fields if they
+  // are strings. This helps simplify the implementation of code generators
+  // and also reflection-based parsing code.
+  //
+  // The following definition:
+  //   message Foo {
+  //     map<string, string> value = 1 [enforce_utf8 = false];
+  //   }
+  // will be interpreted as:
+  //   message Foo {
+  //     message ValueEntry {
+  //       option map_entry = true;
+  //       string key = 1 [enforce_utf8 = false];
+  //       string value = 2 [enforce_utf8 = false];
+  //     }
+  //     repeated ValueEntry value = 1 [enforce_utf8 = false];
+  //  }
+  //
+  // TODO(xiaofeng): Remove this when the "enforce_utf8" option is removed
+  // from protocol compiler.
+  for (int i = 0; i < field->options().uninterpreted_option_size(); ++i) {
+    const UninterpretedOption& option =
+        field->options().uninterpreted_option(i);
+    if (option.name_size() == 1 &&
+        option.name(0).name_part() == "enforce_utf8" &&
+        !option.name(0).is_extension()) {
+      if (key_field->type() == FieldDescriptorProto::TYPE_STRING) {
+        key_field->mutable_options()->add_uninterpreted_option()
+            ->CopyFrom(option);
+      }
+      if (value_field->type() == FieldDescriptorProto::TYPE_STRING) {
+        value_field->mutable_options()->add_uninterpreted_option()
+            ->CopyFrom(option);
+      }
+    }
+  }
 }
 
 bool Parser::ParseFieldOptions(FieldDescriptorProto* field,
@@ -956,6 +993,9 @@ bool Parser::ParseFieldOptions(FieldDescriptorProto* field,
       // We intentionally pass field_location rather than location here, since
       // the default value is not actually an option.
       DO(ParseDefaultAssignment(field, field_location, containing_file));
+    } else if (LookingAt("json_name")) {
+      // Like default value, this "json_name" is not an actual option.
+      DO(ParseJsonName(field, field_location, containing_file));
     } else {
       DO(ParseOption(field->mutable_options(), location,
                      containing_file, OPTION_ASSIGNMENT));
@@ -1102,6 +1142,28 @@ bool Parser::ParseDefaultAssignment(
 
   return true;
 }
+
+bool Parser::ParseJsonName(
+    FieldDescriptorProto* field,
+    const LocationRecorder& field_location,
+    const FileDescriptorProto* containing_file) {
+  if (field->has_json_name()) {
+    AddError("Already set option \"json_name\".");
+    field->clear_json_name();
+  }
+
+  DO(Consume("json_name"));
+  DO(Consume("="));
+
+  LocationRecorder location(field_location,
+                            FieldDescriptorProto::kJsonNameFieldNumber);
+  location.RecordLegacyLocation(
+      field, DescriptorPool::ErrorCollector::OPTION_VALUE);
+  DO(ConsumeString(field->mutable_json_name(),
+                   "Expected string for JSON name."));
+  return true;
+}
+
 
 bool Parser::ParseOptionNamePart(UninterpretedOption* uninterpreted_option,
                                  const LocationRecorder& part_location,

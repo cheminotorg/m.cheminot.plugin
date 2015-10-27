@@ -33,6 +33,7 @@
 #include <functional>
 #include <stack>
 
+#include <google/protobuf/stubs/once.h>
 #include <google/protobuf/stubs/time.h>
 #include <google/protobuf/wire_format_lite.h>
 #include <google/protobuf/util/internal/field_mask_utility.h>
@@ -74,7 +75,7 @@ ProtoStreamObjectWriter::ProtoStreamObjectWriter(
       tracker_(new ObjectLocationTracker()) {}
 
 ProtoStreamObjectWriter::ProtoStreamObjectWriter(
-    TypeInfo* typeinfo, const google::protobuf::Type& type,
+    const TypeInfo* typeinfo, const google::protobuf::Type& type,
     strings::ByteSink* output, ErrorListener* listener)
     : master_type_(type),
       typeinfo_(typeinfo),
@@ -91,13 +92,18 @@ ProtoStreamObjectWriter::ProtoStreamObjectWriter(
       tracker_(new ObjectLocationTracker()) {}
 
 ProtoStreamObjectWriter::~ProtoStreamObjectWriter() {
-  // Cleanup explicitly in order to avoid destructor stack overflow when input
-  // is deeply nested.
-  while (element_ != NULL) {
-    element_.reset(element_->pop());
-  }
   if (own_typeinfo_) {
     delete typeinfo_;
+  }
+  if (element_ == NULL) return;
+  // Cleanup explicitly in order to avoid destructor stack overflow when input
+  // is deeply nested.
+  // Cast to BaseElement to avoid doing additional checks (like missing fields)
+  // during pop().
+  google::protobuf::scoped_ptr<BaseElement> element(
+      static_cast<BaseElement*>(element_.get())->pop<BaseElement>());
+  while (element != NULL) {
+    element.reset(element->pop<BaseElement>());
   }
 }
 
@@ -391,8 +397,8 @@ void ProtoStreamObjectWriter::AnyWriter::RenderDataPiece(
     const TypeRenderer* type_renderer =
         FindTypeRenderer(GetFullTypeWithUrl(ow_->master_type_.name()));
     if (type_renderer) {
-      // TODO(rikka): Don't just ignore the util::Status object!
-      (*type_renderer)(ow_.get(), value);
+      Status status = (*type_renderer)(ow_.get(), value);
+      if (!status.ok()) ow_->InvalidValue("Any", status.error_message());
     } else {
       ow_->RenderDataPiece(name, value);
     }
@@ -454,7 +460,7 @@ void ProtoStreamObjectWriter::AnyWriter::WriteAny() {
 }
 
 ProtoStreamObjectWriter::ProtoElement::ProtoElement(
-    TypeInfo* typeinfo, const google::protobuf::Type& type,
+    const TypeInfo* typeinfo, const google::protobuf::Type& type,
     ProtoStreamObjectWriter* enclosing)
     : BaseElement(NULL),
       ow_(enclosing),
@@ -586,6 +592,19 @@ string ProtoStreamObjectWriter::ProtoElement::ToString() const {
   return loc.empty() ? "." : loc;
 }
 
+bool ProtoStreamObjectWriter::ProtoElement::OneofIndexTaken(int32 index) {
+  return ContainsKey(oneof_indices_, index);
+}
+
+void ProtoStreamObjectWriter::ProtoElement::TakeOneofIndex(int32 index) {
+  InsertIfNotPresent(&oneof_indices_, index);
+}
+
+bool ProtoStreamObjectWriter::ProtoElement::InsertMapKeyIfNotPresent(
+    StringPiece map_key) {
+  return InsertIfNotPresent(&map_keys_, map_key);
+}
+
 inline void ProtoStreamObjectWriter::InvalidName(StringPiece unknown_name,
                                                  StringPiece message) {
   listener_->InvalidName(location(), ToSnakeCase(unknown_name), message);
@@ -629,6 +648,11 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::StartObject(
     return this;
   } else if (element_ != NULL &&
              (element_->IsMap() || element_->IsStructMap())) {
+    if (!ValidMapKey(name)) {
+      ++invalid_depth_;
+      return this;
+    }
+
     field = StartMapEntry(name);
     if (element_->IsStructMapEntry()) {
       // If the top element is a map entry, this means we are starting another
@@ -655,6 +679,13 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::StartObject(
     return this;
   }
 
+  // Check to see if this field is a oneof and that no oneof in that group has
+  // already been set.
+  if (!ValidOneof(*field, name)) {
+    ++invalid_depth_;
+    return this;
+  }
+
   if (field->type_url() == GetFullTypeWithUrl(kStructType)) {
     // Start a struct object.
     StartStruct(field);
@@ -677,7 +708,7 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::StartObject(
     element_.reset(
         new ProtoElement(element_.release(), field, *type, ProtoElement::MAP));
   } else {
-    WriteTag(*field);
+      WriteTag(*field);
     element_.reset(new ProtoElement(element_.release(), field, *type,
                                     ProtoElement::MESSAGE));
   }
@@ -842,6 +873,7 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::EndObject() {
   // struct.
   SkipElements();
 
+
   // If ending the root element,
   // then serialize the full message with calculated sizes.
   if (element_ == NULL) {
@@ -893,6 +925,11 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::StartList(StringPiece name) {
   // Check if we need to start a map. This can heppen when there is either a map
   // or a struct type within a list.
   if (element_->IsMap() || element_->IsStructMap()) {
+    if (!ValidMapKey(name)) {
+      ++invalid_depth_;
+      return this;
+    }
+
     field = StartMapEntry(name);
     if (field == NULL) return this;
 
@@ -932,6 +969,14 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::StartList(StringPiece name) {
     // Also we ignore if the field is not found here as it is caught later.
     field = typeinfo_->FindField(&element_->type(), name);
 
+    // Only check for oneof collisions on the first StartList call. We identify
+    // the first call with !name.empty() check. Subsequent list element calls
+    // will not have the name filled.
+    if (!name.empty() && field && !ValidOneof(*field, name)) {
+      ++invalid_depth_;
+      return this;
+    }
+
     // It is an error to try to bind to map, which behind the scenes is a list.
     if (field && IsMap(*field)) {
       // Push field to stack for error location tracking & reporting.
@@ -940,7 +985,7 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::StartList(StringPiece name) {
                                       ProtoElement::MESSAGE));
       InvalidValue("Map", "Cannot bind a list to map.");
       ++invalid_depth_;
-      element_->pop();
+      element_.reset(element_->pop());
       return this;
     }
 
@@ -1080,11 +1125,11 @@ Status ProtoStreamObjectWriter::RenderFieldMask(ProtoStreamObjectWriter* ow,
                          data.ValueAsStringOrDefault("")));
   }
 
-  // TODO(tsun): figure out how to do proto descriptor based snake case
-  // conversions as much as possible. Because ToSnakeCase sometimes returns the
-  // wrong value.
+// TODO(tsun): figure out how to do proto descriptor based snake case
+// conversions as much as possible. Because ToSnakeCase sometimes returns the
+// wrong value.
   google::protobuf::scoped_ptr<ResultCallback1<util::Status, StringPiece> > callback(
-      NewPermanentCallback(&RenderOneFieldPath, ow));
+      google::protobuf::internal::NewPermanentCallback(&RenderOneFieldPath, ow));
   return DecodeCompactFieldMaskPaths(data.str(), callback.get());
 }
 
@@ -1154,10 +1199,12 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::RenderDataPiece(
   const google::protobuf::Field* field = NULL;
   string type_url;
   bool is_map_entry = false;
+  // We are at the root when element_ == NULL.
   if (element_ == NULL) {
     type_url = GetFullTypeWithUrl(master_type_.name());
   } else {
     if (element_->IsMap() || element_->IsStructMap()) {
+      if (!ValidMapKey(name)) return this;
       is_map_entry = true;
       field = StartMapEntry(name);
     } else {
@@ -1166,6 +1213,11 @@ ProtoStreamObjectWriter* ProtoStreamObjectWriter::RenderDataPiece(
     if (field == NULL) {
       return this;
     }
+
+    // Check to see if this field is a oneof and that no oneof in that group has
+    // already been set.
+    if (!ValidOneof(*field, name)) return this;
+
     type_url = field->type_url();
   }
 
@@ -1314,7 +1366,8 @@ void ProtoStreamObjectWriter::RenderSimpleDataPiece(
     }
     case google::protobuf::Field_Kind_TYPE_ENUM: {
       status = WriteEnum(field.number(), data,
-                         typeinfo_->GetEnum(field.type_url()), stream_.get());
+                         typeinfo_->GetEnumByTypeUrl(field.type_url()),
+                         stream_.get());
       break;
     }
     default:  // TYPE_GROUP or TYPE_MESSAGE
@@ -1330,60 +1383,67 @@ void ProtoStreamObjectWriter::RenderSimpleDataPiece(
 // Map of functions that are responsible for rendering well known type
 // represented by the key.
 hash_map<string, ProtoStreamObjectWriter::TypeRenderer>*
-ProtoStreamObjectWriter::CreateRendererMap() {
-  google::protobuf::scoped_ptr<hash_map<string, ProtoStreamObjectWriter::TypeRenderer> >
-      result(new hash_map<string, ProtoStreamObjectWriter::TypeRenderer>());
-  (*result)["type.googleapis.com/google.protobuf.Timestamp"] =
+    ProtoStreamObjectWriter::renderers_ = NULL;
+GOOGLE_PROTOBUF_DECLARE_ONCE(writer_renderers_init_);
+
+void ProtoStreamObjectWriter::InitRendererMap() {
+  renderers_ = new hash_map<string, ProtoStreamObjectWriter::TypeRenderer>();
+  (*renderers_)["type.googleapis.com/google.protobuf.Timestamp"] =
       &ProtoStreamObjectWriter::RenderTimestamp;
-  (*result)["type.googleapis.com/google.protobuf.Duration"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Duration"] =
       &ProtoStreamObjectWriter::RenderDuration;
-  (*result)["type.googleapis.com/google.protobuf.FieldMask"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.FieldMask"] =
       &ProtoStreamObjectWriter::RenderFieldMask;
-  (*result)["type.googleapis.com/google.protobuf.Double"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Double"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.Float"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Float"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.Int64"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Int64"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.UInt64"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.UInt64"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.Int32"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Int32"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.UInt32"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.UInt32"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.Bool"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Bool"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.String"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.String"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.Bytes"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Bytes"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.DoubleValue"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.DoubleValue"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.FloatValue"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.FloatValue"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.Int64Value"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Int64Value"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.UInt64Value"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.UInt64Value"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.Int32Value"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Int32Value"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.UInt32Value"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.UInt32Value"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.BoolValue"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.BoolValue"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.StringValue"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.StringValue"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.BytesValue"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.BytesValue"] =
       &ProtoStreamObjectWriter::RenderWrapperType;
-  (*result)["type.googleapis.com/google.protobuf.Value"] =
+  (*renderers_)["type.googleapis.com/google.protobuf.Value"] =
       &ProtoStreamObjectWriter::RenderStructValue;
-  return result.release();
+  ::google::protobuf::internal::OnShutdown(&DeleteRendererMap);
+}
+
+void ProtoStreamObjectWriter::DeleteRendererMap() {
+  delete ProtoStreamObjectWriter::renderers_;
+  renderers_ = NULL;
 }
 
 ProtoStreamObjectWriter::TypeRenderer*
 ProtoStreamObjectWriter::FindTypeRenderer(const string& type_url) {
-  static hash_map<string, TypeRenderer>* renderers = CreateRendererMap();
-  return FindOrNull(*renderers, type_url);
+  ::google::protobuf::GoogleOnceInit(&writer_renderers_init_, &InitRendererMap);
+  return FindOrNull(*renderers_, type_url);
 }
 
 ProtoStreamObjectWriter::ProtoElement::ElementType
@@ -1399,6 +1459,37 @@ ProtoStreamObjectWriter::GetElementType(const google::protobuf::Type& type) {
   } else {
     return ProtoElement::MESSAGE;
   }
+}
+
+bool ProtoStreamObjectWriter::ValidOneof(const google::protobuf::Field& field,
+                                         StringPiece unnormalized_name) {
+  if (element_ == NULL) return true;
+
+  if (field.oneof_index() > 0) {
+    if (element_->OneofIndexTaken(field.oneof_index())) {
+      InvalidValue(
+          "oneof",
+          StrCat("oneof field '",
+                 element_->type().oneofs(field.oneof_index() - 1),
+                 "' is already set. Cannot set '", unnormalized_name, "'"));
+      return false;
+    }
+    element_->TakeOneofIndex(field.oneof_index());
+  }
+  return true;
+}
+
+bool ProtoStreamObjectWriter::ValidMapKey(StringPiece unnormalized_name) {
+  if (element_ == NULL) return true;
+
+  if (!element_->InsertMapKeyIfNotPresent(unnormalized_name)) {
+    InvalidName(
+        unnormalized_name,
+        StrCat("Repeated map key: '", unnormalized_name, "' is already set."));
+    return false;
+  }
+
+  return true;
 }
 
 const google::protobuf::Field* ProtoStreamObjectWriter::BeginNamed(
@@ -1450,7 +1541,7 @@ const google::protobuf::Field* ProtoStreamObjectWriter::Lookup(
 const google::protobuf::Type* ProtoStreamObjectWriter::LookupType(
     const google::protobuf::Field* field) {
   return (field->kind() == google::protobuf::Field_Kind_TYPE_MESSAGE
-              ? typeinfo_->GetType(field->type_url())
+              ? typeinfo_->GetTypeByTypeUrl(field->type_url())
               : &element_->type());
 }
 
@@ -1539,10 +1630,12 @@ bool ProtoStreamObjectWriter::IsMap(const google::protobuf::Field& field) {
     return false;
   }
   const google::protobuf::Type* field_type =
-      typeinfo_->GetType(field.type_url());
+      typeinfo_->GetTypeByTypeUrl(field.type_url());
 
+  // TODO(xiaofeng): Unify option names.
   return GetBoolOptionOrDefault(field_type->options(),
-                                "google.protobuf.MessageOptions.map_entry", false);
+                                "google.protobuf.MessageOptions.map_entry", false) ||
+         GetBoolOptionOrDefault(field_type->options(), "map_entry", false);
 }
 
 void ProtoStreamObjectWriter::WriteTag(const google::protobuf::Field& field) {
@@ -1550,6 +1643,7 @@ void ProtoStreamObjectWriter::WriteTag(const google::protobuf::Field& field) {
       static_cast<WireFormatLite::FieldType>(field.kind()));
   stream_->WriteTag(WireFormatLite::MakeTag(field.number(), wire_type));
 }
+
 
 }  // namespace converter
 }  // namespace util

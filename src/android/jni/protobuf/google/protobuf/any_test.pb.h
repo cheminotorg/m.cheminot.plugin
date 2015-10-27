@@ -119,10 +119,10 @@ class TestAny : public ::google::protobuf::Message {
   const ::google::protobuf::Any& repeated_any_value(int index) const;
   ::google::protobuf::Any* mutable_repeated_any_value(int index);
   ::google::protobuf::Any* add_repeated_any_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
-      repeated_any_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
       mutable_repeated_any_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
+      repeated_any_value() const;
 
   // @@protoc_insertion_point(class_scope:protobuf_unittest.TestAny)
  private:
@@ -218,15 +218,15 @@ inline ::google::protobuf::Any* TestAny::add_repeated_any_value() {
   // @@protoc_insertion_point(field_add:protobuf_unittest.TestAny.repeated_any_value)
   return repeated_any_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
-TestAny::repeated_any_value() const {
-  // @@protoc_insertion_point(field_list:protobuf_unittest.TestAny.repeated_any_value)
-  return repeated_any_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
 TestAny::mutable_repeated_any_value() {
   // @@protoc_insertion_point(field_mutable_list:protobuf_unittest.TestAny.repeated_any_value)
   return &repeated_any_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
+TestAny::repeated_any_value() const {
+  // @@protoc_insertion_point(field_list:protobuf_unittest.TestAny.repeated_any_value)
+  return repeated_any_value_;
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS

@@ -43,7 +43,7 @@ package google.protobuf;
 option go_package = "descriptor";
 option java_package = "com.google.protobuf";
 option java_outer_classname = "DescriptorProtos";
-option csharp_namespace = "Google.ProtocolBuffers.DescriptorProtos";
+option csharp_namespace = "Google.Protobuf.Reflection";
 option objc_class_prefix = "GPB";
 
 // descriptor.proto must be optimized for speed because reflection-based
@@ -190,6 +190,12 @@ message FieldDescriptorProto {
   // list.  This field is a member of that oneof.
   optional int32 oneof_index = 9;
 
+  // JSON name of this field. The value is set by protocol compiler. If the
+  // user has set a "json_name" option on this field, that option's value
+  // will be used. Otherwise, it's deduced from the field's name by converting
+  // it to camelCase.
+  optional string json_name = 10;
+
   optional FieldOptions options = 8;
 }
 
@@ -300,10 +306,12 @@ message FileOptions {
 
   // If set true, then the Java code generator will generate equals() and
   // hashCode() methods for all messages defined in the .proto file.
-  // - In the full runtime, this is purely a speed optimization, as the
+  // This increases generated code size, potentially substantially for large
+  // protos, which may harm a memory-constrained application.
+  // - In the full runtime this is a speed optimization, as the
   // AbstractMessage base class includes reflection-based implementations of
   // these methods.
-  //- In the lite runtime, setting this option changes the semantics of
+  // - In the lite runtime, setting this option changes the semantics of
   // equals() and hashCode() to more closely match those of the full runtime;
   // the generated methods compute their results based on field values rather
   // than object identity. (Implementations should not assume that hashcodes
@@ -368,6 +376,10 @@ message FileOptions {
 
   // Namespace for generated classes; defaults to the package.
   optional string csharp_namespace = 37;
+
+  // Whether the nano proto compiler should generate in the deprecated non-nano
+  // suffixed package.
+  optional bool javanano_use_deprecated_package = 38;
 
   // The parser stores options it doesn't recognize here. See above.
   repeated UninterpretedOption uninterpreted_option = 999;
@@ -519,6 +531,7 @@ message FieldOptions {
 
   // For Google-internal migration only. Do not use.
   optional bool weak = 10 [default=false];
+
 
   // The parser stores options it doesn't recognize here. See above.
   repeated UninterpretedOption uninterpreted_option = 999;

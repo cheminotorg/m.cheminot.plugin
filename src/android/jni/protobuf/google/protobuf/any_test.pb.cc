@@ -428,11 +428,11 @@ void TestAny::clear_any_value() {
   if (GetArenaNoVirtual() == NULL && any_value_ != NULL) delete any_value_;
   any_value_ = NULL;
 }
- const ::google::protobuf::Any& TestAny::any_value() const {
+const ::google::protobuf::Any& TestAny::any_value() const {
   // @@protoc_insertion_point(field_get:protobuf_unittest.TestAny.any_value)
   return any_value_ != NULL ? *any_value_ : *default_instance_->any_value_;
 }
- ::google::protobuf::Any* TestAny::mutable_any_value() {
+::google::protobuf::Any* TestAny::mutable_any_value() {
   
   if (any_value_ == NULL) {
     any_value_ = new ::google::protobuf::Any;
@@ -440,13 +440,13 @@ void TestAny::clear_any_value() {
   // @@protoc_insertion_point(field_mutable:protobuf_unittest.TestAny.any_value)
   return any_value_;
 }
- ::google::protobuf::Any* TestAny::release_any_value() {
+::google::protobuf::Any* TestAny::release_any_value() {
   
   ::google::protobuf::Any* temp = any_value_;
   any_value_ = NULL;
   return temp;
 }
- void TestAny::set_allocated_any_value(::google::protobuf::Any* any_value) {
+void TestAny::set_allocated_any_value(::google::protobuf::Any* any_value) {
   delete any_value_;
   any_value_ = any_value;
   if (any_value) {
@@ -464,27 +464,27 @@ int TestAny::repeated_any_value_size() const {
 void TestAny::clear_repeated_any_value() {
   repeated_any_value_.Clear();
 }
- const ::google::protobuf::Any& TestAny::repeated_any_value(int index) const {
+const ::google::protobuf::Any& TestAny::repeated_any_value(int index) const {
   // @@protoc_insertion_point(field_get:protobuf_unittest.TestAny.repeated_any_value)
   return repeated_any_value_.Get(index);
 }
- ::google::protobuf::Any* TestAny::mutable_repeated_any_value(int index) {
+::google::protobuf::Any* TestAny::mutable_repeated_any_value(int index) {
   // @@protoc_insertion_point(field_mutable:protobuf_unittest.TestAny.repeated_any_value)
   return repeated_any_value_.Mutable(index);
 }
- ::google::protobuf::Any* TestAny::add_repeated_any_value() {
+::google::protobuf::Any* TestAny::add_repeated_any_value() {
   // @@protoc_insertion_point(field_add:protobuf_unittest.TestAny.repeated_any_value)
   return repeated_any_value_.Add();
 }
- const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
-TestAny::repeated_any_value() const {
-  // @@protoc_insertion_point(field_list:protobuf_unittest.TestAny.repeated_any_value)
-  return repeated_any_value_;
-}
- ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
+::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
 TestAny::mutable_repeated_any_value() {
   // @@protoc_insertion_point(field_mutable_list:protobuf_unittest.TestAny.repeated_any_value)
   return &repeated_any_value_;
+}
+const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
+TestAny::repeated_any_value() const {
+  // @@protoc_insertion_point(field_list:protobuf_unittest.TestAny.repeated_any_value)
+  return repeated_any_value_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

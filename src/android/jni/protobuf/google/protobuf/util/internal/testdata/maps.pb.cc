@@ -319,10 +319,10 @@ bool MapIn::MergePartialFromCodedStream(
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_other()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->other().data(), this->other().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.maps.MapIn.other");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapIn.other"));
         } else {
           goto handle_unusual;
         }
@@ -336,11 +336,11 @@ bool MapIn::MergePartialFromCodedStream(
          parse_things:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->add_things()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->things(this->things_size() - 1).data(),
             this->things(this->things_size() - 1).length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.maps.MapIn.things");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapIn.things"));
         } else {
           goto handle_unusual;
         }
@@ -359,6 +359,15 @@ bool MapIn::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map_input())[entry->key()] = *entry->mutable_value();
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->key().data(), entry->key().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapIn.MapInputEntry.key"));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->mutable_value()->data(),
+            entry->mutable_value()->length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapIn.MapInputEntry.value"));
         } else {
           goto handle_unusual;
         }
@@ -394,9 +403,9 @@ void MapIn::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:google.protobuf.testing.maps.MapIn)
   // optional string other = 1;
   if (this->other().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->other().data(), this->other().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.maps.MapIn.other");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->other(), output);
@@ -404,10 +413,10 @@ void MapIn::SerializeWithCachedSizes(
 
   // repeated string things = 2;
   for (int i = 0; i < this->things_size(); i++) {
-  ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-    this->things(i).data(), this->things(i).length(),
-    ::google::protobuf::internal::WireFormat::SERIALIZE,
-    "google.protobuf.testing.maps.MapIn.things");
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->things(i).data(), this->things(i).length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "google.protobuf.testing.maps.MapIn.things");
     ::google::protobuf::internal::WireFormatLite::WriteString(
       2, this->things(i), output);
   }
@@ -421,6 +430,14 @@ void MapIn::SerializeWithCachedSizes(
       entry.reset(map_input_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           3, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapIn.MapInputEntry.key");
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->second.data(), it->second.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapIn.MapInputEntry.value");
     }
   }
 
@@ -432,9 +449,9 @@ void MapIn::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:google.protobuf.testing.maps.MapIn)
   // optional string other = 1;
   if (this->other().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->other().data(), this->other().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.maps.MapIn.other");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -443,9 +460,9 @@ void MapIn::SerializeWithCachedSizes(
 
   // repeated string things = 2;
   for (int i = 0; i < this->things_size(); i++) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->things(i).data(), this->things(i).length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.maps.MapIn.things");
     target = ::google::protobuf::internal::WireFormatLite::
       WriteStringToArray(2, this->things(i), target);
@@ -461,6 +478,14 @@ void MapIn::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               3, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapIn.MapInputEntry.key");
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->second.data(), it->second.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapIn.MapInputEntry.value");
     }
   }
 
@@ -791,6 +816,10 @@ bool MapOut::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map1())[entry->key()].Swap(entry->mutable_value());
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->key().data(), entry->key().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapOut.Map1Entry.key"));
         } else {
           goto handle_unusual;
         }
@@ -809,6 +838,10 @@ bool MapOut::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map2())[entry->key()].Swap(entry->mutable_value());
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->key().data(), entry->key().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapOut.Map2Entry.key"));
         } else {
           goto handle_unusual;
         }
@@ -827,6 +860,11 @@ bool MapOut::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map3())[entry->key()] = *entry->mutable_value();
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->mutable_value()->data(),
+            entry->mutable_value()->length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapOut.Map3Entry.value"));
         } else {
           goto handle_unusual;
         }
@@ -842,10 +880,10 @@ bool MapOut::MergePartialFromCodedStream(
          parse_bar:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_bar()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->bar().data(), this->bar().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.maps.MapOut.bar");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapOut.bar"));
         } else {
           goto handle_unusual;
         }
@@ -886,6 +924,10 @@ void MapOut::SerializeWithCachedSizes(
       entry.reset(map1_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           1, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapOut.Map1Entry.key");
     }
   }
 
@@ -898,6 +940,10 @@ void MapOut::SerializeWithCachedSizes(
       entry.reset(map2_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           2, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapOut.Map2Entry.key");
     }
   }
 
@@ -910,14 +956,18 @@ void MapOut::SerializeWithCachedSizes(
       entry.reset(map3_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           3, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->second.data(), it->second.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapOut.Map3Entry.value");
     }
   }
 
   // optional string bar = 4;
   if (this->bar().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->bar().data(), this->bar().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.maps.MapOut.bar");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->bar(), output);
@@ -939,6 +989,10 @@ void MapOut::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               1, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapOut.Map1Entry.key");
     }
   }
 
@@ -952,6 +1006,10 @@ void MapOut::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               2, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapOut.Map2Entry.key");
     }
   }
 
@@ -965,14 +1023,18 @@ void MapOut::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               3, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->second.data(), it->second.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.maps.MapOut.Map3Entry.value");
     }
   }
 
   // optional string bar = 4;
   if (this->bar().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->bar().data(), this->bar().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.maps.MapOut.bar");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -1287,10 +1349,10 @@ bool MapM::MergePartialFromCodedStream(
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_foo()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->foo().data(), this->foo().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.maps.MapM.foo");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.maps.MapM.foo"));
         } else {
           goto handle_unusual;
         }
@@ -1324,9 +1386,9 @@ void MapM::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:google.protobuf.testing.maps.MapM)
   // optional string foo = 1;
   if (this->foo().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->foo().data(), this->foo().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.maps.MapM.foo");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->foo(), output);
@@ -1340,9 +1402,9 @@ void MapM::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:google.protobuf.testing.maps.MapM)
   // optional string foo = 1;
   if (this->foo().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->foo().data(), this->foo().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.maps.MapM.foo");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(

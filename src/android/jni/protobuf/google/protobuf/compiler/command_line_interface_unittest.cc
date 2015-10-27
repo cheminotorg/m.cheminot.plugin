@@ -294,6 +294,10 @@ void CommandLineInterfaceTest::Run(const string& command) {
   if (!disallow_plugins_) {
     cli_.AllowPlugins("prefix-");
 #ifndef GOOGLE_THIRD_PARTY_PROTOBUF
+    string plugin_path;
+#ifdef GOOGLE_PROTOBUF_TEST_PLUGIN_PATH
+    plugin_path = GOOGLE_PROTOBUF_TEST_PLUGIN_PATH;
+#else
     const char* possible_paths[] = {
       // When building with shared libraries, libtool hides the real executable
       // in .libs and puts a fake wrapper in the current directory.
@@ -311,15 +315,13 @@ void CommandLineInterfaceTest::Run(const string& command) {
       "test_plugin.exe",        // Other Win32 (MSVC)
       "test_plugin",            // Unix
     };
-
-    string plugin_path;
-
     for (int i = 0; i < GOOGLE_ARRAYSIZE(possible_paths); i++) {
       if (access(possible_paths[i], F_OK) == 0) {
         plugin_path = possible_paths[i];
         break;
       }
     }
+#endif
 
     if (plugin_path.empty()) {
 #else
@@ -882,6 +884,39 @@ TEST_F(CommandLineInterfaceTest, WriteDescriptorSet) {
   if (HasFatalFailure()) return;
   EXPECT_EQ(1, descriptor_set.file_size());
   EXPECT_EQ("bar.proto", descriptor_set.file(0).name());
+  // Descriptor set should not have source code info.
+  EXPECT_FALSE(descriptor_set.file(0).has_source_code_info());
+}
+
+TEST_F(CommandLineInterfaceTest, WriteDescriptorSetWithDuplicates) {
+  CreateTempFile("foo.proto",
+    "syntax = \"proto2\";\n"
+    "message Foo {}\n");
+  CreateTempFile("bar.proto",
+    "syntax = \"proto2\";\n"
+    "import \"foo.proto\";\n"
+    "message Bar {\n"
+    "  optional Foo foo = 1;\n"
+    "}\n");
+  CreateTempFile("baz.proto",
+    "syntax = \"proto2\";\n"
+    "import \"foo.proto\";\n"
+    "message Baz {\n"
+    "  optional Foo foo = 1;\n"
+    "}\n");
+
+  Run("protocol_compiler --descriptor_set_out=$tmpdir/descriptor_set "
+      "--proto_path=$tmpdir bar.proto foo.proto bar.proto baz.proto");
+
+  ExpectNoErrors();
+
+  FileDescriptorSet descriptor_set;
+  ReadDescriptorSet("descriptor_set", &descriptor_set);
+  if (HasFatalFailure()) return;
+  EXPECT_EQ(3, descriptor_set.file_size());
+  EXPECT_EQ("bar.proto", descriptor_set.file(0).name());
+  EXPECT_EQ("foo.proto", descriptor_set.file(1).name());
+  EXPECT_EQ("baz.proto", descriptor_set.file(2).name());
   // Descriptor set should not have source code info.
   EXPECT_FALSE(descriptor_set.file(0).has_source_code_info());
 }

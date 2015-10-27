@@ -38,16 +38,16 @@ void protobuf_AddDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fbooks_2ep
 void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fbooks_2eproto();
 void protobuf_ShutdownFile_google_2fprotobuf_2futil_2finternal_2ftestdata_2fbooks_2eproto();
 
+class Author;
+class BadAuthor;
+class BadNestedBook;
 class Book;
 class Book_Data;
 class Book_Label;
-class Publisher;
-class Author;
-class BadAuthor;
-class Primitive;
-class PackedPrimitive;
 class NestedBook;
-class BadNestedBook;
+class PackedPrimitive;
+class Primitive;
+class Publisher;
 
 // ===================================================================
 
@@ -403,10 +403,10 @@ class Book : public ::google::protobuf::Message {
   const ::google::protobuf::testing::Book_Label& labels(int index) const;
   ::google::protobuf::testing::Book_Label* mutable_labels(int index);
   ::google::protobuf::testing::Book_Label* add_labels();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >&
-      labels() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >*
       mutable_labels();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >&
+      labels() const;
 
   GOOGLE_PROTOBUF_EXTENSION_ACCESSORS(Book)
   // @@protoc_insertion_point(class_scope:google.protobuf.testing.Book)
@@ -655,10 +655,10 @@ class Author : public ::google::protobuf::Message {
   const ::google::protobuf::testing::Author& friend_(int index) const;
   ::google::protobuf::testing::Author* mutable_friend_(int index);
   ::google::protobuf::testing::Author* add_friend_();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >&
-      friend_() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >*
       mutable_friend_();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >&
+      friend_() const;
 
   // @@protoc_insertion_point(class_scope:google.protobuf.testing.Author)
  private:
@@ -2216,15 +2216,15 @@ inline ::google::protobuf::testing::Book_Label* Book::add_labels() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.Book.labels)
   return labels_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >&
-Book::labels() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.Book.labels)
-  return labels_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >*
 Book::mutable_labels() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.Book.labels)
   return &labels_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >&
+Book::labels() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.Book.labels)
+  return labels_;
 }
 
 // -------------------------------------------------------------------
@@ -2462,15 +2462,15 @@ inline ::google::protobuf::testing::Author* Author::add_friend_() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.Author.friend)
   return friend__.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >&
-Author::friend_() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.Author.friend)
-  return friend__;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >*
 Author::mutable_friend_() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.Author.friend)
   return &friend__;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >&
+Author::friend_() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.Author.friend)
+  return friend__;
 }
 
 // -------------------------------------------------------------------

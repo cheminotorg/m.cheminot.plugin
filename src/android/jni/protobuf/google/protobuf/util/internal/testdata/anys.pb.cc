@@ -249,10 +249,10 @@ bool AnyIn::MergePartialFromCodedStream(
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_something()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->something().data(), this->something().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.anys.AnyIn.something");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.anys.AnyIn.something"));
         } else {
           goto handle_unusual;
         }
@@ -286,9 +286,9 @@ void AnyIn::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:google.protobuf.testing.anys.AnyIn)
   // optional string something = 1;
   if (this->something().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->something().data(), this->something().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.anys.AnyIn.something");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->something(), output);
@@ -302,9 +302,9 @@ void AnyIn::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:google.protobuf.testing.anys.AnyIn)
   // optional string something = 1;
   if (this->something().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->something().data(), this->something().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.anys.AnyIn.something");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -656,11 +656,11 @@ void AnyOut::clear_any() {
   if (GetArenaNoVirtual() == NULL && any_ != NULL) delete any_;
   any_ = NULL;
 }
- const ::google::protobuf::Any& AnyOut::any() const {
+const ::google::protobuf::Any& AnyOut::any() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.anys.AnyOut.any)
   return any_ != NULL ? *any_ : *default_instance_->any_;
 }
- ::google::protobuf::Any* AnyOut::mutable_any() {
+::google::protobuf::Any* AnyOut::mutable_any() {
   
   if (any_ == NULL) {
     any_ = new ::google::protobuf::Any;
@@ -668,13 +668,13 @@ void AnyOut::clear_any() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.anys.AnyOut.any)
   return any_;
 }
- ::google::protobuf::Any* AnyOut::release_any() {
+::google::protobuf::Any* AnyOut::release_any() {
   
   ::google::protobuf::Any* temp = any_;
   any_ = NULL;
   return temp;
 }
- void AnyOut::set_allocated_any(::google::protobuf::Any* any) {
+void AnyOut::set_allocated_any(::google::protobuf::Any* any) {
   delete any_;
   any_ = any;
   if (any) {
@@ -773,10 +773,10 @@ bool AnyM::MergePartialFromCodedStream(
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_foo()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->foo().data(), this->foo().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.anys.AnyM.foo");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.anys.AnyM.foo"));
         } else {
           goto handle_unusual;
         }
@@ -810,9 +810,9 @@ void AnyM::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:google.protobuf.testing.anys.AnyM)
   // optional string foo = 1;
   if (this->foo().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->foo().data(), this->foo().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.anys.AnyM.foo");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->foo(), output);
@@ -826,9 +826,9 @@ void AnyM::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:google.protobuf.testing.anys.AnyM)
   // optional string foo = 1;
   if (this->foo().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->foo().data(), this->foo().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.anys.AnyM.foo");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(

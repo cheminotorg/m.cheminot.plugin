@@ -39,10 +39,10 @@ void protobuf_AddDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2ffield_5fm
 void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2ffield_5fmask_2eproto();
 void protobuf_ShutdownFile_google_2fprotobuf_2futil_2finternal_2ftestdata_2ffield_5fmask_2eproto();
 
-class NestedFieldMask;
 class FieldMaskTest;
 class FieldMaskTestCases;
 class FieldMaskWrapper;
+class NestedFieldMask;
 
 // ===================================================================
 
@@ -129,10 +129,10 @@ class NestedFieldMask : public ::google::protobuf::Message {
   const ::google::protobuf::FieldMask& repeated_mask(int index) const;
   ::google::protobuf::FieldMask* mutable_repeated_mask(int index);
   ::google::protobuf::FieldMask* add_repeated_mask();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
-      repeated_mask() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >*
       mutable_repeated_mask();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
+      repeated_mask() const;
 
   // @@protoc_insertion_point(class_scope:google.protobuf.testing.NestedFieldMask)
  private:
@@ -235,10 +235,10 @@ class FieldMaskTest : public ::google::protobuf::Message {
   const ::google::protobuf::FieldMask& repeated_mask(int index) const;
   ::google::protobuf::FieldMask* mutable_repeated_mask(int index);
   ::google::protobuf::FieldMask* add_repeated_mask();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
-      repeated_mask() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >*
       mutable_repeated_mask();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
+      repeated_mask() const;
 
   // repeated .google.protobuf.testing.NestedFieldMask nested_mask = 4;
   int nested_mask_size() const;
@@ -247,10 +247,10 @@ class FieldMaskTest : public ::google::protobuf::Message {
   const ::google::protobuf::testing::NestedFieldMask& nested_mask(int index) const;
   ::google::protobuf::testing::NestedFieldMask* mutable_nested_mask(int index);
   ::google::protobuf::testing::NestedFieldMask* add_nested_mask();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >&
-      nested_mask() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >*
       mutable_nested_mask();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >&
+      nested_mask() const;
 
   // @@protoc_insertion_point(class_scope:google.protobuf.testing.FieldMaskTest)
  private:
@@ -648,15 +648,15 @@ inline ::google::protobuf::FieldMask* NestedFieldMask::add_repeated_mask() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.NestedFieldMask.repeated_mask)
   return repeated_mask_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
-NestedFieldMask::repeated_mask() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.NestedFieldMask.repeated_mask)
-  return repeated_mask_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >*
 NestedFieldMask::mutable_repeated_mask() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.NestedFieldMask.repeated_mask)
   return &repeated_mask_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
+NestedFieldMask::repeated_mask() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.NestedFieldMask.repeated_mask)
+  return repeated_mask_;
 }
 
 // -------------------------------------------------------------------
@@ -762,15 +762,15 @@ inline ::google::protobuf::FieldMask* FieldMaskTest::add_repeated_mask() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.FieldMaskTest.repeated_mask)
   return repeated_mask_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
-FieldMaskTest::repeated_mask() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.FieldMaskTest.repeated_mask)
-  return repeated_mask_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >*
 FieldMaskTest::mutable_repeated_mask() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.FieldMaskTest.repeated_mask)
   return &repeated_mask_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
+FieldMaskTest::repeated_mask() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.FieldMaskTest.repeated_mask)
+  return repeated_mask_;
 }
 
 // repeated .google.protobuf.testing.NestedFieldMask nested_mask = 4;
@@ -792,15 +792,15 @@ inline ::google::protobuf::testing::NestedFieldMask* FieldMaskTest::add_nested_m
   // @@protoc_insertion_point(field_add:google.protobuf.testing.FieldMaskTest.nested_mask)
   return nested_mask_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >&
-FieldMaskTest::nested_mask() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.FieldMaskTest.nested_mask)
-  return nested_mask_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >*
 FieldMaskTest::mutable_nested_mask() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.FieldMaskTest.nested_mask)
   return &nested_mask_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >&
+FieldMaskTest::nested_mask() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.FieldMaskTest.nested_mask)
+  return nested_mask_;
 }
 
 // -------------------------------------------------------------------

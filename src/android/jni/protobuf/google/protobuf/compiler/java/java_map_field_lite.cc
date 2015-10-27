@@ -139,9 +139,7 @@ ImmutableMapFieldLiteGenerator(const FieldDescriptor* descriptor,
                                        int messageBitIndex,
                                        int builderBitIndex,
                                        Context* context)
-  : descriptor_(descriptor), messageBitIndex_(messageBitIndex),
-    builderBitIndex_(builderBitIndex), context_(context),
-    name_resolver_(context->GetNameResolver())  {
+  : descriptor_(descriptor), name_resolver_(context->GetNameResolver())  {
   SetMessageVariables(descriptor, messageBitIndex, builderBitIndex,
                       context->GetFieldGeneratorInfo(descriptor),
                       name_resolver_, &variables_);
@@ -305,6 +303,14 @@ GenerateBuilderMembers(io::Printer* printer) const {
         "  copyOnWrite();\n"
         "  return instance.getMutable$capitalized_name$();\n"
         "}\n");
+    WriteFieldDocComment(printer, descriptor_);
+    printer->Print(
+        variables_,
+        "$deprecation$public Builder putAll$capitalized_name$(\n"
+        "    java.util.Map<$boxed_key_type$, $value_enum_type$> values) {\n"
+        "  getMutable$capitalized_name$().putAll(values);\n"
+        "  return this;\n"
+        "}\n");
     if (SupportUnknownEnumValue(descriptor_->file())) {
       WriteFieldDocComment(printer, descriptor_);
       printer->Print(
@@ -323,6 +329,14 @@ GenerateBuilderMembers(io::Printer* printer) const {
           "  copyOnWrite();\n"
           "  return instance.getMutable$capitalized_name$Value();\n"
           "}\n");
+      WriteFieldDocComment(printer, descriptor_);
+      printer->Print(
+          variables_,
+          "$deprecation$public Builder putAll$capitalized_name$Value(\n"
+          "    java.util.Map<$boxed_key_type$, $boxed_value_type$> values) {\n"
+          "  getMutable$capitalized_name$Value().putAll(values);\n"
+          "  return this;\n"
+          "}\n");
     }
   } else {
     WriteFieldDocComment(printer, descriptor_);
@@ -338,6 +352,14 @@ GenerateBuilderMembers(io::Printer* printer) const {
         "getMutable$capitalized_name$() {\n"
         "  copyOnWrite();\n"
         "  return instance.getMutable$capitalized_name$();\n"
+        "}\n");
+    WriteFieldDocComment(printer, descriptor_);
+    printer->Print(
+        variables_,
+        "public Builder putAll$capitalized_name$(\n"
+        "    java.util.Map<$type_parameters$> values) {\n"
+        "  getMutable$capitalized_name$().putAll(values);\n"
+        "  return this;\n"
         "}\n");
   }
 }
@@ -383,7 +405,7 @@ GenerateParsingCode(io::Printer* printer) const {
     printer->Print(
         variables_,
         "if ($value_enum_type$.valueOf($name$.getValue()) == null) {\n"
-        "  unknownFields.mergeLengthDelimitedField($number$, bytes);\n"
+        "  super.mergeLengthDelimitedField($number$, bytes);\n"
         "} else {\n"
         "  $name$_.getMutableMap().put($name$.getKey(), $name$.getValue());\n"
         "}\n");

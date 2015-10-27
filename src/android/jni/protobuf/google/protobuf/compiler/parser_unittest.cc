@@ -229,6 +229,32 @@ TEST_F(ParserTest, WarnIfSyntaxIdentifierOmmitted) {
 
 typedef ParserTest ParseMessageTest;
 
+TEST_F(ParseMessageTest, IgnoreBOM) {
+  char input[] = "   message TestMessage {\n"
+      "  required int32 foo = 1;\n"
+      "}\n";
+  // Set UTF-8 BOM.
+  input[0] = (char)0xEF;
+  input[1] = (char)0xBB;
+  input[2] = (char)0xBF;
+  ExpectParsesTo(input,
+    "message_type {"
+    "  name: \"TestMessage\""
+    "  field { name:\"foo\" label:LABEL_REQUIRED type:TYPE_INT32 number:1 }"
+    "}");
+}
+
+TEST_F(ParseMessageTest, BOMError) {
+  char input[] = "   message TestMessage {\n"
+      "  required int32 foo = 1;\n"
+      "}\n";
+  input[0] = (char)0xEF;
+  ExpectHasErrors(input,
+                  "0:1: Proto file starts with 0xEF but not UTF-8 BOM. "
+                  "Only UTF-8 is accepted for proto file.\n"
+                  "0:0: Expected top-level statement (e.g. \"message\").\n");
+}
+
 TEST_F(ParseMessageTest, SimpleMessage) {
   ExpectParsesTo(
     "message TestMessage {\n"
@@ -424,6 +450,20 @@ TEST_F(ParseMessageTest, FieldDefaults) {
     "  }"
     "}");
 #undef ETC
+}
+
+TEST_F(ParseMessageTest, FieldJsonName) {
+  ExpectParsesTo(
+    "message TestMessage {\n"
+    "  optional string foo = 1 [json_name = \"@type\"];\n"
+    "}\n",
+    "message_type {"
+    "  name: \"TestMessage\""
+    "  field {\n"
+    "    name: \"foo\" label: LABEL_OPTIONAL type: TYPE_STRING number: 1"
+    "    json_name: \"@type\"\n"
+    "  }\n"
+    "}\n");
 }
 
 TEST_F(ParseMessageTest, FieldOptions) {
@@ -1098,6 +1138,22 @@ TEST_F(ParseErrorTest, DefaultValueTooLarge) {
     "4:36: Integer out of range.\n"
     "5:36: Integer out of range.\n"
     "6:36: Integer out of range.\n");
+}
+
+TEST_F(ParseErrorTest, JsonNameNotString) {
+  ExpectHasErrors(
+    "message TestMessage {\n"
+    "  optional string foo = 1 [json_name=1];\n"
+    "}\n",
+    "1:37: Expected string for JSON name.\n");
+}
+
+TEST_F(ParseErrorTest, DuplicateJsonName) {
+  ExpectHasErrors(
+    "message TestMessage {\n"
+    "  optional uint32 foo = 1 [json_name=\"a\",json_name=\"b\"];\n"
+    "}\n",
+    "1:41: Already set option \"json_name\".\n");
 }
 
 TEST_F(ParseErrorTest, EnumValueOutOfRange) {

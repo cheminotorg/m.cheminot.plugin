@@ -44,21 +44,21 @@ void protobuf_AddDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefault_5
 void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefault_5fvalue_2eproto();
 void protobuf_ShutdownFile_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefault_5fvalue_2eproto();
 
+class AnyData;
+class AnyMessage;
 class DefaultValueTestCases;
 class DoubleMessage;
-class StructMessage;
-class ValueMessage;
-class ListValueMessage;
-class RequestMessage;
-class AnyMessage;
-class AnyData;
-class StringtoIntMap;
+class DoubleValueMessage;
 class IntToStringMap;
-class MixedMap;
-class MixedMap2;
+class ListValueMessage;
 class MessageMap;
 class MessageMap_M;
-class DoubleValueMessage;
+class MixedMap;
+class MixedMap2;
+class RequestMessage;
+class StringtoIntMap;
+class StructMessage;
+class ValueMessage;
 
 enum MixedMap2_E {
   MixedMap2_E_E0 = 0,
@@ -194,6 +194,15 @@ class DefaultValueTestCases : public ::google::protobuf::Message {
   ::google::protobuf::testing::DoubleMessage* mutable_repeated_nested_message();
   ::google::protobuf::testing::DoubleMessage* release_repeated_nested_message();
   void set_allocated_repeated_nested_message(::google::protobuf::testing::DoubleMessage* repeated_nested_message);
+
+  // optional .google.protobuf.testing.DoubleMessage double_message_with_oneof = 7;
+  bool has_double_message_with_oneof() const;
+  void clear_double_message_with_oneof();
+  static const int kDoubleMessageWithOneofFieldNumber = 7;
+  const ::google::protobuf::testing::DoubleMessage& double_message_with_oneof() const;
+  ::google::protobuf::testing::DoubleMessage* mutable_double_message_with_oneof();
+  ::google::protobuf::testing::DoubleMessage* release_double_message_with_oneof();
+  void set_allocated_double_message_with_oneof(::google::protobuf::testing::DoubleMessage* double_message_with_oneof);
 
   // optional .google.protobuf.testing.StructMessage empty_struct = 201;
   bool has_empty_struct() const;
@@ -483,6 +492,24 @@ class DefaultValueTestCases : public ::google::protobuf::Message {
   ::google::protobuf::testing::MessageMap* release_map_of_objects();
   void set_allocated_map_of_objects(::google::protobuf::testing::MessageMap* map_of_objects);
 
+  // optional .google.protobuf.testing.MixedMap mixed_empty = 407;
+  bool has_mixed_empty() const;
+  void clear_mixed_empty();
+  static const int kMixedEmptyFieldNumber = 407;
+  const ::google::protobuf::testing::MixedMap& mixed_empty() const;
+  ::google::protobuf::testing::MixedMap* mutable_mixed_empty();
+  ::google::protobuf::testing::MixedMap* release_mixed_empty();
+  void set_allocated_mixed_empty(::google::protobuf::testing::MixedMap* mixed_empty);
+
+  // optional .google.protobuf.testing.MessageMap message_map_empty = 408;
+  bool has_message_map_empty() const;
+  void clear_message_map_empty();
+  static const int kMessageMapEmptyFieldNumber = 408;
+  const ::google::protobuf::testing::MessageMap& message_map_empty() const;
+  ::google::protobuf::testing::MessageMap* mutable_message_map_empty();
+  ::google::protobuf::testing::MessageMap* release_message_map_empty();
+  void set_allocated_message_map_empty(::google::protobuf::testing::MessageMap* message_map_empty);
+
   // optional .google.protobuf.testing.DoubleValueMessage double_value = 501;
   bool has_double_value() const;
   void clear_double_value();
@@ -512,6 +539,7 @@ class DefaultValueTestCases : public ::google::protobuf::Message {
   ::google::protobuf::testing::DoubleMessage* repeated_double_;
   ::google::protobuf::testing::DoubleMessage* nested_message_;
   ::google::protobuf::testing::DoubleMessage* repeated_nested_message_;
+  ::google::protobuf::testing::DoubleMessage* double_message_with_oneof_;
   ::google::protobuf::testing::StructMessage* empty_struct_;
   ::google::protobuf::testing::StructMessage* empty_struct2_;
   ::google::protobuf::testing::StructMessage* struct_with_null_value_;
@@ -544,6 +572,8 @@ class DefaultValueTestCases : public ::google::protobuf::Message {
   ::google::protobuf::testing::MixedMap* mixed1_;
   ::google::protobuf::testing::MixedMap2* mixed2_;
   ::google::protobuf::testing::MessageMap* map_of_objects_;
+  ::google::protobuf::testing::MixedMap* mixed_empty_;
+  ::google::protobuf::testing::MessageMap* message_map_empty_;
   ::google::protobuf::testing::DoubleValueMessage* double_value_;
   ::google::protobuf::testing::DoubleValueMessage* double_value_default_;
   mutable int _cached_size_;
@@ -570,6 +600,12 @@ class DoubleMessage : public ::google::protobuf::Message {
 
   static const ::google::protobuf::Descriptor* descriptor();
   static const DoubleMessage& default_instance();
+
+  enum ValueCase {
+    kStrValue = 112,
+    kNumValue = 113,
+    VALUE_NOT_SET = 0,
+  };
 
   void Swap(DoubleMessage* other);
 
@@ -646,10 +682,10 @@ class DoubleMessage : public ::google::protobuf::Message {
   const ::google::protobuf::testing::DoubleMessage& repeated_nested_message(int index) const;
   ::google::protobuf::testing::DoubleMessage* mutable_repeated_nested_message(int index);
   ::google::protobuf::testing::DoubleMessage* add_repeated_nested_message();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >&
-      repeated_nested_message() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >*
       mutable_repeated_nested_message();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >&
+      repeated_nested_message() const;
 
   // optional .google.protobuf.DoubleValue double_wrapper = 100;
   bool has_double_wrapper() const;
@@ -660,8 +696,38 @@ class DoubleMessage : public ::google::protobuf::Message {
   ::google::protobuf::DoubleValue* release_double_wrapper();
   void set_allocated_double_wrapper(::google::protobuf::DoubleValue* double_wrapper);
 
+  // optional string str_value = 112;
+  private:
+  bool has_str_value() const;
+  public:
+  void clear_str_value();
+  static const int kStrValueFieldNumber = 112;
+  const ::std::string& str_value() const;
+  void set_str_value(const ::std::string& value);
+  void set_str_value(const char* value);
+  void set_str_value(const char* value, size_t size);
+  ::std::string* mutable_str_value();
+  ::std::string* release_str_value();
+  void set_allocated_str_value(::std::string* str_value);
+
+  // optional int64 num_value = 113;
+  private:
+  bool has_num_value() const;
+  public:
+  void clear_num_value();
+  static const int kNumValueFieldNumber = 113;
+  ::google::protobuf::int64 num_value() const;
+  void set_num_value(::google::protobuf::int64 value);
+
+  ValueCase value_case() const;
   // @@protoc_insertion_point(class_scope:google.protobuf.testing.DoubleMessage)
  private:
+  inline void set_has_str_value();
+  inline void set_has_num_value();
+
+  inline bool has_value() const;
+  void clear_value();
+  inline void clear_has_value();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
@@ -671,7 +737,14 @@ class DoubleMessage : public ::google::protobuf::Message {
   ::google::protobuf::testing::DoubleMessage* nested_message_;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage > repeated_nested_message_;
   ::google::protobuf::DoubleValue* double_wrapper_;
+  union ValueUnion {
+    ValueUnion() {}
+    ::google::protobuf::internal::ArenaStringPtr str_value_;
+    ::google::protobuf::int64 num_value_;
+  } value_;
   mutable int _cached_size_;
+  ::google::protobuf::uint32 _oneof_case_[1];
+
   friend void  protobuf_AddDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefault_5fvalue_2eproto();
   friend void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefault_5fvalue_2eproto();
   friend void protobuf_ShutdownFile_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefault_5fvalue_2eproto();
@@ -1222,10 +1295,10 @@ class AnyData : public ::google::protobuf::Message {
   const ::google::protobuf::testing::AnyData& repeated_data(int index) const;
   ::google::protobuf::testing::AnyData* mutable_repeated_data(int index);
   ::google::protobuf::testing::AnyData* add_repeated_data();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >&
-      repeated_data() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >*
       mutable_repeated_data();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >&
+      repeated_data() const;
 
   // @@protoc_insertion_point(class_scope:google.protobuf.testing.AnyData)
  private:
@@ -2181,6 +2254,43 @@ inline void DefaultValueTestCases::set_allocated_repeated_nested_message(::googl
     
   }
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.repeated_nested_message)
+}
+
+// optional .google.protobuf.testing.DoubleMessage double_message_with_oneof = 7;
+inline bool DefaultValueTestCases::has_double_message_with_oneof() const {
+  return !_is_default_instance_ && double_message_with_oneof_ != NULL;
+}
+inline void DefaultValueTestCases::clear_double_message_with_oneof() {
+  if (GetArenaNoVirtual() == NULL && double_message_with_oneof_ != NULL) delete double_message_with_oneof_;
+  double_message_with_oneof_ = NULL;
+}
+inline const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::double_message_with_oneof() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.double_message_with_oneof)
+  return double_message_with_oneof_ != NULL ? *double_message_with_oneof_ : *default_instance_->double_message_with_oneof_;
+}
+inline ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_double_message_with_oneof() {
+  
+  if (double_message_with_oneof_ == NULL) {
+    double_message_with_oneof_ = new ::google::protobuf::testing::DoubleMessage;
+  }
+  // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.double_message_with_oneof)
+  return double_message_with_oneof_;
+}
+inline ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_double_message_with_oneof() {
+  
+  ::google::protobuf::testing::DoubleMessage* temp = double_message_with_oneof_;
+  double_message_with_oneof_ = NULL;
+  return temp;
+}
+inline void DefaultValueTestCases::set_allocated_double_message_with_oneof(::google::protobuf::testing::DoubleMessage* double_message_with_oneof) {
+  delete double_message_with_oneof_;
+  double_message_with_oneof_ = double_message_with_oneof;
+  if (double_message_with_oneof) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.double_message_with_oneof)
 }
 
 // optional .google.protobuf.testing.StructMessage empty_struct = 201;
@@ -3367,6 +3477,80 @@ inline void DefaultValueTestCases::set_allocated_map_of_objects(::google::protob
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.map_of_objects)
 }
 
+// optional .google.protobuf.testing.MixedMap mixed_empty = 407;
+inline bool DefaultValueTestCases::has_mixed_empty() const {
+  return !_is_default_instance_ && mixed_empty_ != NULL;
+}
+inline void DefaultValueTestCases::clear_mixed_empty() {
+  if (GetArenaNoVirtual() == NULL && mixed_empty_ != NULL) delete mixed_empty_;
+  mixed_empty_ = NULL;
+}
+inline const ::google::protobuf::testing::MixedMap& DefaultValueTestCases::mixed_empty() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.mixed_empty)
+  return mixed_empty_ != NULL ? *mixed_empty_ : *default_instance_->mixed_empty_;
+}
+inline ::google::protobuf::testing::MixedMap* DefaultValueTestCases::mutable_mixed_empty() {
+  
+  if (mixed_empty_ == NULL) {
+    mixed_empty_ = new ::google::protobuf::testing::MixedMap;
+  }
+  // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.mixed_empty)
+  return mixed_empty_;
+}
+inline ::google::protobuf::testing::MixedMap* DefaultValueTestCases::release_mixed_empty() {
+  
+  ::google::protobuf::testing::MixedMap* temp = mixed_empty_;
+  mixed_empty_ = NULL;
+  return temp;
+}
+inline void DefaultValueTestCases::set_allocated_mixed_empty(::google::protobuf::testing::MixedMap* mixed_empty) {
+  delete mixed_empty_;
+  mixed_empty_ = mixed_empty;
+  if (mixed_empty) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.mixed_empty)
+}
+
+// optional .google.protobuf.testing.MessageMap message_map_empty = 408;
+inline bool DefaultValueTestCases::has_message_map_empty() const {
+  return !_is_default_instance_ && message_map_empty_ != NULL;
+}
+inline void DefaultValueTestCases::clear_message_map_empty() {
+  if (GetArenaNoVirtual() == NULL && message_map_empty_ != NULL) delete message_map_empty_;
+  message_map_empty_ = NULL;
+}
+inline const ::google::protobuf::testing::MessageMap& DefaultValueTestCases::message_map_empty() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.message_map_empty)
+  return message_map_empty_ != NULL ? *message_map_empty_ : *default_instance_->message_map_empty_;
+}
+inline ::google::protobuf::testing::MessageMap* DefaultValueTestCases::mutable_message_map_empty() {
+  
+  if (message_map_empty_ == NULL) {
+    message_map_empty_ = new ::google::protobuf::testing::MessageMap;
+  }
+  // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.message_map_empty)
+  return message_map_empty_;
+}
+inline ::google::protobuf::testing::MessageMap* DefaultValueTestCases::release_message_map_empty() {
+  
+  ::google::protobuf::testing::MessageMap* temp = message_map_empty_;
+  message_map_empty_ = NULL;
+  return temp;
+}
+inline void DefaultValueTestCases::set_allocated_message_map_empty(::google::protobuf::testing::MessageMap* message_map_empty) {
+  delete message_map_empty_;
+  message_map_empty_ = message_map_empty;
+  if (message_map_empty) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.message_map_empty)
+}
+
 // optional .google.protobuf.testing.DoubleValueMessage double_value = 501;
 inline bool DefaultValueTestCases::has_double_value() const {
   return !_is_default_instance_ && double_value_ != NULL;
@@ -3545,15 +3729,15 @@ inline ::google::protobuf::testing::DoubleMessage* DoubleMessage::add_repeated_n
   // @@protoc_insertion_point(field_add:google.protobuf.testing.DoubleMessage.repeated_nested_message)
   return repeated_nested_message_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >&
-DoubleMessage::repeated_nested_message() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.DoubleMessage.repeated_nested_message)
-  return repeated_nested_message_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >*
 DoubleMessage::mutable_repeated_nested_message() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.DoubleMessage.repeated_nested_message)
   return &repeated_nested_message_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >&
+DoubleMessage::repeated_nested_message() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.DoubleMessage.repeated_nested_message)
+  return repeated_nested_message_;
 }
 
 // optional .google.protobuf.DoubleValue double_wrapper = 100;
@@ -3593,6 +3777,124 @@ inline void DoubleMessage::set_allocated_double_wrapper(::google::protobuf::Doub
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DoubleMessage.double_wrapper)
 }
 
+// optional string str_value = 112;
+inline bool DoubleMessage::has_str_value() const {
+  return value_case() == kStrValue;
+}
+inline void DoubleMessage::set_has_str_value() {
+  _oneof_case_[0] = kStrValue;
+}
+inline void DoubleMessage::clear_str_value() {
+  if (has_str_value()) {
+    value_.str_value_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    clear_has_value();
+  }
+}
+inline const ::std::string& DoubleMessage::str_value() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DoubleMessage.str_value)
+  if (has_str_value()) {
+    return value_.str_value_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  return *&::google::protobuf::internal::GetEmptyStringAlreadyInited();
+}
+inline void DoubleMessage::set_str_value(const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:google.protobuf.testing.DoubleMessage.str_value)
+  if (!has_str_value()) {
+    clear_value();
+    set_has_str_value();
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.str_value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:google.protobuf.testing.DoubleMessage.str_value)
+}
+inline void DoubleMessage::set_str_value(const char* value) {
+  if (!has_str_value()) {
+    clear_value();
+    set_has_str_value();
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.str_value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:google.protobuf.testing.DoubleMessage.str_value)
+}
+inline void DoubleMessage::set_str_value(const char* value, size_t size) {
+  if (!has_str_value()) {
+    clear_value();
+    set_has_str_value();
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.str_value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:google.protobuf.testing.DoubleMessage.str_value)
+}
+inline ::std::string* DoubleMessage::mutable_str_value() {
+  if (!has_str_value()) {
+    clear_value();
+    set_has_str_value();
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DoubleMessage.str_value)
+  return value_.str_value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* DoubleMessage::release_str_value() {
+  if (has_str_value()) {
+    clear_has_value();
+    return value_.str_value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  } else {
+    return NULL;
+  }
+}
+inline void DoubleMessage::set_allocated_str_value(::std::string* str_value) {
+  if (!has_str_value()) {
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  clear_value();
+  if (str_value != NULL) {
+    set_has_str_value();
+    value_.str_value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+        str_value);
+  }
+  // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DoubleMessage.str_value)
+}
+
+// optional int64 num_value = 113;
+inline bool DoubleMessage::has_num_value() const {
+  return value_case() == kNumValue;
+}
+inline void DoubleMessage::set_has_num_value() {
+  _oneof_case_[0] = kNumValue;
+}
+inline void DoubleMessage::clear_num_value() {
+  if (has_num_value()) {
+    value_.num_value_ = GOOGLE_LONGLONG(0);
+    clear_has_value();
+  }
+}
+inline ::google::protobuf::int64 DoubleMessage::num_value() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DoubleMessage.num_value)
+  if (has_num_value()) {
+    return value_.num_value_;
+  }
+  return GOOGLE_LONGLONG(0);
+}
+inline void DoubleMessage::set_num_value(::google::protobuf::int64 value) {
+  if (!has_num_value()) {
+    clear_value();
+    set_has_num_value();
+  }
+  value_.num_value_ = value;
+  // @@protoc_insertion_point(field_set:google.protobuf.testing.DoubleMessage.num_value)
+}
+
+inline bool DoubleMessage::has_value() const {
+  return value_case() != VALUE_NOT_SET;
+}
+inline void DoubleMessage::clear_has_value() {
+  _oneof_case_[0] = VALUE_NOT_SET;
+}
+inline DoubleMessage::ValueCase DoubleMessage::value_case() const {
+  return DoubleMessage::ValueCase(_oneof_case_[0]);
+}
 // -------------------------------------------------------------------
 
 // StructMessage
@@ -4067,15 +4369,15 @@ inline ::google::protobuf::testing::AnyData* AnyData::add_repeated_data() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.AnyData.repeated_data)
   return repeated_data_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >&
-AnyData::repeated_data() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.AnyData.repeated_data)
-  return repeated_data_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >*
 AnyData::mutable_repeated_data() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.AnyData.repeated_data)
   return &repeated_data_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >&
+AnyData::repeated_data() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.AnyData.repeated_data)
+  return repeated_data_;
 }
 
 // -------------------------------------------------------------------

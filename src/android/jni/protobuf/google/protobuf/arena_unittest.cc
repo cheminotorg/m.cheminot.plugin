@@ -40,7 +40,9 @@
 #include <typeinfo>
 #include <vector>
 
+#include <google/protobuf/stubs/logging.h>
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/scoped_ptr.h>
 #include <google/protobuf/arena_test_util.h>
 #include <google/protobuf/test_util.h>
 #include <google/protobuf/unittest.pb.h>
@@ -360,7 +362,7 @@ TEST(ArenaTest, ReleaseMessage) {
   Arena arena;
   TestAllTypes* arena_message = Arena::CreateMessage<TestAllTypes>(&arena);
   arena_message->mutable_optional_nested_message()->set_bb(118);
-  scoped_ptr<TestAllTypes::NestedMessage> nested(
+  google::protobuf::scoped_ptr<TestAllTypes::NestedMessage> nested(
       arena_message->release_optional_nested_message());
   EXPECT_EQ(118, nested->bb());
 
@@ -381,7 +383,7 @@ TEST(ArenaTest, ReleaseString) {
   Arena arena;
   TestAllTypes* arena_message = Arena::CreateMessage<TestAllTypes>(&arena);
   arena_message->set_optional_string("hello");
-  scoped_ptr<string> released_str(
+  google::protobuf::scoped_ptr<string> released_str(
       arena_message->release_optional_string());
   EXPECT_EQ("hello", *released_str);
 
@@ -619,8 +621,6 @@ TEST(ArenaTest, RepeatedPtrFieldAddClearedTest) {
   }
 }
 
-// N.B.: no reflection version of this test because all the arena-specific code
-// is in RepeatedPtrField, and the reflection works implicitly based on that.
 TEST(ArenaTest, AddAllocatedToRepeatedField) {
   // Heap->arena case.
   Arena arena1;
@@ -678,6 +678,55 @@ TEST(ArenaTest, AddAllocatedToRepeatedField) {
     EXPECT_EQ(s, &arena1_message->repeated_string(i));
     EXPECT_EQ("Test", arena1_message->repeated_string(i));
   }
+}
+
+TEST(ArenaTest, AddAllocatedToRepeatedFieldViaReflection) {
+  // Heap->arena case.
+  Arena arena1;
+  TestAllTypes* arena1_message = Arena::CreateMessage<TestAllTypes>(&arena1);
+  const Reflection* r = arena1_message->GetReflection();
+  const Descriptor* d = arena1_message->GetDescriptor();
+  const FieldDescriptor* fd =
+      d->FindFieldByName("repeated_nested_message");
+  for (int i = 0; i < 10; i++) {
+    TestAllTypes::NestedMessage* heap_submessage =
+        new TestAllTypes::NestedMessage;
+    heap_submessage->set_bb(42);
+    r->AddAllocatedMessage(arena1_message, fd, heap_submessage);
+    // Should not copy object -- will use arena_->Own().
+    EXPECT_EQ(heap_submessage,
+              &arena1_message->repeated_nested_message(i));
+    EXPECT_EQ(42, arena1_message->repeated_nested_message(i).bb());
+  }
+
+  // Arena1->Arena2 case.
+  arena1_message->Clear();
+  for (int i = 0; i < 10; i++) {
+    Arena arena2;
+    TestAllTypes::NestedMessage* arena2_submessage =
+        Arena::CreateMessage<TestAllTypes::NestedMessage>(&arena2);
+    arena2_submessage->set_bb(42);
+    r->AddAllocatedMessage(arena1_message, fd, arena2_submessage);
+    // Should copy object.
+    EXPECT_NE(arena2_submessage,
+              &arena1_message->repeated_nested_message(i));
+    EXPECT_EQ(42, arena1_message->repeated_nested_message(i).bb());
+  }
+
+  // Arena->heap case.
+  TestAllTypes* heap_message = new TestAllTypes;
+  for (int i = 0; i < 10; i++) {
+    Arena arena2;
+    TestAllTypes::NestedMessage* arena2_submessage =
+        Arena::CreateMessage<TestAllTypes::NestedMessage>(&arena2);
+    arena2_submessage->set_bb(42);
+    r->AddAllocatedMessage(heap_message, fd, arena2_submessage);
+    // Should copy object.
+    EXPECT_NE(arena2_submessage,
+              &heap_message->repeated_nested_message(i));
+    EXPECT_EQ(42, heap_message->repeated_nested_message(i).bb());
+  }
+  delete heap_message;
 }
 
 TEST(ArenaTest, ReleaseLastRepeatedField) {
@@ -1230,7 +1279,7 @@ TEST(ArenaTest, ArenaHooksSanity) {
     EXPECT_EQ(1, ArenaHooksTestUtil::num_init);
     EXPECT_EQ(0, ArenaHooksTestUtil::num_allocations);
     ::google::protobuf::Arena::Create<uint64>(&arena);
-    if (::google::protobuf::internal::has_trivial_destructor<uint64>::value) {
+    if (google::protobuf::internal::has_trivial_destructor<uint64>::value) {
       EXPECT_EQ(1, ArenaHooksTestUtil::num_allocations);
     } else {
       EXPECT_EQ(2, ArenaHooksTestUtil::num_allocations);

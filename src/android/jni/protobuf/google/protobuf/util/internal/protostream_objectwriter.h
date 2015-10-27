@@ -71,7 +71,7 @@ class ObjectLocationTracker;
 // It also supports streaming.
 class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter {
  public:
-  // Constructor. Does not take ownership of any parameter passed in.
+// Constructor. Does not take ownership of any parameter passed in.
   ProtoStreamObjectWriter(TypeResolver* type_resolver,
                           const google::protobuf::Type& type,
                           strings::ByteSink* output, ErrorListener* listener);
@@ -82,20 +82,17 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
   virtual ProtoStreamObjectWriter* EndObject();
   virtual ProtoStreamObjectWriter* StartList(StringPiece name);
   virtual ProtoStreamObjectWriter* EndList();
-  virtual ProtoStreamObjectWriter* RenderBool(StringPiece name,
-                                              bool value) {
+  virtual ProtoStreamObjectWriter* RenderBool(StringPiece name, bool value) {
     return RenderDataPiece(name, DataPiece(value));
   }
-  virtual ProtoStreamObjectWriter* RenderInt32(StringPiece name,
-                                               int32 value) {
+  virtual ProtoStreamObjectWriter* RenderInt32(StringPiece name, int32 value) {
     return RenderDataPiece(name, DataPiece(value));
   }
   virtual ProtoStreamObjectWriter* RenderUint32(StringPiece name,
                                                 uint32 value) {
     return RenderDataPiece(name, DataPiece(value));
   }
-  virtual ProtoStreamObjectWriter* RenderInt64(StringPiece name,
-                                               int64 value) {
+  virtual ProtoStreamObjectWriter* RenderInt64(StringPiece name, int64 value) {
     return RenderDataPiece(name, DataPiece(value));
   }
   virtual ProtoStreamObjectWriter* RenderUint64(StringPiece name,
@@ -106,8 +103,7 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
                                                 double value) {
     return RenderDataPiece(name, DataPiece(value));
   }
-  virtual ProtoStreamObjectWriter* RenderFloat(StringPiece name,
-                                               float value) {
+  virtual ProtoStreamObjectWriter* RenderFloat(StringPiece name, float value) {
     return RenderDataPiece(name, DataPiece(value));
   }
   virtual ProtoStreamObjectWriter* RenderString(StringPiece name,
@@ -217,7 +213,7 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
     };
 
     // Constructor for the root element. No parent nor field.
-    ProtoElement(TypeInfo* typeinfo, const google::protobuf::Type& type,
+    ProtoElement(const TypeInfo* typeinfo, const google::protobuf::Type& type,
                  ProtoStreamObjectWriter* enclosing);
 
     // Constructor for a field of an element.
@@ -256,6 +252,20 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
       return static_cast<ProtoElement*>(BaseElement::parent());
     }
 
+    // Returns true if the index is already taken by a preceeding oneof input.
+    bool OneofIndexTaken(int32 index);
+
+    // Marks the oneof 'index' as taken. Future inputs to this oneof will
+    // generate an error.
+    void TakeOneofIndex(int32 index);
+
+    // Inserts map key into hash set if and only if the key did NOT already
+    // exist in hash set.
+    // The hash set (map_keys_) is ONLY used to keep track of map keys.
+    // Return true if insert successfully; returns false if the map key was
+    // already present.
+    bool InsertMapKeyIfNotPresent(StringPiece map_key);
+
    private:
     // Used for access to variables of the enclosing instance of
     // ProtoStreamObjectWriter.
@@ -269,7 +279,7 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
     const google::protobuf::Field* field_;
 
     // TypeInfo to lookup types.
-    TypeInfo* typeinfo_;
+    const TypeInfo* typeinfo_;
 
     // Additional variables if this element is a message:
     // (Root element is always a message).
@@ -289,6 +299,14 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
     // The type of this element, see enum for permissible types.
     ElementType element_type_;
 
+    // Set of oneof indices already seen for the type_. Used to validate
+    // incoming messages so no more than one oneof is set.
+    hash_set<int32> oneof_indices_;
+
+    // Set of map keys already seen for the type_. Used to validate incoming
+    // messages so no map key appears more than once.
+    hash_set<StringPiece> map_keys_;
+
     GOOGLE_DISALLOW_IMPLICIT_CONSTRUCTORS(ProtoElement);
   };
 
@@ -298,7 +316,7 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
     int size;
   };
 
-  ProtoStreamObjectWriter(TypeInfo* typeinfo,
+  ProtoStreamObjectWriter(const TypeInfo* typeinfo,
                           const google::protobuf::Type& type,
                           strings::ByteSink* output, ErrorListener* listener);
 
@@ -371,6 +389,7 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
   // Helper method to write proto tags based on the given field.
   void WriteTag(const google::protobuf::Field& field);
 
+
   // Helper function to render primitive data types in DataPiece.
   void RenderSimpleDataPiece(const google::protobuf::Field& field,
                              const google::protobuf::Type& type,
@@ -400,18 +419,36 @@ class LIBPROTOBUF_EXPORT ProtoStreamObjectWriter : public StructuredObjectWriter
 
   // Helper functions to create the map and find functions responsible for
   // rendering well known types, keyed by type URL.
-  static hash_map<string, TypeRenderer>* CreateRendererMap();
+  static hash_map<string, TypeRenderer>* renderers_;
+  static void InitRendererMap();
+  static void DeleteRendererMap();
   static TypeRenderer* FindTypeRenderer(const string& type_url);
 
   // Returns the ProtoElement::ElementType for the given Type.
   static ProtoElement::ElementType GetElementType(
       const google::protobuf::Type& type);
 
+  // Returns true if the field for type_ can be set as a oneof. If field is not
+  // a oneof type, this function does nothing and returns true.
+  // If another field for this oneof is already set, this function returns
+  // false. It also calls the appropriate error callback.
+  // unnormalized_name is used for error string.
+  bool ValidOneof(const google::protobuf::Field& field,
+                  StringPiece unnormalized_name);
+
+  // Returns true if the map key for type_ is not duplicated key.
+  // If map key is duplicated key, this function returns false.
+  // Note that caller should make sure that the current proto element (element_)
+  // is of element type MAP or STRUCT_MAP.
+  // It also calls the appropriate error callback and unnormalzied_name is used
+  // for error string.
+  bool ValidMapKey(StringPiece unnormalized_name);
+
   // Variables for describing the structure of the input tree:
   // master_type_: descriptor for the whole protobuf message.
   // typeinfo_ : the TypeInfo object to lookup types.
   const google::protobuf::Type& master_type_;
-  TypeInfo* typeinfo_;
+  const TypeInfo* typeinfo_;
   // Whether we own the typeinfo_ object.
   bool own_typeinfo_;
 

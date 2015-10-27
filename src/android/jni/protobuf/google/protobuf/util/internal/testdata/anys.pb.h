@@ -41,8 +41,8 @@ void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fanys_2
 void protobuf_ShutdownFile_google_2fprotobuf_2futil_2finternal_2ftestdata_2fanys_2eproto();
 
 class AnyIn;
-class AnyOut;
 class AnyM;
+class AnyOut;
 
 // ===================================================================
 

@@ -38,12 +38,15 @@
 
 #include <google/protobuf/message.h>
 
+#include <google/protobuf/stubs/logging.h>
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/mutex.h>
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/reflection_internal.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/descriptor.pb.h>
+#include <google/protobuf/map_field.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_util.h>
 #include <google/protobuf/reflection_ops.h>
@@ -256,6 +259,22 @@ void Reflection::AddEnumValue(Message* message,
   GOOGLE_LOG(FATAL) << "Unimplemented EnumValue API.";
 }
 
+MapIterator Reflection::MapBegin(
+    Message* message,
+    const FieldDescriptor* field) const {
+  GOOGLE_LOG(FATAL) << "Unimplemented Map Reflection API.";
+  MapIterator iter(message, field);
+  return iter;
+}
+
+MapIterator Reflection::MapEnd(
+    Message* message,
+    const FieldDescriptor* field) const {
+  GOOGLE_LOG(FATAL) << "Unimplemented Map Reflection API.";
+  MapIterator iter(message, field);
+  return iter;
+}
+
 // =============================================================================
 // MessageFactory
 
@@ -466,16 +485,28 @@ struct ShutdownRepeatedFieldRegister {
 
 namespace internal {
 template<>
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+// Note: force noinline to workaround MSVC 2015 compiler bug, issue #240
+GOOGLE_ATTRIBUTE_NOINLINE
+#endif
 Message* GenericTypeHandler<Message>::NewFromPrototype(
     const Message* prototype, google::protobuf::Arena* arena) {
   return prototype->New(arena);
 }
 template<>
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+// Note: force noinline to workaround MSVC 2015 compiler bug, issue #240
+GOOGLE_ATTRIBUTE_NOINLINE
+#endif
 google::protobuf::Arena* GenericTypeHandler<Message>::GetArena(
     Message* value) {
   return value->GetArena();
 }
 template<>
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+// Note: force noinline to workaround MSVC 2015 compiler bug, issue #240
+GOOGLE_ATTRIBUTE_NOINLINE
+#endif
 void* GenericTypeHandler<Message>::GetMaybeArenaPointer(
     Message* value) {
   return value->GetMaybeArenaPointer();

@@ -70,6 +70,7 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/io/printer.h>
+#include <google/protobuf/stubs/logging.h>
 #include <google/protobuf/stubs/strutil.h>
 #include <google/protobuf/stubs/substitute.h>
 #include <google/protobuf/stubs/map_util.h>
@@ -189,7 +190,7 @@ bool TryCreateParentDirectory(const string& prefix, const string& filename) {
 bool GetProtocAbsolutePath(string* path) {
 #ifdef _WIN32
   char buffer[MAX_PATH];
-  int len = GetModuleFileName(NULL, buffer, MAX_PATH);
+  int len = GetModuleFileNameA(NULL, buffer, MAX_PATH);
 #elif __APPLE__
   char buffer[PATH_MAX];
   int len = 0;
@@ -1657,7 +1658,11 @@ bool CommandLineInterface::WriteDescriptorSet(
                                 &already_seen, file_set.mutable_file());
     }
   } else {
+    set<const FileDescriptor*> already_seen;
     for (int i = 0; i < parsed_files.size(); i++) {
+      if (!already_seen.insert(parsed_files[i]).second) {
+        continue;
+      }
       FileDescriptorProto* file_proto = file_set.add_file();
       parsed_files[i]->CopyTo(file_proto);
       if (source_info_in_descriptor_set_) {

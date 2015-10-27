@@ -46,17 +46,18 @@ void protobuf_AssignDesc_google_2fprotobuf_2futil_2fjson_5fformat_5fproto3_2epro
 void protobuf_ShutdownFile_google_2fprotobuf_2futil_2fjson_5fformat_5fproto3_2eproto();
 
 class MessageType;
-class TestMessage;
-class TestOneof;
-class TestMap;
-class TestWrapper;
-class TestTimestamp;
+class TestAny;
 class TestDuration;
 class TestFieldMask;
-class TestStruct;
-class TestAny;
-class TestValue;
 class TestListValue;
+class TestMap;
+class TestMessage;
+class TestNestedMap;
+class TestOneof;
+class TestStruct;
+class TestTimestamp;
+class TestValue;
+class TestWrapper;
 
 enum EnumType {
   FOO = 0,
@@ -427,10 +428,10 @@ class TestMessage : public ::google::protobuf::Message {
   const ::proto3::MessageType& repeated_message_value(int index) const;
   ::proto3::MessageType* mutable_repeated_message_value(int index);
   ::proto3::MessageType* add_repeated_message_value();
-  const ::google::protobuf::RepeatedPtrField< ::proto3::MessageType >&
-      repeated_message_value() const;
   ::google::protobuf::RepeatedPtrField< ::proto3::MessageType >*
       mutable_repeated_message_value();
+  const ::google::protobuf::RepeatedPtrField< ::proto3::MessageType >&
+      repeated_message_value() const;
 
   // @@protoc_insertion_point(class_scope:proto3.TestMessage)
  private:
@@ -824,6 +825,218 @@ class TestMap : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class TestNestedMap : public ::google::protobuf::Message {
+ public:
+  TestNestedMap();
+  virtual ~TestNestedMap();
+
+  TestNestedMap(const TestNestedMap& from);
+
+  inline TestNestedMap& operator=(const TestNestedMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TestNestedMap& default_instance();
+
+  void Swap(TestNestedMap* other);
+
+  // implements Message ----------------------------------------------
+
+  inline TestNestedMap* New() const { return New(NULL); }
+
+  TestNestedMap* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const TestNestedMap& from);
+  void MergeFrom(const TestNestedMap& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(TestNestedMap* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+
+  // accessors -------------------------------------------------------
+
+  // map<bool, int32> bool_map = 1;
+  int bool_map_size() const;
+  void clear_bool_map();
+  static const int kBoolMapFieldNumber = 1;
+  const ::google::protobuf::Map< bool, ::google::protobuf::int32 >&
+      bool_map() const;
+  ::google::protobuf::Map< bool, ::google::protobuf::int32 >*
+      mutable_bool_map();
+
+  // map<int32, int32> int32_map = 2;
+  int int32_map_size() const;
+  void clear_int32_map();
+  static const int kInt32MapFieldNumber = 2;
+  const ::google::protobuf::Map< ::google::protobuf::int32, ::google::protobuf::int32 >&
+      int32_map() const;
+  ::google::protobuf::Map< ::google::protobuf::int32, ::google::protobuf::int32 >*
+      mutable_int32_map();
+
+  // map<int64, int32> int64_map = 3;
+  int int64_map_size() const;
+  void clear_int64_map();
+  static const int kInt64MapFieldNumber = 3;
+  const ::google::protobuf::Map< ::google::protobuf::int64, ::google::protobuf::int32 >&
+      int64_map() const;
+  ::google::protobuf::Map< ::google::protobuf::int64, ::google::protobuf::int32 >*
+      mutable_int64_map();
+
+  // map<uint32, int32> uint32_map = 4;
+  int uint32_map_size() const;
+  void clear_uint32_map();
+  static const int kUint32MapFieldNumber = 4;
+  const ::google::protobuf::Map< ::google::protobuf::uint32, ::google::protobuf::int32 >&
+      uint32_map() const;
+  ::google::protobuf::Map< ::google::protobuf::uint32, ::google::protobuf::int32 >*
+      mutable_uint32_map();
+
+  // map<uint64, int32> uint64_map = 5;
+  int uint64_map_size() const;
+  void clear_uint64_map();
+  static const int kUint64MapFieldNumber = 5;
+  const ::google::protobuf::Map< ::google::protobuf::uint64, ::google::protobuf::int32 >&
+      uint64_map() const;
+  ::google::protobuf::Map< ::google::protobuf::uint64, ::google::protobuf::int32 >*
+      mutable_uint64_map();
+
+  // map<string, int32> string_map = 6;
+  int string_map_size() const;
+  void clear_string_map();
+  static const int kStringMapFieldNumber = 6;
+  const ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >&
+      string_map() const;
+  ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >*
+      mutable_string_map();
+
+  // map<string, .proto3.TestNestedMap> map_map = 7;
+  int map_map_size() const;
+  void clear_map_map();
+  static const int kMapMapFieldNumber = 7;
+  const ::google::protobuf::Map< ::std::string, ::proto3::TestNestedMap >&
+      map_map() const;
+  ::google::protobuf::Map< ::std::string, ::proto3::TestNestedMap >*
+      mutable_map_map();
+
+  // @@protoc_insertion_point(class_scope:proto3.TestNestedMap)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  typedef ::google::protobuf::internal::MapEntryLite<
+      bool, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_BOOL,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 >
+      TestNestedMap_BoolMapEntry;
+  ::google::protobuf::internal::MapField<
+      bool, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_BOOL,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 > bool_map_;
+  typedef ::google::protobuf::internal::MapEntryLite<
+      ::google::protobuf::int32, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 >
+      TestNestedMap_Int32MapEntry;
+  ::google::protobuf::internal::MapField<
+      ::google::protobuf::int32, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 > int32_map_;
+  typedef ::google::protobuf::internal::MapEntryLite<
+      ::google::protobuf::int64, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT64,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 >
+      TestNestedMap_Int64MapEntry;
+  ::google::protobuf::internal::MapField<
+      ::google::protobuf::int64, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT64,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 > int64_map_;
+  typedef ::google::protobuf::internal::MapEntryLite<
+      ::google::protobuf::uint32, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_UINT32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 >
+      TestNestedMap_Uint32MapEntry;
+  ::google::protobuf::internal::MapField<
+      ::google::protobuf::uint32, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_UINT32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 > uint32_map_;
+  typedef ::google::protobuf::internal::MapEntryLite<
+      ::google::protobuf::uint64, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_UINT64,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 >
+      TestNestedMap_Uint64MapEntry;
+  ::google::protobuf::internal::MapField<
+      ::google::protobuf::uint64, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_UINT64,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 > uint64_map_;
+  typedef ::google::protobuf::internal::MapEntryLite<
+      ::std::string, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 >
+      TestNestedMap_StringMapEntry;
+  ::google::protobuf::internal::MapField<
+      ::std::string, ::google::protobuf::int32,
+      ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 > string_map_;
+  typedef ::google::protobuf::internal::MapEntryLite<
+      ::std::string, ::proto3::TestNestedMap,
+      ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
+      ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
+      0 >
+      TestNestedMap_MapMapEntry;
+  ::google::protobuf::internal::MapField<
+      ::std::string, ::proto3::TestNestedMap,
+      ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
+      ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
+      0 > map_map_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_google_2fprotobuf_2futil_2fjson_5fformat_5fproto3_2eproto();
+  friend void protobuf_AssignDesc_google_2fprotobuf_2futil_2fjson_5fformat_5fproto3_2eproto();
+  friend void protobuf_ShutdownFile_google_2fprotobuf_2futil_2fjson_5fformat_5fproto3_2eproto();
+
+  void InitAsDefaultInstance();
+  static TestNestedMap* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class TestWrapper : public ::google::protobuf::Message {
  public:
   TestWrapper();
@@ -968,10 +1181,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::BoolValue& repeated_bool_value(int index) const;
   ::google::protobuf::BoolValue* mutable_repeated_bool_value(int index);
   ::google::protobuf::BoolValue* add_repeated_bool_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::BoolValue >&
-      repeated_bool_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::BoolValue >*
       mutable_repeated_bool_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::BoolValue >&
+      repeated_bool_value() const;
 
   // repeated .google.protobuf.Int32Value repeated_int32_value = 12;
   int repeated_int32_value_size() const;
@@ -980,10 +1193,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::Int32Value& repeated_int32_value(int index) const;
   ::google::protobuf::Int32Value* mutable_repeated_int32_value(int index);
   ::google::protobuf::Int32Value* add_repeated_int32_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int32Value >&
-      repeated_int32_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int32Value >*
       mutable_repeated_int32_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int32Value >&
+      repeated_int32_value() const;
 
   // repeated .google.protobuf.Int64Value repeated_int64_value = 13;
   int repeated_int64_value_size() const;
@@ -992,10 +1205,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::Int64Value& repeated_int64_value(int index) const;
   ::google::protobuf::Int64Value* mutable_repeated_int64_value(int index);
   ::google::protobuf::Int64Value* add_repeated_int64_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int64Value >&
-      repeated_int64_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int64Value >*
       mutable_repeated_int64_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int64Value >&
+      repeated_int64_value() const;
 
   // repeated .google.protobuf.UInt32Value repeated_uint32_value = 14;
   int repeated_uint32_value_size() const;
@@ -1004,10 +1217,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::UInt32Value& repeated_uint32_value(int index) const;
   ::google::protobuf::UInt32Value* mutable_repeated_uint32_value(int index);
   ::google::protobuf::UInt32Value* add_repeated_uint32_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt32Value >&
-      repeated_uint32_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt32Value >*
       mutable_repeated_uint32_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt32Value >&
+      repeated_uint32_value() const;
 
   // repeated .google.protobuf.UInt64Value repeated_uint64_value = 15;
   int repeated_uint64_value_size() const;
@@ -1016,10 +1229,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::UInt64Value& repeated_uint64_value(int index) const;
   ::google::protobuf::UInt64Value* mutable_repeated_uint64_value(int index);
   ::google::protobuf::UInt64Value* add_repeated_uint64_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt64Value >&
-      repeated_uint64_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt64Value >*
       mutable_repeated_uint64_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt64Value >&
+      repeated_uint64_value() const;
 
   // repeated .google.protobuf.FloatValue repeated_float_value = 16;
   int repeated_float_value_size() const;
@@ -1028,10 +1241,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::FloatValue& repeated_float_value(int index) const;
   ::google::protobuf::FloatValue* mutable_repeated_float_value(int index);
   ::google::protobuf::FloatValue* add_repeated_float_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FloatValue >&
-      repeated_float_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::FloatValue >*
       mutable_repeated_float_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FloatValue >&
+      repeated_float_value() const;
 
   // repeated .google.protobuf.DoubleValue repeated_double_value = 17;
   int repeated_double_value_size() const;
@@ -1040,10 +1253,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::DoubleValue& repeated_double_value(int index) const;
   ::google::protobuf::DoubleValue* mutable_repeated_double_value(int index);
   ::google::protobuf::DoubleValue* add_repeated_double_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::DoubleValue >&
-      repeated_double_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::DoubleValue >*
       mutable_repeated_double_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::DoubleValue >&
+      repeated_double_value() const;
 
   // repeated .google.protobuf.StringValue repeated_string_value = 18;
   int repeated_string_value_size() const;
@@ -1052,10 +1265,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::StringValue& repeated_string_value(int index) const;
   ::google::protobuf::StringValue* mutable_repeated_string_value(int index);
   ::google::protobuf::StringValue* add_repeated_string_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::StringValue >&
-      repeated_string_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::StringValue >*
       mutable_repeated_string_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::StringValue >&
+      repeated_string_value() const;
 
   // repeated .google.protobuf.BytesValue repeated_bytes_value = 19;
   int repeated_bytes_value_size() const;
@@ -1064,10 +1277,10 @@ class TestWrapper : public ::google::protobuf::Message {
   const ::google::protobuf::BytesValue& repeated_bytes_value(int index) const;
   ::google::protobuf::BytesValue* mutable_repeated_bytes_value(int index);
   ::google::protobuf::BytesValue* add_repeated_bytes_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::BytesValue >&
-      repeated_bytes_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::BytesValue >*
       mutable_repeated_bytes_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::BytesValue >&
+      repeated_bytes_value() const;
 
   // @@protoc_insertion_point(class_scope:proto3.TestWrapper)
  private:
@@ -1174,10 +1387,10 @@ class TestTimestamp : public ::google::protobuf::Message {
   const ::google::protobuf::Timestamp& repeated_value(int index) const;
   ::google::protobuf::Timestamp* mutable_repeated_value(int index);
   ::google::protobuf::Timestamp* add_repeated_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Timestamp >&
-      repeated_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Timestamp >*
       mutable_repeated_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Timestamp >&
+      repeated_value() const;
 
   // @@protoc_insertion_point(class_scope:proto3.TestTimestamp)
  private:
@@ -1268,10 +1481,10 @@ class TestDuration : public ::google::protobuf::Message {
   const ::google::protobuf::Duration& repeated_value(int index) const;
   ::google::protobuf::Duration* mutable_repeated_value(int index);
   ::google::protobuf::Duration* add_repeated_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Duration >&
-      repeated_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Duration >*
       mutable_repeated_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Duration >&
+      repeated_value() const;
 
   // @@protoc_insertion_point(class_scope:proto3.TestDuration)
  private:
@@ -1443,10 +1656,10 @@ class TestStruct : public ::google::protobuf::Message {
   const ::google::protobuf::Struct& repeated_value(int index) const;
   ::google::protobuf::Struct* mutable_repeated_value(int index);
   ::google::protobuf::Struct* add_repeated_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Struct >&
-      repeated_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Struct >*
       mutable_repeated_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Struct >&
+      repeated_value() const;
 
   // @@protoc_insertion_point(class_scope:proto3.TestStruct)
  private:
@@ -1537,10 +1750,10 @@ class TestAny : public ::google::protobuf::Message {
   const ::google::protobuf::Any& repeated_value(int index) const;
   ::google::protobuf::Any* mutable_repeated_value(int index);
   ::google::protobuf::Any* add_repeated_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
-      repeated_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
       mutable_repeated_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
+      repeated_value() const;
 
   // @@protoc_insertion_point(class_scope:proto3.TestAny)
  private:
@@ -1631,10 +1844,10 @@ class TestValue : public ::google::protobuf::Message {
   const ::google::protobuf::Value& repeated_value(int index) const;
   ::google::protobuf::Value* mutable_repeated_value(int index);
   ::google::protobuf::Value* add_repeated_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >&
-      repeated_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >*
       mutable_repeated_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >&
+      repeated_value() const;
 
   // @@protoc_insertion_point(class_scope:proto3.TestValue)
  private:
@@ -1725,10 +1938,10 @@ class TestListValue : public ::google::protobuf::Message {
   const ::google::protobuf::ListValue& repeated_value(int index) const;
   ::google::protobuf::ListValue* mutable_repeated_value(int index);
   ::google::protobuf::ListValue* add_repeated_value();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::ListValue >&
-      repeated_value() const;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::ListValue >*
       mutable_repeated_value();
+  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::ListValue >&
+      repeated_value() const;
 
   // @@protoc_insertion_point(class_scope:proto3.TestListValue)
  private:
@@ -2373,15 +2586,15 @@ inline ::proto3::MessageType* TestMessage::add_repeated_message_value() {
   // @@protoc_insertion_point(field_add:proto3.TestMessage.repeated_message_value)
   return repeated_message_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::proto3::MessageType >&
-TestMessage::repeated_message_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestMessage.repeated_message_value)
-  return repeated_message_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::proto3::MessageType >*
 TestMessage::mutable_repeated_message_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestMessage.repeated_message_value)
   return &repeated_message_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::proto3::MessageType >&
+TestMessage::repeated_message_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestMessage.repeated_message_value)
+  return repeated_message_value_;
 }
 
 // -------------------------------------------------------------------
@@ -2619,10 +2832,11 @@ inline void TestOneof::clear_oneof_message_value() {
     clear_has_oneof_value();
   }
 }
-inline const ::proto3::MessageType& TestOneof::oneof_message_value() const {
+inline  const ::proto3::MessageType& TestOneof::oneof_message_value() const {
   // @@protoc_insertion_point(field_get:proto3.TestOneof.oneof_message_value)
-  return has_oneof_message_value() ? *oneof_value_.oneof_message_value_
-                      : ::proto3::MessageType::default_instance();
+  return has_oneof_message_value()
+      ? *oneof_value_.oneof_message_value_
+      : ::proto3::MessageType::default_instance();
 }
 inline ::proto3::MessageType* TestOneof::mutable_oneof_message_value() {
   if (!has_oneof_message_value()) {
@@ -2771,6 +2985,136 @@ inline ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >*
 TestMap::mutable_string_map() {
   // @@protoc_insertion_point(field_mutable_map:proto3.TestMap.string_map)
   return string_map_.MutableMap();
+}
+
+// -------------------------------------------------------------------
+
+// TestNestedMap
+
+// map<bool, int32> bool_map = 1;
+inline int TestNestedMap::bool_map_size() const {
+  return bool_map_.size();
+}
+inline void TestNestedMap::clear_bool_map() {
+  bool_map_.Clear();
+}
+inline const ::google::protobuf::Map< bool, ::google::protobuf::int32 >&
+TestNestedMap::bool_map() const {
+  // @@protoc_insertion_point(field_map:proto3.TestNestedMap.bool_map)
+  return bool_map_.GetMap();
+}
+inline ::google::protobuf::Map< bool, ::google::protobuf::int32 >*
+TestNestedMap::mutable_bool_map() {
+  // @@protoc_insertion_point(field_mutable_map:proto3.TestNestedMap.bool_map)
+  return bool_map_.MutableMap();
+}
+
+// map<int32, int32> int32_map = 2;
+inline int TestNestedMap::int32_map_size() const {
+  return int32_map_.size();
+}
+inline void TestNestedMap::clear_int32_map() {
+  int32_map_.Clear();
+}
+inline const ::google::protobuf::Map< ::google::protobuf::int32, ::google::protobuf::int32 >&
+TestNestedMap::int32_map() const {
+  // @@protoc_insertion_point(field_map:proto3.TestNestedMap.int32_map)
+  return int32_map_.GetMap();
+}
+inline ::google::protobuf::Map< ::google::protobuf::int32, ::google::protobuf::int32 >*
+TestNestedMap::mutable_int32_map() {
+  // @@protoc_insertion_point(field_mutable_map:proto3.TestNestedMap.int32_map)
+  return int32_map_.MutableMap();
+}
+
+// map<int64, int32> int64_map = 3;
+inline int TestNestedMap::int64_map_size() const {
+  return int64_map_.size();
+}
+inline void TestNestedMap::clear_int64_map() {
+  int64_map_.Clear();
+}
+inline const ::google::protobuf::Map< ::google::protobuf::int64, ::google::protobuf::int32 >&
+TestNestedMap::int64_map() const {
+  // @@protoc_insertion_point(field_map:proto3.TestNestedMap.int64_map)
+  return int64_map_.GetMap();
+}
+inline ::google::protobuf::Map< ::google::protobuf::int64, ::google::protobuf::int32 >*
+TestNestedMap::mutable_int64_map() {
+  // @@protoc_insertion_point(field_mutable_map:proto3.TestNestedMap.int64_map)
+  return int64_map_.MutableMap();
+}
+
+// map<uint32, int32> uint32_map = 4;
+inline int TestNestedMap::uint32_map_size() const {
+  return uint32_map_.size();
+}
+inline void TestNestedMap::clear_uint32_map() {
+  uint32_map_.Clear();
+}
+inline const ::google::protobuf::Map< ::google::protobuf::uint32, ::google::protobuf::int32 >&
+TestNestedMap::uint32_map() const {
+  // @@protoc_insertion_point(field_map:proto3.TestNestedMap.uint32_map)
+  return uint32_map_.GetMap();
+}
+inline ::google::protobuf::Map< ::google::protobuf::uint32, ::google::protobuf::int32 >*
+TestNestedMap::mutable_uint32_map() {
+  // @@protoc_insertion_point(field_mutable_map:proto3.TestNestedMap.uint32_map)
+  return uint32_map_.MutableMap();
+}
+
+// map<uint64, int32> uint64_map = 5;
+inline int TestNestedMap::uint64_map_size() const {
+  return uint64_map_.size();
+}
+inline void TestNestedMap::clear_uint64_map() {
+  uint64_map_.Clear();
+}
+inline const ::google::protobuf::Map< ::google::protobuf::uint64, ::google::protobuf::int32 >&
+TestNestedMap::uint64_map() const {
+  // @@protoc_insertion_point(field_map:proto3.TestNestedMap.uint64_map)
+  return uint64_map_.GetMap();
+}
+inline ::google::protobuf::Map< ::google::protobuf::uint64, ::google::protobuf::int32 >*
+TestNestedMap::mutable_uint64_map() {
+  // @@protoc_insertion_point(field_mutable_map:proto3.TestNestedMap.uint64_map)
+  return uint64_map_.MutableMap();
+}
+
+// map<string, int32> string_map = 6;
+inline int TestNestedMap::string_map_size() const {
+  return string_map_.size();
+}
+inline void TestNestedMap::clear_string_map() {
+  string_map_.Clear();
+}
+inline const ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >&
+TestNestedMap::string_map() const {
+  // @@protoc_insertion_point(field_map:proto3.TestNestedMap.string_map)
+  return string_map_.GetMap();
+}
+inline ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >*
+TestNestedMap::mutable_string_map() {
+  // @@protoc_insertion_point(field_mutable_map:proto3.TestNestedMap.string_map)
+  return string_map_.MutableMap();
+}
+
+// map<string, .proto3.TestNestedMap> map_map = 7;
+inline int TestNestedMap::map_map_size() const {
+  return map_map_.size();
+}
+inline void TestNestedMap::clear_map_map() {
+  map_map_.Clear();
+}
+inline const ::google::protobuf::Map< ::std::string, ::proto3::TestNestedMap >&
+TestNestedMap::map_map() const {
+  // @@protoc_insertion_point(field_map:proto3.TestNestedMap.map_map)
+  return map_map_.GetMap();
+}
+inline ::google::protobuf::Map< ::std::string, ::proto3::TestNestedMap >*
+TestNestedMap::mutable_map_map() {
+  // @@protoc_insertion_point(field_mutable_map:proto3.TestNestedMap.map_map)
+  return map_map_.MutableMap();
 }
 
 // -------------------------------------------------------------------
@@ -3129,15 +3473,15 @@ inline ::google::protobuf::BoolValue* TestWrapper::add_repeated_bool_value() {
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_bool_value)
   return repeated_bool_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::BoolValue >&
-TestWrapper::repeated_bool_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_bool_value)
-  return repeated_bool_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::BoolValue >*
 TestWrapper::mutable_repeated_bool_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_bool_value)
   return &repeated_bool_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::BoolValue >&
+TestWrapper::repeated_bool_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_bool_value)
+  return repeated_bool_value_;
 }
 
 // repeated .google.protobuf.Int32Value repeated_int32_value = 12;
@@ -3159,15 +3503,15 @@ inline ::google::protobuf::Int32Value* TestWrapper::add_repeated_int32_value() {
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_int32_value)
   return repeated_int32_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int32Value >&
-TestWrapper::repeated_int32_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_int32_value)
-  return repeated_int32_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int32Value >*
 TestWrapper::mutable_repeated_int32_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_int32_value)
   return &repeated_int32_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int32Value >&
+TestWrapper::repeated_int32_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_int32_value)
+  return repeated_int32_value_;
 }
 
 // repeated .google.protobuf.Int64Value repeated_int64_value = 13;
@@ -3189,15 +3533,15 @@ inline ::google::protobuf::Int64Value* TestWrapper::add_repeated_int64_value() {
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_int64_value)
   return repeated_int64_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int64Value >&
-TestWrapper::repeated_int64_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_int64_value)
-  return repeated_int64_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int64Value >*
 TestWrapper::mutable_repeated_int64_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_int64_value)
   return &repeated_int64_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Int64Value >&
+TestWrapper::repeated_int64_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_int64_value)
+  return repeated_int64_value_;
 }
 
 // repeated .google.protobuf.UInt32Value repeated_uint32_value = 14;
@@ -3219,15 +3563,15 @@ inline ::google::protobuf::UInt32Value* TestWrapper::add_repeated_uint32_value()
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_uint32_value)
   return repeated_uint32_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt32Value >&
-TestWrapper::repeated_uint32_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_uint32_value)
-  return repeated_uint32_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt32Value >*
 TestWrapper::mutable_repeated_uint32_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_uint32_value)
   return &repeated_uint32_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt32Value >&
+TestWrapper::repeated_uint32_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_uint32_value)
+  return repeated_uint32_value_;
 }
 
 // repeated .google.protobuf.UInt64Value repeated_uint64_value = 15;
@@ -3249,15 +3593,15 @@ inline ::google::protobuf::UInt64Value* TestWrapper::add_repeated_uint64_value()
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_uint64_value)
   return repeated_uint64_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt64Value >&
-TestWrapper::repeated_uint64_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_uint64_value)
-  return repeated_uint64_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt64Value >*
 TestWrapper::mutable_repeated_uint64_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_uint64_value)
   return &repeated_uint64_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::UInt64Value >&
+TestWrapper::repeated_uint64_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_uint64_value)
+  return repeated_uint64_value_;
 }
 
 // repeated .google.protobuf.FloatValue repeated_float_value = 16;
@@ -3279,15 +3623,15 @@ inline ::google::protobuf::FloatValue* TestWrapper::add_repeated_float_value() {
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_float_value)
   return repeated_float_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FloatValue >&
-TestWrapper::repeated_float_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_float_value)
-  return repeated_float_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::FloatValue >*
 TestWrapper::mutable_repeated_float_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_float_value)
   return &repeated_float_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FloatValue >&
+TestWrapper::repeated_float_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_float_value)
+  return repeated_float_value_;
 }
 
 // repeated .google.protobuf.DoubleValue repeated_double_value = 17;
@@ -3309,15 +3653,15 @@ inline ::google::protobuf::DoubleValue* TestWrapper::add_repeated_double_value()
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_double_value)
   return repeated_double_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::DoubleValue >&
-TestWrapper::repeated_double_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_double_value)
-  return repeated_double_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::DoubleValue >*
 TestWrapper::mutable_repeated_double_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_double_value)
   return &repeated_double_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::DoubleValue >&
+TestWrapper::repeated_double_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_double_value)
+  return repeated_double_value_;
 }
 
 // repeated .google.protobuf.StringValue repeated_string_value = 18;
@@ -3339,15 +3683,15 @@ inline ::google::protobuf::StringValue* TestWrapper::add_repeated_string_value()
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_string_value)
   return repeated_string_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::StringValue >&
-TestWrapper::repeated_string_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_string_value)
-  return repeated_string_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::StringValue >*
 TestWrapper::mutable_repeated_string_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_string_value)
   return &repeated_string_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::StringValue >&
+TestWrapper::repeated_string_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_string_value)
+  return repeated_string_value_;
 }
 
 // repeated .google.protobuf.BytesValue repeated_bytes_value = 19;
@@ -3369,15 +3713,15 @@ inline ::google::protobuf::BytesValue* TestWrapper::add_repeated_bytes_value() {
   // @@protoc_insertion_point(field_add:proto3.TestWrapper.repeated_bytes_value)
   return repeated_bytes_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::BytesValue >&
-TestWrapper::repeated_bytes_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_bytes_value)
-  return repeated_bytes_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::BytesValue >*
 TestWrapper::mutable_repeated_bytes_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestWrapper.repeated_bytes_value)
   return &repeated_bytes_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::BytesValue >&
+TestWrapper::repeated_bytes_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestWrapper.repeated_bytes_value)
+  return repeated_bytes_value_;
 }
 
 // -------------------------------------------------------------------
@@ -3440,15 +3784,15 @@ inline ::google::protobuf::Timestamp* TestTimestamp::add_repeated_value() {
   // @@protoc_insertion_point(field_add:proto3.TestTimestamp.repeated_value)
   return repeated_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Timestamp >&
-TestTimestamp::repeated_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestTimestamp.repeated_value)
-  return repeated_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Timestamp >*
 TestTimestamp::mutable_repeated_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestTimestamp.repeated_value)
   return &repeated_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Timestamp >&
+TestTimestamp::repeated_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestTimestamp.repeated_value)
+  return repeated_value_;
 }
 
 // -------------------------------------------------------------------
@@ -3511,15 +3855,15 @@ inline ::google::protobuf::Duration* TestDuration::add_repeated_value() {
   // @@protoc_insertion_point(field_add:proto3.TestDuration.repeated_value)
   return repeated_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Duration >&
-TestDuration::repeated_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestDuration.repeated_value)
-  return repeated_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Duration >*
 TestDuration::mutable_repeated_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestDuration.repeated_value)
   return &repeated_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Duration >&
+TestDuration::repeated_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestDuration.repeated_value)
+  return repeated_value_;
 }
 
 // -------------------------------------------------------------------
@@ -3623,15 +3967,15 @@ inline ::google::protobuf::Struct* TestStruct::add_repeated_value() {
   // @@protoc_insertion_point(field_add:proto3.TestStruct.repeated_value)
   return repeated_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Struct >&
-TestStruct::repeated_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestStruct.repeated_value)
-  return repeated_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Struct >*
 TestStruct::mutable_repeated_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestStruct.repeated_value)
   return &repeated_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Struct >&
+TestStruct::repeated_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestStruct.repeated_value)
+  return repeated_value_;
 }
 
 // -------------------------------------------------------------------
@@ -3694,15 +4038,15 @@ inline ::google::protobuf::Any* TestAny::add_repeated_value() {
   // @@protoc_insertion_point(field_add:proto3.TestAny.repeated_value)
   return repeated_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
-TestAny::repeated_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestAny.repeated_value)
-  return repeated_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
 TestAny::mutable_repeated_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestAny.repeated_value)
   return &repeated_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
+TestAny::repeated_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestAny.repeated_value)
+  return repeated_value_;
 }
 
 // -------------------------------------------------------------------
@@ -3765,15 +4109,15 @@ inline ::google::protobuf::Value* TestValue::add_repeated_value() {
   // @@protoc_insertion_point(field_add:proto3.TestValue.repeated_value)
   return repeated_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >&
-TestValue::repeated_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestValue.repeated_value)
-  return repeated_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >*
 TestValue::mutable_repeated_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestValue.repeated_value)
   return &repeated_value_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >&
+TestValue::repeated_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestValue.repeated_value)
+  return repeated_value_;
 }
 
 // -------------------------------------------------------------------
@@ -3836,18 +4180,20 @@ inline ::google::protobuf::ListValue* TestListValue::add_repeated_value() {
   // @@protoc_insertion_point(field_add:proto3.TestListValue.repeated_value)
   return repeated_value_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::ListValue >&
-TestListValue::repeated_value() const {
-  // @@protoc_insertion_point(field_list:proto3.TestListValue.repeated_value)
-  return repeated_value_;
-}
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::ListValue >*
 TestListValue::mutable_repeated_value() {
   // @@protoc_insertion_point(field_mutable_list:proto3.TestListValue.repeated_value)
   return &repeated_value_;
 }
+inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::ListValue >&
+TestListValue::repeated_value() const {
+  // @@protoc_insertion_point(field_list:proto3.TestListValue.repeated_value)
+  return repeated_value_;
+}
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -337,11 +337,11 @@ void StructType::clear_object() {
   if (GetArenaNoVirtual() == NULL && object_ != NULL) delete object_;
   object_ = NULL;
 }
- const ::google::protobuf::Struct& StructType::object() const {
+const ::google::protobuf::Struct& StructType::object() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.structs.StructType.object)
   return object_ != NULL ? *object_ : *default_instance_->object_;
 }
- ::google::protobuf::Struct* StructType::mutable_object() {
+::google::protobuf::Struct* StructType::mutable_object() {
   
   if (object_ == NULL) {
     object_ = new ::google::protobuf::Struct;
@@ -349,13 +349,13 @@ void StructType::clear_object() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.structs.StructType.object)
   return object_;
 }
- ::google::protobuf::Struct* StructType::release_object() {
+::google::protobuf::Struct* StructType::release_object() {
   
   ::google::protobuf::Struct* temp = object_;
   object_ = NULL;
   return temp;
 }
- void StructType::set_allocated_object(::google::protobuf::Struct* object) {
+void StructType::set_allocated_object(::google::protobuf::Struct* object) {
   delete object_;
   object_ = object;
   if (object) {

@@ -323,10 +323,10 @@ bool NestedFieldMask::MergePartialFromCodedStream(
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_data()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->data().data(), this->data().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.NestedFieldMask.data");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.NestedFieldMask.data"));
         } else {
           goto handle_unusual;
         }
@@ -390,9 +390,9 @@ void NestedFieldMask::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:google.protobuf.testing.NestedFieldMask)
   // optional string data = 1;
   if (this->data().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->data().data(), this->data().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.NestedFieldMask.data");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->data(), output);
@@ -418,9 +418,9 @@ void NestedFieldMask::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:google.protobuf.testing.NestedFieldMask)
   // optional string data = 1;
   if (this->data().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->data().data(), this->data().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.NestedFieldMask.data");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -591,11 +591,11 @@ void NestedFieldMask::clear_single_mask() {
   if (GetArenaNoVirtual() == NULL && single_mask_ != NULL) delete single_mask_;
   single_mask_ = NULL;
 }
- const ::google::protobuf::FieldMask& NestedFieldMask::single_mask() const {
+const ::google::protobuf::FieldMask& NestedFieldMask::single_mask() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.NestedFieldMask.single_mask)
   return single_mask_ != NULL ? *single_mask_ : *default_instance_->single_mask_;
 }
- ::google::protobuf::FieldMask* NestedFieldMask::mutable_single_mask() {
+::google::protobuf::FieldMask* NestedFieldMask::mutable_single_mask() {
   
   if (single_mask_ == NULL) {
     single_mask_ = new ::google::protobuf::FieldMask;
@@ -603,13 +603,13 @@ void NestedFieldMask::clear_single_mask() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.NestedFieldMask.single_mask)
   return single_mask_;
 }
- ::google::protobuf::FieldMask* NestedFieldMask::release_single_mask() {
+::google::protobuf::FieldMask* NestedFieldMask::release_single_mask() {
   
   ::google::protobuf::FieldMask* temp = single_mask_;
   single_mask_ = NULL;
   return temp;
 }
- void NestedFieldMask::set_allocated_single_mask(::google::protobuf::FieldMask* single_mask) {
+void NestedFieldMask::set_allocated_single_mask(::google::protobuf::FieldMask* single_mask) {
   delete single_mask_;
   single_mask_ = single_mask;
   if (single_mask) {
@@ -627,27 +627,27 @@ int NestedFieldMask::repeated_mask_size() const {
 void NestedFieldMask::clear_repeated_mask() {
   repeated_mask_.Clear();
 }
- const ::google::protobuf::FieldMask& NestedFieldMask::repeated_mask(int index) const {
+const ::google::protobuf::FieldMask& NestedFieldMask::repeated_mask(int index) const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.NestedFieldMask.repeated_mask)
   return repeated_mask_.Get(index);
 }
- ::google::protobuf::FieldMask* NestedFieldMask::mutable_repeated_mask(int index) {
+::google::protobuf::FieldMask* NestedFieldMask::mutable_repeated_mask(int index) {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.NestedFieldMask.repeated_mask)
   return repeated_mask_.Mutable(index);
 }
- ::google::protobuf::FieldMask* NestedFieldMask::add_repeated_mask() {
+::google::protobuf::FieldMask* NestedFieldMask::add_repeated_mask() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.NestedFieldMask.repeated_mask)
   return repeated_mask_.Add();
 }
- const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
-NestedFieldMask::repeated_mask() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.NestedFieldMask.repeated_mask)
-  return repeated_mask_;
-}
- ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >*
+::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >*
 NestedFieldMask::mutable_repeated_mask() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.NestedFieldMask.repeated_mask)
   return &repeated_mask_;
+}
+const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
+NestedFieldMask::repeated_mask() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.NestedFieldMask.repeated_mask)
+  return repeated_mask_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -748,10 +748,10 @@ bool FieldMaskTest::MergePartialFromCodedStream(
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_id()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->id().data(), this->id().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.FieldMaskTest.id");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.FieldMaskTest.id"));
         } else {
           goto handle_unusual;
         }
@@ -831,9 +831,9 @@ void FieldMaskTest::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:google.protobuf.testing.FieldMaskTest)
   // optional string id = 1;
   if (this->id().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->id().data(), this->id().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.FieldMaskTest.id");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->id(), output);
@@ -865,9 +865,9 @@ void FieldMaskTest::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:google.protobuf.testing.FieldMaskTest)
   // optional string id = 1;
   if (this->id().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->id().data(), this->id().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.FieldMaskTest.id");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -1055,11 +1055,11 @@ void FieldMaskTest::clear_single_mask() {
   if (GetArenaNoVirtual() == NULL && single_mask_ != NULL) delete single_mask_;
   single_mask_ = NULL;
 }
- const ::google::protobuf::FieldMask& FieldMaskTest::single_mask() const {
+const ::google::protobuf::FieldMask& FieldMaskTest::single_mask() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTest.single_mask)
   return single_mask_ != NULL ? *single_mask_ : *default_instance_->single_mask_;
 }
- ::google::protobuf::FieldMask* FieldMaskTest::mutable_single_mask() {
+::google::protobuf::FieldMask* FieldMaskTest::mutable_single_mask() {
   
   if (single_mask_ == NULL) {
     single_mask_ = new ::google::protobuf::FieldMask;
@@ -1067,13 +1067,13 @@ void FieldMaskTest::clear_single_mask() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTest.single_mask)
   return single_mask_;
 }
- ::google::protobuf::FieldMask* FieldMaskTest::release_single_mask() {
+::google::protobuf::FieldMask* FieldMaskTest::release_single_mask() {
   
   ::google::protobuf::FieldMask* temp = single_mask_;
   single_mask_ = NULL;
   return temp;
 }
- void FieldMaskTest::set_allocated_single_mask(::google::protobuf::FieldMask* single_mask) {
+void FieldMaskTest::set_allocated_single_mask(::google::protobuf::FieldMask* single_mask) {
   delete single_mask_;
   single_mask_ = single_mask;
   if (single_mask) {
@@ -1091,27 +1091,27 @@ int FieldMaskTest::repeated_mask_size() const {
 void FieldMaskTest::clear_repeated_mask() {
   repeated_mask_.Clear();
 }
- const ::google::protobuf::FieldMask& FieldMaskTest::repeated_mask(int index) const {
+const ::google::protobuf::FieldMask& FieldMaskTest::repeated_mask(int index) const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTest.repeated_mask)
   return repeated_mask_.Get(index);
 }
- ::google::protobuf::FieldMask* FieldMaskTest::mutable_repeated_mask(int index) {
+::google::protobuf::FieldMask* FieldMaskTest::mutable_repeated_mask(int index) {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTest.repeated_mask)
   return repeated_mask_.Mutable(index);
 }
- ::google::protobuf::FieldMask* FieldMaskTest::add_repeated_mask() {
+::google::protobuf::FieldMask* FieldMaskTest::add_repeated_mask() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.FieldMaskTest.repeated_mask)
   return repeated_mask_.Add();
 }
- const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
-FieldMaskTest::repeated_mask() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.FieldMaskTest.repeated_mask)
-  return repeated_mask_;
-}
- ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >*
+::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >*
 FieldMaskTest::mutable_repeated_mask() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.FieldMaskTest.repeated_mask)
   return &repeated_mask_;
+}
+const ::google::protobuf::RepeatedPtrField< ::google::protobuf::FieldMask >&
+FieldMaskTest::repeated_mask() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.FieldMaskTest.repeated_mask)
+  return repeated_mask_;
 }
 
 // repeated .google.protobuf.testing.NestedFieldMask nested_mask = 4;
@@ -1121,27 +1121,27 @@ int FieldMaskTest::nested_mask_size() const {
 void FieldMaskTest::clear_nested_mask() {
   nested_mask_.Clear();
 }
- const ::google::protobuf::testing::NestedFieldMask& FieldMaskTest::nested_mask(int index) const {
+const ::google::protobuf::testing::NestedFieldMask& FieldMaskTest::nested_mask(int index) const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTest.nested_mask)
   return nested_mask_.Get(index);
 }
- ::google::protobuf::testing::NestedFieldMask* FieldMaskTest::mutable_nested_mask(int index) {
+::google::protobuf::testing::NestedFieldMask* FieldMaskTest::mutable_nested_mask(int index) {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTest.nested_mask)
   return nested_mask_.Mutable(index);
 }
- ::google::protobuf::testing::NestedFieldMask* FieldMaskTest::add_nested_mask() {
+::google::protobuf::testing::NestedFieldMask* FieldMaskTest::add_nested_mask() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.FieldMaskTest.nested_mask)
   return nested_mask_.Add();
 }
- const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >&
-FieldMaskTest::nested_mask() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.FieldMaskTest.nested_mask)
-  return nested_mask_;
-}
- ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >*
+::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >*
 FieldMaskTest::mutable_nested_mask() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.FieldMaskTest.nested_mask)
   return &nested_mask_;
+}
+const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::NestedFieldMask >&
+FieldMaskTest::nested_mask() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.FieldMaskTest.nested_mask)
+  return nested_mask_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1841,11 +1841,11 @@ void FieldMaskTestCases::clear_single_mask() {
   if (GetArenaNoVirtual() == NULL && single_mask_ != NULL) delete single_mask_;
   single_mask_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::single_mask() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::single_mask() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.single_mask)
   return single_mask_ != NULL ? *single_mask_ : *default_instance_->single_mask_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_single_mask() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_single_mask() {
   
   if (single_mask_ == NULL) {
     single_mask_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -1853,13 +1853,13 @@ void FieldMaskTestCases::clear_single_mask() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.single_mask)
   return single_mask_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_single_mask() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_single_mask() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = single_mask_;
   single_mask_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_single_mask(::google::protobuf::testing::FieldMaskWrapper* single_mask) {
+void FieldMaskTestCases::set_allocated_single_mask(::google::protobuf::testing::FieldMaskWrapper* single_mask) {
   delete single_mask_;
   single_mask_ = single_mask;
   if (single_mask) {
@@ -1878,11 +1878,11 @@ void FieldMaskTestCases::clear_multiple_mask() {
   if (GetArenaNoVirtual() == NULL && multiple_mask_ != NULL) delete multiple_mask_;
   multiple_mask_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::multiple_mask() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::multiple_mask() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.multiple_mask)
   return multiple_mask_ != NULL ? *multiple_mask_ : *default_instance_->multiple_mask_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_multiple_mask() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_multiple_mask() {
   
   if (multiple_mask_ == NULL) {
     multiple_mask_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -1890,13 +1890,13 @@ void FieldMaskTestCases::clear_multiple_mask() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.multiple_mask)
   return multiple_mask_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_multiple_mask() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_multiple_mask() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = multiple_mask_;
   multiple_mask_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_multiple_mask(::google::protobuf::testing::FieldMaskWrapper* multiple_mask) {
+void FieldMaskTestCases::set_allocated_multiple_mask(::google::protobuf::testing::FieldMaskWrapper* multiple_mask) {
   delete multiple_mask_;
   multiple_mask_ = multiple_mask;
   if (multiple_mask) {
@@ -1915,11 +1915,11 @@ void FieldMaskTestCases::clear_snake_camel() {
   if (GetArenaNoVirtual() == NULL && snake_camel_ != NULL) delete snake_camel_;
   snake_camel_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::snake_camel() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::snake_camel() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.snake_camel)
   return snake_camel_ != NULL ? *snake_camel_ : *default_instance_->snake_camel_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_snake_camel() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_snake_camel() {
   
   if (snake_camel_ == NULL) {
     snake_camel_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -1927,13 +1927,13 @@ void FieldMaskTestCases::clear_snake_camel() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.snake_camel)
   return snake_camel_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_snake_camel() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_snake_camel() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = snake_camel_;
   snake_camel_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_snake_camel(::google::protobuf::testing::FieldMaskWrapper* snake_camel) {
+void FieldMaskTestCases::set_allocated_snake_camel(::google::protobuf::testing::FieldMaskWrapper* snake_camel) {
   delete snake_camel_;
   snake_camel_ = snake_camel;
   if (snake_camel) {
@@ -1952,11 +1952,11 @@ void FieldMaskTestCases::clear_empty_field() {
   if (GetArenaNoVirtual() == NULL && empty_field_ != NULL) delete empty_field_;
   empty_field_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::empty_field() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::empty_field() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.empty_field)
   return empty_field_ != NULL ? *empty_field_ : *default_instance_->empty_field_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_empty_field() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_empty_field() {
   
   if (empty_field_ == NULL) {
     empty_field_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -1964,13 +1964,13 @@ void FieldMaskTestCases::clear_empty_field() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.empty_field)
   return empty_field_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_empty_field() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_empty_field() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = empty_field_;
   empty_field_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_empty_field(::google::protobuf::testing::FieldMaskWrapper* empty_field) {
+void FieldMaskTestCases::set_allocated_empty_field(::google::protobuf::testing::FieldMaskWrapper* empty_field) {
   delete empty_field_;
   empty_field_ = empty_field;
   if (empty_field) {
@@ -1989,11 +1989,11 @@ void FieldMaskTestCases::clear_apiary_format1() {
   if (GetArenaNoVirtual() == NULL && apiary_format1_ != NULL) delete apiary_format1_;
   apiary_format1_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::apiary_format1() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::apiary_format1() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.apiary_format1)
   return apiary_format1_ != NULL ? *apiary_format1_ : *default_instance_->apiary_format1_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_apiary_format1() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_apiary_format1() {
   
   if (apiary_format1_ == NULL) {
     apiary_format1_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -2001,13 +2001,13 @@ void FieldMaskTestCases::clear_apiary_format1() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.apiary_format1)
   return apiary_format1_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_apiary_format1() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_apiary_format1() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = apiary_format1_;
   apiary_format1_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_apiary_format1(::google::protobuf::testing::FieldMaskWrapper* apiary_format1) {
+void FieldMaskTestCases::set_allocated_apiary_format1(::google::protobuf::testing::FieldMaskWrapper* apiary_format1) {
   delete apiary_format1_;
   apiary_format1_ = apiary_format1;
   if (apiary_format1) {
@@ -2026,11 +2026,11 @@ void FieldMaskTestCases::clear_apiary_format2() {
   if (GetArenaNoVirtual() == NULL && apiary_format2_ != NULL) delete apiary_format2_;
   apiary_format2_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::apiary_format2() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::apiary_format2() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.apiary_format2)
   return apiary_format2_ != NULL ? *apiary_format2_ : *default_instance_->apiary_format2_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_apiary_format2() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_apiary_format2() {
   
   if (apiary_format2_ == NULL) {
     apiary_format2_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -2038,13 +2038,13 @@ void FieldMaskTestCases::clear_apiary_format2() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.apiary_format2)
   return apiary_format2_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_apiary_format2() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_apiary_format2() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = apiary_format2_;
   apiary_format2_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_apiary_format2(::google::protobuf::testing::FieldMaskWrapper* apiary_format2) {
+void FieldMaskTestCases::set_allocated_apiary_format2(::google::protobuf::testing::FieldMaskWrapper* apiary_format2) {
   delete apiary_format2_;
   apiary_format2_ = apiary_format2;
   if (apiary_format2) {
@@ -2063,11 +2063,11 @@ void FieldMaskTestCases::clear_apiary_format3() {
   if (GetArenaNoVirtual() == NULL && apiary_format3_ != NULL) delete apiary_format3_;
   apiary_format3_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::apiary_format3() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::apiary_format3() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.apiary_format3)
   return apiary_format3_ != NULL ? *apiary_format3_ : *default_instance_->apiary_format3_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_apiary_format3() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_apiary_format3() {
   
   if (apiary_format3_ == NULL) {
     apiary_format3_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -2075,13 +2075,13 @@ void FieldMaskTestCases::clear_apiary_format3() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.apiary_format3)
   return apiary_format3_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_apiary_format3() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_apiary_format3() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = apiary_format3_;
   apiary_format3_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_apiary_format3(::google::protobuf::testing::FieldMaskWrapper* apiary_format3) {
+void FieldMaskTestCases::set_allocated_apiary_format3(::google::protobuf::testing::FieldMaskWrapper* apiary_format3) {
   delete apiary_format3_;
   apiary_format3_ = apiary_format3;
   if (apiary_format3) {
@@ -2100,11 +2100,11 @@ void FieldMaskTestCases::clear_map_key1() {
   if (GetArenaNoVirtual() == NULL && map_key1_ != NULL) delete map_key1_;
   map_key1_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key1() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key1() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.map_key1)
   return map_key1_ != NULL ? *map_key1_ : *default_instance_->map_key1_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key1() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key1() {
   
   if (map_key1_ == NULL) {
     map_key1_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -2112,13 +2112,13 @@ void FieldMaskTestCases::clear_map_key1() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.map_key1)
   return map_key1_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key1() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key1() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = map_key1_;
   map_key1_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_map_key1(::google::protobuf::testing::FieldMaskWrapper* map_key1) {
+void FieldMaskTestCases::set_allocated_map_key1(::google::protobuf::testing::FieldMaskWrapper* map_key1) {
   delete map_key1_;
   map_key1_ = map_key1;
   if (map_key1) {
@@ -2137,11 +2137,11 @@ void FieldMaskTestCases::clear_map_key2() {
   if (GetArenaNoVirtual() == NULL && map_key2_ != NULL) delete map_key2_;
   map_key2_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key2() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key2() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.map_key2)
   return map_key2_ != NULL ? *map_key2_ : *default_instance_->map_key2_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key2() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key2() {
   
   if (map_key2_ == NULL) {
     map_key2_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -2149,13 +2149,13 @@ void FieldMaskTestCases::clear_map_key2() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.map_key2)
   return map_key2_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key2() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key2() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = map_key2_;
   map_key2_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_map_key2(::google::protobuf::testing::FieldMaskWrapper* map_key2) {
+void FieldMaskTestCases::set_allocated_map_key2(::google::protobuf::testing::FieldMaskWrapper* map_key2) {
   delete map_key2_;
   map_key2_ = map_key2;
   if (map_key2) {
@@ -2174,11 +2174,11 @@ void FieldMaskTestCases::clear_map_key3() {
   if (GetArenaNoVirtual() == NULL && map_key3_ != NULL) delete map_key3_;
   map_key3_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key3() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key3() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.map_key3)
   return map_key3_ != NULL ? *map_key3_ : *default_instance_->map_key3_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key3() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key3() {
   
   if (map_key3_ == NULL) {
     map_key3_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -2186,13 +2186,13 @@ void FieldMaskTestCases::clear_map_key3() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.map_key3)
   return map_key3_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key3() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key3() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = map_key3_;
   map_key3_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_map_key3(::google::protobuf::testing::FieldMaskWrapper* map_key3) {
+void FieldMaskTestCases::set_allocated_map_key3(::google::protobuf::testing::FieldMaskWrapper* map_key3) {
   delete map_key3_;
   map_key3_ = map_key3;
   if (map_key3) {
@@ -2211,11 +2211,11 @@ void FieldMaskTestCases::clear_map_key4() {
   if (GetArenaNoVirtual() == NULL && map_key4_ != NULL) delete map_key4_;
   map_key4_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key4() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key4() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.map_key4)
   return map_key4_ != NULL ? *map_key4_ : *default_instance_->map_key4_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key4() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key4() {
   
   if (map_key4_ == NULL) {
     map_key4_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -2223,13 +2223,13 @@ void FieldMaskTestCases::clear_map_key4() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.map_key4)
   return map_key4_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key4() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key4() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = map_key4_;
   map_key4_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_map_key4(::google::protobuf::testing::FieldMaskWrapper* map_key4) {
+void FieldMaskTestCases::set_allocated_map_key4(::google::protobuf::testing::FieldMaskWrapper* map_key4) {
   delete map_key4_;
   map_key4_ = map_key4;
   if (map_key4) {
@@ -2248,11 +2248,11 @@ void FieldMaskTestCases::clear_map_key5() {
   if (GetArenaNoVirtual() == NULL && map_key5_ != NULL) delete map_key5_;
   map_key5_ = NULL;
 }
- const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key5() const {
+const ::google::protobuf::testing::FieldMaskWrapper& FieldMaskTestCases::map_key5() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskTestCases.map_key5)
   return map_key5_ != NULL ? *map_key5_ : *default_instance_->map_key5_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key5() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::mutable_map_key5() {
   
   if (map_key5_ == NULL) {
     map_key5_ = new ::google::protobuf::testing::FieldMaskWrapper;
@@ -2260,13 +2260,13 @@ void FieldMaskTestCases::clear_map_key5() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskTestCases.map_key5)
   return map_key5_;
 }
- ::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key5() {
+::google::protobuf::testing::FieldMaskWrapper* FieldMaskTestCases::release_map_key5() {
   
   ::google::protobuf::testing::FieldMaskWrapper* temp = map_key5_;
   map_key5_ = NULL;
   return temp;
 }
- void FieldMaskTestCases::set_allocated_map_key5(::google::protobuf::testing::FieldMaskWrapper* map_key5) {
+void FieldMaskTestCases::set_allocated_map_key5(::google::protobuf::testing::FieldMaskWrapper* map_key5) {
   delete map_key5_;
   map_key5_ = map_key5;
   if (map_key5) {
@@ -2501,11 +2501,11 @@ void FieldMaskWrapper::clear_mask() {
   if (GetArenaNoVirtual() == NULL && mask_ != NULL) delete mask_;
   mask_ = NULL;
 }
- const ::google::protobuf::FieldMask& FieldMaskWrapper::mask() const {
+const ::google::protobuf::FieldMask& FieldMaskWrapper::mask() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.FieldMaskWrapper.mask)
   return mask_ != NULL ? *mask_ : *default_instance_->mask_;
 }
- ::google::protobuf::FieldMask* FieldMaskWrapper::mutable_mask() {
+::google::protobuf::FieldMask* FieldMaskWrapper::mutable_mask() {
   
   if (mask_ == NULL) {
     mask_ = new ::google::protobuf::FieldMask;
@@ -2513,13 +2513,13 @@ void FieldMaskWrapper::clear_mask() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.FieldMaskWrapper.mask)
   return mask_;
 }
- ::google::protobuf::FieldMask* FieldMaskWrapper::release_mask() {
+::google::protobuf::FieldMask* FieldMaskWrapper::release_mask() {
   
   ::google::protobuf::FieldMask* temp = mask_;
   mask_ = NULL;
   return temp;
 }
- void FieldMaskWrapper::set_allocated_mask(::google::protobuf::FieldMask* mask) {
+void FieldMaskWrapper::set_allocated_mask(::google::protobuf::FieldMask* mask) {
   delete mask_;
   mask_ = mask;
   if (mask) {

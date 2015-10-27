@@ -1861,11 +1861,11 @@ void Book::clear_author() {
   if (author_ != NULL) author_->::google::protobuf::testing::Author::Clear();
   clear_has_author();
 }
- const ::google::protobuf::testing::Author& Book::author() const {
+const ::google::protobuf::testing::Author& Book::author() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.Book.author)
   return author_ != NULL ? *author_ : *default_instance_->author_;
 }
- ::google::protobuf::testing::Author* Book::mutable_author() {
+::google::protobuf::testing::Author* Book::mutable_author() {
   set_has_author();
   if (author_ == NULL) {
     author_ = new ::google::protobuf::testing::Author;
@@ -1873,13 +1873,13 @@ void Book::clear_author() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.Book.author)
   return author_;
 }
- ::google::protobuf::testing::Author* Book::release_author() {
+::google::protobuf::testing::Author* Book::release_author() {
   clear_has_author();
   ::google::protobuf::testing::Author* temp = author_;
   author_ = NULL;
   return temp;
 }
- void Book::set_allocated_author(::google::protobuf::testing::Author* author) {
+void Book::set_allocated_author(::google::protobuf::testing::Author* author) {
   delete author_;
   author_ = author;
   if (author) {
@@ -2005,11 +2005,11 @@ void Book::clear_data() {
   if (data_ != NULL) data_->::google::protobuf::testing::Book_Data::Clear();
   clear_has_data();
 }
- const ::google::protobuf::testing::Book_Data& Book::data() const {
+const ::google::protobuf::testing::Book_Data& Book::data() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.Book.data)
   return data_ != NULL ? *data_ : *default_instance_->data_;
 }
- ::google::protobuf::testing::Book_Data* Book::mutable_data() {
+::google::protobuf::testing::Book_Data* Book::mutable_data() {
   set_has_data();
   if (data_ == NULL) {
     data_ = new ::google::protobuf::testing::Book_Data;
@@ -2017,13 +2017,13 @@ void Book::clear_data() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.Book.data)
   return data_;
 }
- ::google::protobuf::testing::Book_Data* Book::release_data() {
+::google::protobuf::testing::Book_Data* Book::release_data() {
   clear_has_data();
   ::google::protobuf::testing::Book_Data* temp = data_;
   data_ = NULL;
   return temp;
 }
- void Book::set_allocated_data(::google::protobuf::testing::Book_Data* data) {
+void Book::set_allocated_data(::google::protobuf::testing::Book_Data* data) {
   delete data_;
   data_ = data;
   if (data) {
@@ -2048,11 +2048,11 @@ void Book::clear_publisher() {
   if (publisher_ != NULL) publisher_->::google::protobuf::testing::Publisher::Clear();
   clear_has_publisher();
 }
- const ::google::protobuf::testing::Publisher& Book::publisher() const {
+const ::google::protobuf::testing::Publisher& Book::publisher() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.Book.publisher)
   return publisher_ != NULL ? *publisher_ : *default_instance_->publisher_;
 }
- ::google::protobuf::testing::Publisher* Book::mutable_publisher() {
+::google::protobuf::testing::Publisher* Book::mutable_publisher() {
   set_has_publisher();
   if (publisher_ == NULL) {
     publisher_ = new ::google::protobuf::testing::Publisher;
@@ -2060,13 +2060,13 @@ void Book::clear_publisher() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.Book.publisher)
   return publisher_;
 }
- ::google::protobuf::testing::Publisher* Book::release_publisher() {
+::google::protobuf::testing::Publisher* Book::release_publisher() {
   clear_has_publisher();
   ::google::protobuf::testing::Publisher* temp = publisher_;
   publisher_ = NULL;
   return temp;
 }
- void Book::set_allocated_publisher(::google::protobuf::testing::Publisher* publisher) {
+void Book::set_allocated_publisher(::google::protobuf::testing::Publisher* publisher) {
   delete publisher_;
   publisher_ = publisher;
   if (publisher) {
@@ -2084,27 +2084,27 @@ int Book::labels_size() const {
 void Book::clear_labels() {
   labels_.Clear();
 }
- const ::google::protobuf::testing::Book_Label& Book::labels(int index) const {
+const ::google::protobuf::testing::Book_Label& Book::labels(int index) const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.Book.labels)
   return labels_.Get(index);
 }
- ::google::protobuf::testing::Book_Label* Book::mutable_labels(int index) {
+::google::protobuf::testing::Book_Label* Book::mutable_labels(int index) {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.Book.labels)
   return labels_.Mutable(index);
 }
- ::google::protobuf::testing::Book_Label* Book::add_labels() {
+::google::protobuf::testing::Book_Label* Book::add_labels() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.Book.labels)
   return labels_.Add();
 }
- const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >&
-Book::labels() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.Book.labels)
-  return labels_;
-}
- ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >*
+::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >*
 Book::mutable_labels() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.Book.labels)
   return &labels_;
+}
+const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Book_Label >&
+Book::labels() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.Book.labels)
+  return labels_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2637,10 +2637,10 @@ void Author::SerializeWithCachedSizes(
 
   // repeated string pseudonym = 3;
   for (int i = 0; i < this->pseudonym_size(); i++) {
-  ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-    this->pseudonym(i).data(), this->pseudonym(i).length(),
-    ::google::protobuf::internal::WireFormat::SERIALIZE,
-    "google.protobuf.testing.Author.pseudonym");
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->pseudonym(i).data(), this->pseudonym(i).length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "google.protobuf.testing.Author.pseudonym");
     ::google::protobuf::internal::WireFormatLite::WriteString(
       3, this->pseudonym(i), output);
   }
@@ -3000,27 +3000,27 @@ int Author::friend__size() const {
 void Author::clear_friend_() {
   friend__.Clear();
 }
- const ::google::protobuf::testing::Author& Author::friend_(int index) const {
+const ::google::protobuf::testing::Author& Author::friend_(int index) const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.Author.friend)
   return friend__.Get(index);
 }
- ::google::protobuf::testing::Author* Author::mutable_friend_(int index) {
+::google::protobuf::testing::Author* Author::mutable_friend_(int index) {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.Author.friend)
   return friend__.Mutable(index);
 }
- ::google::protobuf::testing::Author* Author::add_friend_() {
+::google::protobuf::testing::Author* Author::add_friend_() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.Author.friend)
   return friend__.Add();
 }
- const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >&
-Author::friend_() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.Author.friend)
-  return friend__;
-}
- ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >*
+::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >*
 Author::mutable_friend_() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.Author.friend)
   return &friend__;
+}
+const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::Author >&
+Author::friend_() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.Author.friend)
+  return friend__;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -4451,10 +4451,10 @@ void Primitive::SerializeWithCachedSizes(
 
   // repeated string rep_str = 26;
   for (int i = 0; i < this->rep_str_size(); i++) {
-  ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-    this->rep_str(i).data(), this->rep_str(i).length(),
-    ::google::protobuf::internal::WireFormat::SERIALIZE,
-    "google.protobuf.testing.Primitive.rep_str");
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->rep_str(i).data(), this->rep_str(i).length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "google.protobuf.testing.Primitive.rep_str");
     ::google::protobuf::internal::WireFormatLite::WriteString(
       26, this->rep_str(i), output);
   }
@@ -7624,11 +7624,11 @@ void NestedBook::clear_book() {
   if (book_ != NULL) book_->::google::protobuf::testing::Book::Clear();
   clear_has_book();
 }
- const ::google::protobuf::testing::Book& NestedBook::book() const {
+const ::google::protobuf::testing::Book& NestedBook::book() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.NestedBook.book)
   return book_ != NULL ? *book_ : *default_instance_->book_;
 }
- ::google::protobuf::testing::Book* NestedBook::mutable_book() {
+::google::protobuf::testing::Book* NestedBook::mutable_book() {
   set_has_book();
   if (book_ == NULL) {
     book_ = new ::google::protobuf::testing::Book;
@@ -7636,13 +7636,13 @@ void NestedBook::clear_book() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.NestedBook.book)
   return book_;
 }
- ::google::protobuf::testing::Book* NestedBook::release_book() {
+::google::protobuf::testing::Book* NestedBook::release_book() {
   clear_has_book();
   ::google::protobuf::testing::Book* temp = book_;
   book_ = NULL;
   return temp;
 }
- void NestedBook::set_allocated_book(::google::protobuf::testing::Book* book) {
+void NestedBook::set_allocated_book(::google::protobuf::testing::Book* book) {
   delete book_;
   book_ = book;
   if (book) {

@@ -35,7 +35,6 @@
 #include <google/protobuf/compiler/code_generator.h>
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/descriptor.pb.h>
 #include <google/protobuf/stubs/stl_util.h>
 #include <google/protobuf/stubs/strutil.h>
 #include <sstream>
@@ -55,9 +54,6 @@ FileGenerator::FileGenerator(const FileDescriptor *file)
     : file_(file),
       root_class_name_(FileClassName(file)),
       is_public_dep_(false) {
-  // Validate the objc prefix.
-  ValidateObjCClassPrefix(file_);
-
   for (int i = 0; i < file_->enum_type_count(); i++) {
     EnumGenerator *generator = new EnumGenerator(file_->enum_type(i));
     enum_generators_.push_back(generator);
@@ -117,9 +113,9 @@ void FileGenerator::GenerateHeader(io::Printer *printer) {
 
   printer->Print(
       "// @@protoc_insertion_point(imports)\n"
+      "\n"
+      "CF_EXTERN_C_BEGIN\n"
       "\n");
-
-  printer->Print("CF_EXTERN_C_BEGIN\n\n");
 
   set<string> fwd_decls;
   for (vector<MessageGenerator *>::iterator iter = message_generators_.begin();
@@ -133,6 +129,10 @@ void FileGenerator::GenerateHeader(io::Printer *printer) {
   if (fwd_decls.begin() != fwd_decls.end()) {
     printer->Print("\n");
   }
+
+  printer->Print(
+      "NS_ASSUME_NONNULL_BEGIN\n"
+      "\n");
 
   // need to write out all enums first
   for (vector<EnumGenerator *>::iterator iter = enum_generators_.begin();
@@ -148,7 +148,6 @@ void FileGenerator::GenerateHeader(io::Printer *printer) {
   // For extensions to chain together, the Root gets created even if there
   // are no extensions.
   printer->Print(
-      "\n"
       "#pragma mark - $root_class_name$\n"
       "\n"
       "@interface $root_class_name$ : GPBRootObject\n"
@@ -182,11 +181,12 @@ void FileGenerator::GenerateHeader(io::Printer *printer) {
     (*iter)->GenerateMessageHeader(printer);
   }
 
-  printer->Print("CF_EXTERN_C_END\n");
-
   printer->Print(
-    "\n"
-    "// @@protoc_insertion_point(global_scope)\n");
+      "NS_ASSUME_NONNULL_END\n"
+      "\n"
+      "CF_EXTERN_C_END\n"
+      "\n"
+      "// @@protoc_insertion_point(global_scope)\n");
 }
 
 void FileGenerator::GenerateSource(io::Printer *printer) {

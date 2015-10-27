@@ -42,8 +42,8 @@ void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fmaps_2
 void protobuf_ShutdownFile_google_2fprotobuf_2futil_2finternal_2ftestdata_2fmaps_2eproto();
 
 class MapIn;
-class MapOut;
 class MapM;
+class MapOut;
 
 // ===================================================================
 

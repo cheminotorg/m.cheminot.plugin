@@ -35,6 +35,7 @@
 #include <map>
 #include <string>
 
+#include <google/protobuf/stubs/logging.h>
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/compiler/java/java_context.h>
 #include <google/protobuf/compiler/java/java_doc_comment.h>
@@ -298,7 +299,7 @@ GenerateParsingCode(io::Printer* printer) const {
       "if (value == null) {\n");
     if (PreserveUnknownFields(descriptor_->containing_type())) {
       printer->Print(variables_,
-        "  unknownFields.mergeVarintField($number$, rawValue);\n");
+        "  super.mergeVarintField($number$, rawValue);\n");
     }
     printer->Print(variables_,
       "} else {\n"
@@ -491,7 +492,7 @@ GenerateParsingCode(io::Printer* printer) const {
       "if (value == null) {\n");
     if (PreserveUnknownFields(descriptor_->containing_type())) {
       printer->Print(variables_,
-        "  unknownFields.mergeVarintField($number$, rawValue);\n");
+        "  super.mergeVarintField($number$, rawValue);\n");
     }
     printer->Print(variables_,
       "} else {\n"
@@ -849,7 +850,7 @@ GenerateParsingCode(io::Printer* printer) const {
         "if (value == null) {\n");
     if (PreserveUnknownFields(descriptor_->containing_type())) {
       printer->Print(variables_,
-        "  unknownFields.mergeVarintField($number$, rawValue);\n");
+        "  super.mergeVarintField($number$, rawValue);\n");
     }
     printer->Print(variables_,
       "} else {\n"

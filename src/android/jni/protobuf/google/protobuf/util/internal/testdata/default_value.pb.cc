@@ -28,6 +28,10 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* DoubleMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   DoubleMessage_reflection_ = NULL;
+struct DoubleMessageOneofInstance {
+  ::google::protobuf::internal::ArenaStringPtr str_value_;
+  ::google::protobuf::int64 num_value_;
+}* DoubleMessage_default_oneof_instance_ = NULL;
 const ::google::protobuf::Descriptor* StructMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   StructMessage_reflection_ = NULL;
@@ -85,13 +89,14 @@ void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefaul
       "google/protobuf/util/internal/testdata/default_value.proto");
   GOOGLE_CHECK(file != NULL);
   DefaultValueTestCases_descriptor_ = file->message_type(0);
-  static const int DefaultValueTestCases_offsets_[40] = {
+  static const int DefaultValueTestCases_offsets_[43] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, empty_double_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, double_with_default_value_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, double_with_nondefault_value_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, repeated_double_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, nested_message_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, repeated_nested_message_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, double_message_with_oneof_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, empty_struct_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, empty_struct2_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, struct_with_null_value_),
@@ -124,6 +129,8 @@ void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefaul
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, mixed1_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, mixed2_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, map_of_objects_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, mixed_empty_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, message_map_empty_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, double_value_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, double_value_default_),
   };
@@ -139,12 +146,15 @@ void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefaul
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DefaultValueTestCases, _is_default_instance_));
   DoubleMessage_descriptor_ = file->message_type(1);
-  static const int DoubleMessage_offsets_[5] = {
+  static const int DoubleMessage_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, double_value_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, repeated_double_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, nested_message_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, repeated_nested_message_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, double_wrapper_),
+    PROTO2_GENERATED_DEFAULT_ONEOF_FIELD_OFFSET(DoubleMessage_default_oneof_instance_, str_value_),
+    PROTO2_GENERATED_DEFAULT_ONEOF_FIELD_OFFSET(DoubleMessage_default_oneof_instance_, num_value_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, value_),
   };
   DoubleMessage_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -154,6 +164,8 @@ void protobuf_AssignDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefaul
       -1,
       -1,
       -1,
+      DoubleMessage_default_oneof_instance_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, _oneof_case_[0]),
       sizeof(DoubleMessage),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleMessage, _is_default_instance_));
@@ -475,6 +487,7 @@ void protobuf_ShutdownFile_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefa
   delete DefaultValueTestCases::default_instance_;
   delete DefaultValueTestCases_reflection_;
   delete DoubleMessage::default_instance_;
+  delete DoubleMessage_default_oneof_instance_;
   delete DoubleMessage_reflection_;
   delete StructMessage::default_instance_;
   delete StructMessage_reflection_;
@@ -518,7 +531,7 @@ void protobuf_AddDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefault_5
     "/default_value.proto\022\027google.protobuf.te"
     "sting\032\031google/protobuf/any.proto\032\034google"
     "/protobuf/struct.proto\032\036google/protobuf/"
-    "wrappers.proto\"\211\025\n\025DefaultValueTestCases"
+    "wrappers.proto\"\316\026\n\025DefaultValueTestCases"
     "\022<\n\014empty_double\030\001 \001(\0132&.google.protobuf"
     ".testing.DoubleMessage\022I\n\031double_with_de"
     "fault_value\030\002 \001(\0132&.google.protobuf.test"
@@ -529,115 +542,122 @@ void protobuf_AddDesc_google_2fprotobuf_2futil_2finternal_2ftestdata_2fdefault_5
     "\022>\n\016nested_message\030\005 \001(\0132&.google.protob"
     "uf.testing.DoubleMessage\022G\n\027repeated_nes"
     "ted_message\030\006 \001(\0132&.google.protobuf.test"
-    "ing.DoubleMessage\022=\n\014empty_struct\030\311\001 \001(\013"
-    "2&.google.protobuf.testing.StructMessage"
-    "\022>\n\rempty_struct2\030\312\001 \001(\0132&.google.protob"
-    "uf.testing.StructMessage\022G\n\026struct_with_"
-    "null_value\030\313\001 \001(\0132&.google.protobuf.test"
-    "ing.StructMessage\022C\n\022struct_with_values\030"
-    "\314\001 \001(\0132&.google.protobuf.testing.StructM"
-    "essage\022J\n\031struct_with_nested_struct\030\315\001 \001"
-    "(\0132&.google.protobuf.testing.StructMessa"
-    "ge\022H\n\027struct_with_nested_list\030\316\001 \001(\0132&.g"
-    "oogle.protobuf.testing.StructMessage\022J\n\031"
-    "struct_with_list_of_nulls\030\317\001 \001(\0132&.googl"
-    "e.protobuf.testing.StructMessage\022J\n\031stru"
-    "ct_with_list_of_lists\030\320\001 \001(\0132&.google.pr"
-    "otobuf.testing.StructMessage\022L\n\033struct_w"
-    "ith_list_of_structs\030\321\001 \001(\0132&.google.prot"
-    "obuf.testing.StructMessage\0222\n\020top_level_"
-    "struct\030\322\001 \001(\0132\027.google.protobuf.Struct\022D"
-    "\n\024value_wrapper_simple\030\324\001 \001(\0132%.google.p"
-    "rotobuf.testing.ValueMessage\022I\n\031value_wr"
-    "apper_with_struct\030\325\001 \001(\0132%.google.protob"
-    "uf.testing.ValueMessage\022G\n\027value_wrapper"
-    "_with_list\030\326\001 \001(\0132%.google.protobuf.test"
-    "ing.ValueMessage\022F\n\022list_value_wrapper\030\327"
-    "\001 \001(\0132).google.protobuf.testing.ListValu"
-    "eMessage\0227\n\026top_level_value_simple\030\330\001 \001("
-    "\0132\026.google.protobuf.Value\022<\n\033top_level_v"
-    "alue_with_struct\030\331\001 \001(\0132\026.google.protobu"
-    "f.Value\022:\n\031top_level_value_with_list\030\332\001 "
-    "\001(\0132\026.google.protobuf.Value\0228\n\023top_level"
-    "_listvalue\030\333\001 \001(\0132\032.google.protobuf.List"
-    "Value\0227\n\tempty_any\030\255\002 \001(\0132#.google.proto"
-    "buf.testing.AnyMessage\022;\n\rtype_only_any\030"
-    "\256\002 \001(\0132#.google.protobuf.testing.AnyMess"
-    "age\022;\n\rrecursive_any\030\257\002 \001(\0132#.google.pro"
-    "tobuf.testing.AnyMessage\022D\n\026any_with_mes"
-    "sage_value\030\260\002 \001(\0132#.google.protobuf.test"
-    "ing.AnyMessage\022E\n\027any_with_nested_messag"
-    "e\030\261\002 \001(\0132#.google.protobuf.testing.AnyMe"
-    "ssage\022M\n\037any_with_message_containing_map"
-    "\030\262\002 \001(\0132#.google.protobuf.testing.AnyMes"
-    "sage\022P\n\"any_with_message_containing_stru"
-    "ct\030\263\002 \001(\0132#.google.protobuf.testing.AnyM"
-    "essage\022,\n\rtop_level_any\030\264\002 \001(\0132\024.google."
-    "protobuf.Any\022;\n\tempty_map\030\221\003 \001(\0132\'.googl"
-    "e.protobuf.testing.StringtoIntMap\022\?\n\rstr"
-    "ing_to_int\030\222\003 \001(\0132\'.google.protobuf.test"
-    "ing.StringtoIntMap\022\?\n\rint_to_string\030\223\003 \001"
-    "(\0132\'.google.protobuf.testing.IntToString"
-    "Map\0222\n\006mixed1\030\224\003 \001(\0132!.google.protobuf.t"
-    "esting.MixedMap\0223\n\006mixed2\030\225\003 \001(\0132\".googl"
-    "e.protobuf.testing.MixedMap2\022<\n\016map_of_o"
-    "bjects\030\226\003 \001(\0132#.google.protobuf.testing."
-    "MessageMap\022B\n\014double_value\030\365\003 \001(\0132+.goog"
-    "le.protobuf.testing.DoubleValueMessage\022J"
-    "\n\024double_value_default\030\366\003 \001(\0132+.google.p"
-    "rotobuf.testing.DoubleValueMessage\"\375\001\n\rD"
-    "oubleMessage\022\024\n\014double_value\030\001 \001(\001\022\027\n\017re"
-    "peated_double\030\002 \003(\001\022>\n\016nested_message\030\003 "
-    "\001(\0132&.google.protobuf.testing.DoubleMess"
-    "age\022G\n\027repeated_nested_message\030\004 \003(\0132&.g"
-    "oogle.protobuf.testing.DoubleMessage\0224\n\016"
-    "double_wrapper\030d \001(\0132\034.google.protobuf.D"
-    "oubleValue\"8\n\rStructMessage\022\'\n\006struct\030\001 "
-    "\001(\0132\027.google.protobuf.Struct\"5\n\014ValueMes"
-    "sage\022%\n\005value\030\001 \001(\0132\026.google.protobuf.Va"
-    "lue\"E\n\020ListValueMessage\0221\n\rshopping_list"
-    "\030\001 \001(\0132\032.google.protobuf.ListValue\"!\n\016Re"
-    "questMessage\022\017\n\007content\030\001 \001(\t\"_\n\nAnyMess"
-    "age\022!\n\003any\030\001 \001(\0132\024.google.protobuf.Any\022."
-    "\n\004data\030\002 \001(\0132 .google.protobuf.testing.A"
-    "nyData\"\301\002\n\007AnyData\022\014\n\004attr\030\001 \001(\005\022\013\n\003str\030"
-    "\002 \001(\t\022\014\n\004msgs\030\003 \003(\t\0225\n\013nested_data\030\004 \001(\013"
-    "2 .google.protobuf.testing.AnyData\022\?\n\010ma"
-    "p_data\030\007 \003(\0132-.google.protobuf.testing.A"
-    "nyData.MapDataEntry\022,\n\013struct_data\030\010 \001(\013"
-    "2\027.google.protobuf.Struct\0227\n\rrepeated_da"
-    "ta\030\t \003(\0132 .google.protobuf.testing.AnyDa"
-    "ta\032.\n\014MapDataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value"
-    "\030\002 \001(\t:\0028\001\"{\n\016StringtoIntMap\022=\n\003map\030\001 \003("
-    "\01320.google.protobuf.testing.StringtoIntM"
-    "ap.MapEntry\032*\n\010MapEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005"
-    "value\030\002 \001(\005:\0028\001\"{\n\016IntToStringMap\022=\n\003map"
-    "\030\001 \003(\01320.google.protobuf.testing.IntToSt"
-    "ringMap.MapEntry\032*\n\010MapEntry\022\013\n\003key\030\001 \001("
-    "\005\022\r\n\005value\030\002 \001(\t:\0028\001\"\217\001\n\010MixedMap\022\013\n\003msg"
-    "\030\001 \001(\t\0227\n\003map\030\002 \003(\0132*.google.protobuf.te"
-    "sting.MixedMap.MapEntry\022\021\n\tint_value\030\003 \001"
-    "(\005\032*\n\010MapEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001"
-    "(\002:\0028\001\"\325\001\n\tMixedMap2\0228\n\003map\030\001 \003(\0132+.goog"
-    "le.protobuf.testing.MixedMap2.MapEntry\0220"
-    "\n\002ee\030\002 \001(\0162$.google.protobuf.testing.Mix"
-    "edMap2.E\022\013\n\003msg\030\004 \001(\t\032*\n\010MapEntry\022\013\n\003key"
-    "\030\001 \001(\005\022\r\n\005value\030\002 \001(\010:\0028\001\"#\n\001E\022\006\n\002E0\020\000\022\006"
-    "\n\002E1\020\001\022\006\n\002E2\020\002\022\006\n\002E3\020\003\"\306\001\n\nMessageMap\0229\n"
-    "\003map\030\001 \003(\0132,.google.protobuf.testing.Mes"
-    "sageMap.MapEntry\032*\n\001M\022\021\n\tinner_int\030\001 \001(\005"
-    "\022\022\n\ninner_text\030\002 \001(\t\032Q\n\010MapEntry\022\013\n\003key\030"
-    "\001 \001(\t\0224\n\005value\030\002 \001(\0132%.google.protobuf.t"
-    "esting.MessageMap.M:\0028\001\"B\n\022DoubleValueMe"
-    "ssage\022,\n\006double\030\001 \001(\0132\034.google.protobuf."
-    "DoubleValue2z\n\027DefaultValueTestService\022_"
-    "\n\004Call\022\'.google.protobuf.testing.Request"
-    "Message\032..google.protobuf.testing.Defaul"
-    "tValueTestCasesb\006proto3", 4783);
+    "ing.DoubleMessage\022I\n\031double_message_with"
+    "_oneof\030\007 \001(\0132&.google.protobuf.testing.D"
+    "oubleMessage\022=\n\014empty_struct\030\311\001 \001(\0132&.go"
+    "ogle.protobuf.testing.StructMessage\022>\n\re"
+    "mpty_struct2\030\312\001 \001(\0132&.google.protobuf.te"
+    "sting.StructMessage\022G\n\026struct_with_null_"
+    "value\030\313\001 \001(\0132&.google.protobuf.testing.S"
+    "tructMessage\022C\n\022struct_with_values\030\314\001 \001("
+    "\0132&.google.protobuf.testing.StructMessag"
+    "e\022J\n\031struct_with_nested_struct\030\315\001 \001(\0132&."
+    "google.protobuf.testing.StructMessage\022H\n"
+    "\027struct_with_nested_list\030\316\001 \001(\0132&.google"
+    ".protobuf.testing.StructMessage\022J\n\031struc"
+    "t_with_list_of_nulls\030\317\001 \001(\0132&.google.pro"
+    "tobuf.testing.StructMessage\022J\n\031struct_wi"
+    "th_list_of_lists\030\320\001 \001(\0132&.google.protobu"
+    "f.testing.StructMessage\022L\n\033struct_with_l"
+    "ist_of_structs\030\321\001 \001(\0132&.google.protobuf."
+    "testing.StructMessage\0222\n\020top_level_struc"
+    "t\030\322\001 \001(\0132\027.google.protobuf.Struct\022D\n\024val"
+    "ue_wrapper_simple\030\324\001 \001(\0132%.google.protob"
+    "uf.testing.ValueMessage\022I\n\031value_wrapper"
+    "_with_struct\030\325\001 \001(\0132%.google.protobuf.te"
+    "sting.ValueMessage\022G\n\027value_wrapper_with"
+    "_list\030\326\001 \001(\0132%.google.protobuf.testing.V"
+    "alueMessage\022F\n\022list_value_wrapper\030\327\001 \001(\013"
+    "2).google.protobuf.testing.ListValueMess"
+    "age\0227\n\026top_level_value_simple\030\330\001 \001(\0132\026.g"
+    "oogle.protobuf.Value\022<\n\033top_level_value_"
+    "with_struct\030\331\001 \001(\0132\026.google.protobuf.Val"
+    "ue\022:\n\031top_level_value_with_list\030\332\001 \001(\0132\026"
+    ".google.protobuf.Value\0228\n\023top_level_list"
+    "value\030\333\001 \001(\0132\032.google.protobuf.ListValue"
+    "\0227\n\tempty_any\030\255\002 \001(\0132#.google.protobuf.t"
+    "esting.AnyMessage\022;\n\rtype_only_any\030\256\002 \001("
+    "\0132#.google.protobuf.testing.AnyMessage\022;"
+    "\n\rrecursive_any\030\257\002 \001(\0132#.google.protobuf"
+    ".testing.AnyMessage\022D\n\026any_with_message_"
+    "value\030\260\002 \001(\0132#.google.protobuf.testing.A"
+    "nyMessage\022E\n\027any_with_nested_message\030\261\002 "
+    "\001(\0132#.google.protobuf.testing.AnyMessage"
+    "\022M\n\037any_with_message_containing_map\030\262\002 \001"
+    "(\0132#.google.protobuf.testing.AnyMessage\022"
+    "P\n\"any_with_message_containing_struct\030\263\002"
+    " \001(\0132#.google.protobuf.testing.AnyMessag"
+    "e\022,\n\rtop_level_any\030\264\002 \001(\0132\024.google.proto"
+    "buf.Any\022;\n\tempty_map\030\221\003 \001(\0132\'.google.pro"
+    "tobuf.testing.StringtoIntMap\022\?\n\rstring_t"
+    "o_int\030\222\003 \001(\0132\'.google.protobuf.testing.S"
+    "tringtoIntMap\022\?\n\rint_to_string\030\223\003 \001(\0132\'."
+    "google.protobuf.testing.IntToStringMap\0222"
+    "\n\006mixed1\030\224\003 \001(\0132!.google.protobuf.testin"
+    "g.MixedMap\0223\n\006mixed2\030\225\003 \001(\0132\".google.pro"
+    "tobuf.testing.MixedMap2\022<\n\016map_of_object"
+    "s\030\226\003 \001(\0132#.google.protobuf.testing.Messa"
+    "geMap\0227\n\013mixed_empty\030\227\003 \001(\0132!.google.pro"
+    "tobuf.testing.MixedMap\022\?\n\021message_map_em"
+    "pty\030\230\003 \001(\0132#.google.protobuf.testing.Mes"
+    "sageMap\022B\n\014double_value\030\365\003 \001(\0132+.google."
+    "protobuf.testing.DoubleValueMessage\022J\n\024d"
+    "ouble_value_default\030\366\003 \001(\0132+.google.prot"
+    "obuf.testing.DoubleValueMessage\"\260\002\n\rDoub"
+    "leMessage\022\024\n\014double_value\030\001 \001(\001\022\027\n\017repea"
+    "ted_double\030\002 \003(\001\022>\n\016nested_message\030\003 \001(\013"
+    "2&.google.protobuf.testing.DoubleMessage"
+    "\022G\n\027repeated_nested_message\030\004 \003(\0132&.goog"
+    "le.protobuf.testing.DoubleMessage\0224\n\016dou"
+    "ble_wrapper\030d \001(\0132\034.google.protobuf.Doub"
+    "leValue\022\023\n\tstr_value\030p \001(\tH\000\022\023\n\tnum_valu"
+    "e\030q \001(\003H\000B\007\n\005value\"8\n\rStructMessage\022\'\n\006s"
+    "truct\030\001 \001(\0132\027.google.protobuf.Struct\"5\n\014"
+    "ValueMessage\022%\n\005value\030\001 \001(\0132\026.google.pro"
+    "tobuf.Value\"E\n\020ListValueMessage\0221\n\rshopp"
+    "ing_list\030\001 \001(\0132\032.google.protobuf.ListVal"
+    "ue\"!\n\016RequestMessage\022\017\n\007content\030\001 \001(\t\"_\n"
+    "\nAnyMessage\022!\n\003any\030\001 \001(\0132\024.google.protob"
+    "uf.Any\022.\n\004data\030\002 \001(\0132 .google.protobuf.t"
+    "esting.AnyData\"\301\002\n\007AnyData\022\014\n\004attr\030\001 \001(\005"
+    "\022\013\n\003str\030\002 \001(\t\022\014\n\004msgs\030\003 \003(\t\0225\n\013nested_da"
+    "ta\030\004 \001(\0132 .google.protobuf.testing.AnyDa"
+    "ta\022\?\n\010map_data\030\007 \003(\0132-.google.protobuf.t"
+    "esting.AnyData.MapDataEntry\022,\n\013struct_da"
+    "ta\030\010 \001(\0132\027.google.protobuf.Struct\0227\n\rrep"
+    "eated_data\030\t \003(\0132 .google.protobuf.testi"
+    "ng.AnyData\032.\n\014MapDataEntry\022\013\n\003key\030\001 \001(\t\022"
+    "\r\n\005value\030\002 \001(\t:\0028\001\"{\n\016StringtoIntMap\022=\n\003"
+    "map\030\001 \003(\01320.google.protobuf.testing.Stri"
+    "ngtoIntMap.MapEntry\032*\n\010MapEntry\022\013\n\003key\030\001"
+    " \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"{\n\016IntToStringMa"
+    "p\022=\n\003map\030\001 \003(\01320.google.protobuf.testing"
+    ".IntToStringMap.MapEntry\032*\n\010MapEntry\022\013\n\003"
+    "key\030\001 \001(\005\022\r\n\005value\030\002 \001(\t:\0028\001\"\217\001\n\010MixedMa"
+    "p\022\013\n\003msg\030\001 \001(\t\0227\n\003map\030\002 \003(\0132*.google.pro"
+    "tobuf.testing.MixedMap.MapEntry\022\021\n\tint_v"
+    "alue\030\003 \001(\005\032*\n\010MapEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005v"
+    "alue\030\002 \001(\002:\0028\001\"\325\001\n\tMixedMap2\0228\n\003map\030\001 \003("
+    "\0132+.google.protobuf.testing.MixedMap2.Ma"
+    "pEntry\0220\n\002ee\030\002 \001(\0162$.google.protobuf.tes"
+    "ting.MixedMap2.E\022\013\n\003msg\030\004 \001(\t\032*\n\010MapEntr"
+    "y\022\013\n\003key\030\001 \001(\005\022\r\n\005value\030\002 \001(\010:\0028\001\"#\n\001E\022\006"
+    "\n\002E0\020\000\022\006\n\002E1\020\001\022\006\n\002E2\020\002\022\006\n\002E3\020\003\"\306\001\n\nMessa"
+    "geMap\0229\n\003map\030\001 \003(\0132,.google.protobuf.tes"
+    "ting.MessageMap.MapEntry\032*\n\001M\022\021\n\tinner_i"
+    "nt\030\001 \001(\005\022\022\n\ninner_text\030\002 \001(\t\032Q\n\010MapEntry"
+    "\022\013\n\003key\030\001 \001(\t\0224\n\005value\030\002 \001(\0132%.google.pr"
+    "otobuf.testing.MessageMap.M:\0028\001\"B\n\022Doubl"
+    "eValueMessage\022,\n\006double\030\001 \001(\0132\034.google.p"
+    "rotobuf.DoubleValue2z\n\027DefaultValueTestS"
+    "ervice\022_\n\004Call\022\'.google.protobuf.testing"
+    ".RequestMessage\032..google.protobuf.testin"
+    "g.DefaultValueTestCasesb\006proto3", 5031);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "google/protobuf/util/internal/testdata/default_value.proto", &protobuf_RegisterTypes);
   DefaultValueTestCases::default_instance_ = new DefaultValueTestCases();
   DoubleMessage::default_instance_ = new DoubleMessage();
+  DoubleMessage_default_oneof_instance_ = new DoubleMessageOneofInstance();
   StructMessage::default_instance_ = new StructMessage();
   ValueMessage::default_instance_ = new ValueMessage();
   ListValueMessage::default_instance_ = new ListValueMessage();
@@ -695,6 +715,7 @@ const int DefaultValueTestCases::kDoubleWithNondefaultValueFieldNumber;
 const int DefaultValueTestCases::kRepeatedDoubleFieldNumber;
 const int DefaultValueTestCases::kNestedMessageFieldNumber;
 const int DefaultValueTestCases::kRepeatedNestedMessageFieldNumber;
+const int DefaultValueTestCases::kDoubleMessageWithOneofFieldNumber;
 const int DefaultValueTestCases::kEmptyStructFieldNumber;
 const int DefaultValueTestCases::kEmptyStruct2FieldNumber;
 const int DefaultValueTestCases::kStructWithNullValueFieldNumber;
@@ -727,6 +748,8 @@ const int DefaultValueTestCases::kIntToStringFieldNumber;
 const int DefaultValueTestCases::kMixed1FieldNumber;
 const int DefaultValueTestCases::kMixed2FieldNumber;
 const int DefaultValueTestCases::kMapOfObjectsFieldNumber;
+const int DefaultValueTestCases::kMixedEmptyFieldNumber;
+const int DefaultValueTestCases::kMessageMapEmptyFieldNumber;
 const int DefaultValueTestCases::kDoubleValueFieldNumber;
 const int DefaultValueTestCases::kDoubleValueDefaultFieldNumber;
 #endif  // !_MSC_VER
@@ -745,6 +768,7 @@ void DefaultValueTestCases::InitAsDefaultInstance() {
   repeated_double_ = const_cast< ::google::protobuf::testing::DoubleMessage*>(&::google::protobuf::testing::DoubleMessage::default_instance());
   nested_message_ = const_cast< ::google::protobuf::testing::DoubleMessage*>(&::google::protobuf::testing::DoubleMessage::default_instance());
   repeated_nested_message_ = const_cast< ::google::protobuf::testing::DoubleMessage*>(&::google::protobuf::testing::DoubleMessage::default_instance());
+  double_message_with_oneof_ = const_cast< ::google::protobuf::testing::DoubleMessage*>(&::google::protobuf::testing::DoubleMessage::default_instance());
   empty_struct_ = const_cast< ::google::protobuf::testing::StructMessage*>(&::google::protobuf::testing::StructMessage::default_instance());
   empty_struct2_ = const_cast< ::google::protobuf::testing::StructMessage*>(&::google::protobuf::testing::StructMessage::default_instance());
   struct_with_null_value_ = const_cast< ::google::protobuf::testing::StructMessage*>(&::google::protobuf::testing::StructMessage::default_instance());
@@ -777,6 +801,8 @@ void DefaultValueTestCases::InitAsDefaultInstance() {
   mixed1_ = const_cast< ::google::protobuf::testing::MixedMap*>(&::google::protobuf::testing::MixedMap::default_instance());
   mixed2_ = const_cast< ::google::protobuf::testing::MixedMap2*>(&::google::protobuf::testing::MixedMap2::default_instance());
   map_of_objects_ = const_cast< ::google::protobuf::testing::MessageMap*>(&::google::protobuf::testing::MessageMap::default_instance());
+  mixed_empty_ = const_cast< ::google::protobuf::testing::MixedMap*>(&::google::protobuf::testing::MixedMap::default_instance());
+  message_map_empty_ = const_cast< ::google::protobuf::testing::MessageMap*>(&::google::protobuf::testing::MessageMap::default_instance());
   double_value_ = const_cast< ::google::protobuf::testing::DoubleValueMessage*>(&::google::protobuf::testing::DoubleValueMessage::default_instance());
   double_value_default_ = const_cast< ::google::protobuf::testing::DoubleValueMessage*>(&::google::protobuf::testing::DoubleValueMessage::default_instance());
 }
@@ -798,6 +824,7 @@ void DefaultValueTestCases::SharedCtor() {
   repeated_double_ = NULL;
   nested_message_ = NULL;
   repeated_nested_message_ = NULL;
+  double_message_with_oneof_ = NULL;
   empty_struct_ = NULL;
   empty_struct2_ = NULL;
   struct_with_null_value_ = NULL;
@@ -830,6 +857,8 @@ void DefaultValueTestCases::SharedCtor() {
   mixed1_ = NULL;
   mixed2_ = NULL;
   map_of_objects_ = NULL;
+  mixed_empty_ = NULL;
+  message_map_empty_ = NULL;
   double_value_ = NULL;
   double_value_default_ = NULL;
 }
@@ -847,6 +876,7 @@ void DefaultValueTestCases::SharedDtor() {
     delete repeated_double_;
     delete nested_message_;
     delete repeated_nested_message_;
+    delete double_message_with_oneof_;
     delete empty_struct_;
     delete empty_struct2_;
     delete struct_with_null_value_;
@@ -879,6 +909,8 @@ void DefaultValueTestCases::SharedDtor() {
     delete mixed1_;
     delete mixed2_;
     delete map_of_objects_;
+    delete mixed_empty_;
+    delete message_map_empty_;
     delete double_value_;
     delete double_value_default_;
   }
@@ -922,6 +954,8 @@ void DefaultValueTestCases::Clear() {
   nested_message_ = NULL;
   if (GetArenaNoVirtual() == NULL && repeated_nested_message_ != NULL) delete repeated_nested_message_;
   repeated_nested_message_ = NULL;
+  if (GetArenaNoVirtual() == NULL && double_message_with_oneof_ != NULL) delete double_message_with_oneof_;
+  double_message_with_oneof_ = NULL;
   if (GetArenaNoVirtual() == NULL && empty_struct_ != NULL) delete empty_struct_;
   empty_struct_ = NULL;
   if (GetArenaNoVirtual() == NULL && empty_struct2_ != NULL) delete empty_struct2_;
@@ -986,6 +1020,10 @@ void DefaultValueTestCases::Clear() {
   mixed2_ = NULL;
   if (GetArenaNoVirtual() == NULL && map_of_objects_ != NULL) delete map_of_objects_;
   map_of_objects_ = NULL;
+  if (GetArenaNoVirtual() == NULL && mixed_empty_ != NULL) delete mixed_empty_;
+  mixed_empty_ = NULL;
+  if (GetArenaNoVirtual() == NULL && message_map_empty_ != NULL) delete message_map_empty_;
+  message_map_empty_ = NULL;
   if (GetArenaNoVirtual() == NULL && double_value_ != NULL) delete double_value_;
   double_value_ = NULL;
   if (GetArenaNoVirtual() == NULL && double_value_default_ != NULL) delete double_value_default_;
@@ -1072,6 +1110,19 @@ bool DefaultValueTestCases::MergePartialFromCodedStream(
          parse_repeated_nested_message:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_repeated_nested_message()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(58)) goto parse_double_message_with_oneof;
+        break;
+      }
+
+      // optional .google.protobuf.testing.DoubleMessage double_message_with_oneof = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_double_message_with_oneof:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_double_message_with_oneof()));
         } else {
           goto handle_unusual;
         }
@@ -1491,6 +1542,32 @@ bool DefaultValueTestCases::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(3258)) goto parse_mixed_empty;
+        break;
+      }
+
+      // optional .google.protobuf.testing.MixedMap mixed_empty = 407;
+      case 407: {
+        if (tag == 3258) {
+         parse_mixed_empty:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_mixed_empty()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(3266)) goto parse_message_map_empty;
+        break;
+      }
+
+      // optional .google.protobuf.testing.MessageMap message_map_empty = 408;
+      case 408: {
+        if (tag == 3266) {
+         parse_message_map_empty:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_message_map_empty()));
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectTag(4010)) goto parse_double_value;
         break;
       }
@@ -1579,6 +1656,12 @@ void DefaultValueTestCases::SerializeWithCachedSizes(
   if (this->has_repeated_nested_message()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       6, *this->repeated_nested_message_, output);
+  }
+
+  // optional .google.protobuf.testing.DoubleMessage double_message_with_oneof = 7;
+  if (this->has_double_message_with_oneof()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, *this->double_message_with_oneof_, output);
   }
 
   // optional .google.protobuf.testing.StructMessage empty_struct = 201;
@@ -1773,6 +1856,18 @@ void DefaultValueTestCases::SerializeWithCachedSizes(
       406, *this->map_of_objects_, output);
   }
 
+  // optional .google.protobuf.testing.MixedMap mixed_empty = 407;
+  if (this->has_mixed_empty()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      407, *this->mixed_empty_, output);
+  }
+
+  // optional .google.protobuf.testing.MessageMap message_map_empty = 408;
+  if (this->has_message_map_empty()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      408, *this->message_map_empty_, output);
+  }
+
   // optional .google.protobuf.testing.DoubleValueMessage double_value = 501;
   if (this->has_double_value()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
@@ -1831,6 +1926,13 @@ void DefaultValueTestCases::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         6, *this->repeated_nested_message_, target);
+  }
+
+  // optional .google.protobuf.testing.DoubleMessage double_message_with_oneof = 7;
+  if (this->has_double_message_with_oneof()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        7, *this->double_message_with_oneof_, target);
   }
 
   // optional .google.protobuf.testing.StructMessage empty_struct = 201;
@@ -2057,6 +2159,20 @@ void DefaultValueTestCases::SerializeWithCachedSizes(
         406, *this->map_of_objects_, target);
   }
 
+  // optional .google.protobuf.testing.MixedMap mixed_empty = 407;
+  if (this->has_mixed_empty()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        407, *this->mixed_empty_, target);
+  }
+
+  // optional .google.protobuf.testing.MessageMap message_map_empty = 408;
+  if (this->has_message_map_empty()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        408, *this->message_map_empty_, target);
+  }
+
   // optional .google.protobuf.testing.DoubleValueMessage double_value = 501;
   if (this->has_double_value()) {
     target = ::google::protobuf::internal::WireFormatLite::
@@ -2118,6 +2234,13 @@ int DefaultValueTestCases::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->repeated_nested_message_);
+  }
+
+  // optional .google.protobuf.testing.DoubleMessage double_message_with_oneof = 7;
+  if (this->has_double_message_with_oneof()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->double_message_with_oneof_);
   }
 
   // optional .google.protobuf.testing.StructMessage empty_struct = 201;
@@ -2344,6 +2467,20 @@ int DefaultValueTestCases::ByteSize() const {
         *this->map_of_objects_);
   }
 
+  // optional .google.protobuf.testing.MixedMap mixed_empty = 407;
+  if (this->has_mixed_empty()) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->mixed_empty_);
+  }
+
+  // optional .google.protobuf.testing.MessageMap message_map_empty = 408;
+  if (this->has_message_map_empty()) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->message_map_empty_);
+  }
+
   // optional .google.protobuf.testing.DoubleValueMessage double_value = 501;
   if (this->has_double_value()) {
     total_size += 2 +
@@ -2395,6 +2532,9 @@ void DefaultValueTestCases::MergeFrom(const DefaultValueTestCases& from) {
   }
   if (from.has_repeated_nested_message()) {
     mutable_repeated_nested_message()->::google::protobuf::testing::DoubleMessage::MergeFrom(from.repeated_nested_message());
+  }
+  if (from.has_double_message_with_oneof()) {
+    mutable_double_message_with_oneof()->::google::protobuf::testing::DoubleMessage::MergeFrom(from.double_message_with_oneof());
   }
   if (from.has_empty_struct()) {
     mutable_empty_struct()->::google::protobuf::testing::StructMessage::MergeFrom(from.empty_struct());
@@ -2492,6 +2632,12 @@ void DefaultValueTestCases::MergeFrom(const DefaultValueTestCases& from) {
   if (from.has_map_of_objects()) {
     mutable_map_of_objects()->::google::protobuf::testing::MessageMap::MergeFrom(from.map_of_objects());
   }
+  if (from.has_mixed_empty()) {
+    mutable_mixed_empty()->::google::protobuf::testing::MixedMap::MergeFrom(from.mixed_empty());
+  }
+  if (from.has_message_map_empty()) {
+    mutable_message_map_empty()->::google::protobuf::testing::MessageMap::MergeFrom(from.message_map_empty());
+  }
   if (from.has_double_value()) {
     mutable_double_value()->::google::protobuf::testing::DoubleValueMessage::MergeFrom(from.double_value());
   }
@@ -2528,6 +2674,7 @@ void DefaultValueTestCases::InternalSwap(DefaultValueTestCases* other) {
   std::swap(repeated_double_, other->repeated_double_);
   std::swap(nested_message_, other->nested_message_);
   std::swap(repeated_nested_message_, other->repeated_nested_message_);
+  std::swap(double_message_with_oneof_, other->double_message_with_oneof_);
   std::swap(empty_struct_, other->empty_struct_);
   std::swap(empty_struct2_, other->empty_struct2_);
   std::swap(struct_with_null_value_, other->struct_with_null_value_);
@@ -2560,6 +2707,8 @@ void DefaultValueTestCases::InternalSwap(DefaultValueTestCases* other) {
   std::swap(mixed1_, other->mixed1_);
   std::swap(mixed2_, other->mixed2_);
   std::swap(map_of_objects_, other->map_of_objects_);
+  std::swap(mixed_empty_, other->mixed_empty_);
+  std::swap(message_map_empty_, other->message_map_empty_);
   std::swap(double_value_, other->double_value_);
   std::swap(double_value_default_, other->double_value_default_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -2585,11 +2734,11 @@ void DefaultValueTestCases::clear_empty_double() {
   if (GetArenaNoVirtual() == NULL && empty_double_ != NULL) delete empty_double_;
   empty_double_ = NULL;
 }
- const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::empty_double() const {
+const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::empty_double() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.empty_double)
   return empty_double_ != NULL ? *empty_double_ : *default_instance_->empty_double_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_empty_double() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_empty_double() {
   
   if (empty_double_ == NULL) {
     empty_double_ = new ::google::protobuf::testing::DoubleMessage;
@@ -2597,13 +2746,13 @@ void DefaultValueTestCases::clear_empty_double() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.empty_double)
   return empty_double_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_empty_double() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_empty_double() {
   
   ::google::protobuf::testing::DoubleMessage* temp = empty_double_;
   empty_double_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_empty_double(::google::protobuf::testing::DoubleMessage* empty_double) {
+void DefaultValueTestCases::set_allocated_empty_double(::google::protobuf::testing::DoubleMessage* empty_double) {
   delete empty_double_;
   empty_double_ = empty_double;
   if (empty_double) {
@@ -2622,11 +2771,11 @@ void DefaultValueTestCases::clear_double_with_default_value() {
   if (GetArenaNoVirtual() == NULL && double_with_default_value_ != NULL) delete double_with_default_value_;
   double_with_default_value_ = NULL;
 }
- const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::double_with_default_value() const {
+const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::double_with_default_value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.double_with_default_value)
   return double_with_default_value_ != NULL ? *double_with_default_value_ : *default_instance_->double_with_default_value_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_double_with_default_value() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_double_with_default_value() {
   
   if (double_with_default_value_ == NULL) {
     double_with_default_value_ = new ::google::protobuf::testing::DoubleMessage;
@@ -2634,13 +2783,13 @@ void DefaultValueTestCases::clear_double_with_default_value() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.double_with_default_value)
   return double_with_default_value_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_double_with_default_value() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_double_with_default_value() {
   
   ::google::protobuf::testing::DoubleMessage* temp = double_with_default_value_;
   double_with_default_value_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_double_with_default_value(::google::protobuf::testing::DoubleMessage* double_with_default_value) {
+void DefaultValueTestCases::set_allocated_double_with_default_value(::google::protobuf::testing::DoubleMessage* double_with_default_value) {
   delete double_with_default_value_;
   double_with_default_value_ = double_with_default_value;
   if (double_with_default_value) {
@@ -2659,11 +2808,11 @@ void DefaultValueTestCases::clear_double_with_nondefault_value() {
   if (GetArenaNoVirtual() == NULL && double_with_nondefault_value_ != NULL) delete double_with_nondefault_value_;
   double_with_nondefault_value_ = NULL;
 }
- const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::double_with_nondefault_value() const {
+const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::double_with_nondefault_value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.double_with_nondefault_value)
   return double_with_nondefault_value_ != NULL ? *double_with_nondefault_value_ : *default_instance_->double_with_nondefault_value_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_double_with_nondefault_value() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_double_with_nondefault_value() {
   
   if (double_with_nondefault_value_ == NULL) {
     double_with_nondefault_value_ = new ::google::protobuf::testing::DoubleMessage;
@@ -2671,13 +2820,13 @@ void DefaultValueTestCases::clear_double_with_nondefault_value() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.double_with_nondefault_value)
   return double_with_nondefault_value_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_double_with_nondefault_value() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_double_with_nondefault_value() {
   
   ::google::protobuf::testing::DoubleMessage* temp = double_with_nondefault_value_;
   double_with_nondefault_value_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_double_with_nondefault_value(::google::protobuf::testing::DoubleMessage* double_with_nondefault_value) {
+void DefaultValueTestCases::set_allocated_double_with_nondefault_value(::google::protobuf::testing::DoubleMessage* double_with_nondefault_value) {
   delete double_with_nondefault_value_;
   double_with_nondefault_value_ = double_with_nondefault_value;
   if (double_with_nondefault_value) {
@@ -2696,11 +2845,11 @@ void DefaultValueTestCases::clear_repeated_double() {
   if (GetArenaNoVirtual() == NULL && repeated_double_ != NULL) delete repeated_double_;
   repeated_double_ = NULL;
 }
- const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::repeated_double() const {
+const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::repeated_double() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.repeated_double)
   return repeated_double_ != NULL ? *repeated_double_ : *default_instance_->repeated_double_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_repeated_double() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_repeated_double() {
   
   if (repeated_double_ == NULL) {
     repeated_double_ = new ::google::protobuf::testing::DoubleMessage;
@@ -2708,13 +2857,13 @@ void DefaultValueTestCases::clear_repeated_double() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.repeated_double)
   return repeated_double_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_repeated_double() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_repeated_double() {
   
   ::google::protobuf::testing::DoubleMessage* temp = repeated_double_;
   repeated_double_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_repeated_double(::google::protobuf::testing::DoubleMessage* repeated_double) {
+void DefaultValueTestCases::set_allocated_repeated_double(::google::protobuf::testing::DoubleMessage* repeated_double) {
   delete repeated_double_;
   repeated_double_ = repeated_double;
   if (repeated_double) {
@@ -2733,11 +2882,11 @@ void DefaultValueTestCases::clear_nested_message() {
   if (GetArenaNoVirtual() == NULL && nested_message_ != NULL) delete nested_message_;
   nested_message_ = NULL;
 }
- const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::nested_message() const {
+const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::nested_message() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.nested_message)
   return nested_message_ != NULL ? *nested_message_ : *default_instance_->nested_message_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_nested_message() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_nested_message() {
   
   if (nested_message_ == NULL) {
     nested_message_ = new ::google::protobuf::testing::DoubleMessage;
@@ -2745,13 +2894,13 @@ void DefaultValueTestCases::clear_nested_message() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.nested_message)
   return nested_message_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_nested_message() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_nested_message() {
   
   ::google::protobuf::testing::DoubleMessage* temp = nested_message_;
   nested_message_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_nested_message(::google::protobuf::testing::DoubleMessage* nested_message) {
+void DefaultValueTestCases::set_allocated_nested_message(::google::protobuf::testing::DoubleMessage* nested_message) {
   delete nested_message_;
   nested_message_ = nested_message;
   if (nested_message) {
@@ -2770,11 +2919,11 @@ void DefaultValueTestCases::clear_repeated_nested_message() {
   if (GetArenaNoVirtual() == NULL && repeated_nested_message_ != NULL) delete repeated_nested_message_;
   repeated_nested_message_ = NULL;
 }
- const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::repeated_nested_message() const {
+const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::repeated_nested_message() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.repeated_nested_message)
   return repeated_nested_message_ != NULL ? *repeated_nested_message_ : *default_instance_->repeated_nested_message_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_repeated_nested_message() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_repeated_nested_message() {
   
   if (repeated_nested_message_ == NULL) {
     repeated_nested_message_ = new ::google::protobuf::testing::DoubleMessage;
@@ -2782,13 +2931,13 @@ void DefaultValueTestCases::clear_repeated_nested_message() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.repeated_nested_message)
   return repeated_nested_message_;
 }
- ::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_repeated_nested_message() {
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_repeated_nested_message() {
   
   ::google::protobuf::testing::DoubleMessage* temp = repeated_nested_message_;
   repeated_nested_message_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_repeated_nested_message(::google::protobuf::testing::DoubleMessage* repeated_nested_message) {
+void DefaultValueTestCases::set_allocated_repeated_nested_message(::google::protobuf::testing::DoubleMessage* repeated_nested_message) {
   delete repeated_nested_message_;
   repeated_nested_message_ = repeated_nested_message;
   if (repeated_nested_message) {
@@ -2799,6 +2948,43 @@ void DefaultValueTestCases::clear_repeated_nested_message() {
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.repeated_nested_message)
 }
 
+// optional .google.protobuf.testing.DoubleMessage double_message_with_oneof = 7;
+bool DefaultValueTestCases::has_double_message_with_oneof() const {
+  return !_is_default_instance_ && double_message_with_oneof_ != NULL;
+}
+void DefaultValueTestCases::clear_double_message_with_oneof() {
+  if (GetArenaNoVirtual() == NULL && double_message_with_oneof_ != NULL) delete double_message_with_oneof_;
+  double_message_with_oneof_ = NULL;
+}
+const ::google::protobuf::testing::DoubleMessage& DefaultValueTestCases::double_message_with_oneof() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.double_message_with_oneof)
+  return double_message_with_oneof_ != NULL ? *double_message_with_oneof_ : *default_instance_->double_message_with_oneof_;
+}
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::mutable_double_message_with_oneof() {
+  
+  if (double_message_with_oneof_ == NULL) {
+    double_message_with_oneof_ = new ::google::protobuf::testing::DoubleMessage;
+  }
+  // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.double_message_with_oneof)
+  return double_message_with_oneof_;
+}
+::google::protobuf::testing::DoubleMessage* DefaultValueTestCases::release_double_message_with_oneof() {
+  
+  ::google::protobuf::testing::DoubleMessage* temp = double_message_with_oneof_;
+  double_message_with_oneof_ = NULL;
+  return temp;
+}
+void DefaultValueTestCases::set_allocated_double_message_with_oneof(::google::protobuf::testing::DoubleMessage* double_message_with_oneof) {
+  delete double_message_with_oneof_;
+  double_message_with_oneof_ = double_message_with_oneof;
+  if (double_message_with_oneof) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.double_message_with_oneof)
+}
+
 // optional .google.protobuf.testing.StructMessage empty_struct = 201;
 bool DefaultValueTestCases::has_empty_struct() const {
   return !_is_default_instance_ && empty_struct_ != NULL;
@@ -2807,11 +2993,11 @@ void DefaultValueTestCases::clear_empty_struct() {
   if (GetArenaNoVirtual() == NULL && empty_struct_ != NULL) delete empty_struct_;
   empty_struct_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::empty_struct() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::empty_struct() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.empty_struct)
   return empty_struct_ != NULL ? *empty_struct_ : *default_instance_->empty_struct_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_empty_struct() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_empty_struct() {
   
   if (empty_struct_ == NULL) {
     empty_struct_ = new ::google::protobuf::testing::StructMessage;
@@ -2819,13 +3005,13 @@ void DefaultValueTestCases::clear_empty_struct() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.empty_struct)
   return empty_struct_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_empty_struct() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_empty_struct() {
   
   ::google::protobuf::testing::StructMessage* temp = empty_struct_;
   empty_struct_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_empty_struct(::google::protobuf::testing::StructMessage* empty_struct) {
+void DefaultValueTestCases::set_allocated_empty_struct(::google::protobuf::testing::StructMessage* empty_struct) {
   delete empty_struct_;
   empty_struct_ = empty_struct;
   if (empty_struct) {
@@ -2844,11 +3030,11 @@ void DefaultValueTestCases::clear_empty_struct2() {
   if (GetArenaNoVirtual() == NULL && empty_struct2_ != NULL) delete empty_struct2_;
   empty_struct2_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::empty_struct2() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::empty_struct2() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.empty_struct2)
   return empty_struct2_ != NULL ? *empty_struct2_ : *default_instance_->empty_struct2_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_empty_struct2() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_empty_struct2() {
   
   if (empty_struct2_ == NULL) {
     empty_struct2_ = new ::google::protobuf::testing::StructMessage;
@@ -2856,13 +3042,13 @@ void DefaultValueTestCases::clear_empty_struct2() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.empty_struct2)
   return empty_struct2_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_empty_struct2() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_empty_struct2() {
   
   ::google::protobuf::testing::StructMessage* temp = empty_struct2_;
   empty_struct2_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_empty_struct2(::google::protobuf::testing::StructMessage* empty_struct2) {
+void DefaultValueTestCases::set_allocated_empty_struct2(::google::protobuf::testing::StructMessage* empty_struct2) {
   delete empty_struct2_;
   empty_struct2_ = empty_struct2;
   if (empty_struct2) {
@@ -2881,11 +3067,11 @@ void DefaultValueTestCases::clear_struct_with_null_value() {
   if (GetArenaNoVirtual() == NULL && struct_with_null_value_ != NULL) delete struct_with_null_value_;
   struct_with_null_value_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_null_value() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_null_value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.struct_with_null_value)
   return struct_with_null_value_ != NULL ? *struct_with_null_value_ : *default_instance_->struct_with_null_value_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_null_value() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_null_value() {
   
   if (struct_with_null_value_ == NULL) {
     struct_with_null_value_ = new ::google::protobuf::testing::StructMessage;
@@ -2893,13 +3079,13 @@ void DefaultValueTestCases::clear_struct_with_null_value() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.struct_with_null_value)
   return struct_with_null_value_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_null_value() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_null_value() {
   
   ::google::protobuf::testing::StructMessage* temp = struct_with_null_value_;
   struct_with_null_value_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_struct_with_null_value(::google::protobuf::testing::StructMessage* struct_with_null_value) {
+void DefaultValueTestCases::set_allocated_struct_with_null_value(::google::protobuf::testing::StructMessage* struct_with_null_value) {
   delete struct_with_null_value_;
   struct_with_null_value_ = struct_with_null_value;
   if (struct_with_null_value) {
@@ -2918,11 +3104,11 @@ void DefaultValueTestCases::clear_struct_with_values() {
   if (GetArenaNoVirtual() == NULL && struct_with_values_ != NULL) delete struct_with_values_;
   struct_with_values_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_values() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_values() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.struct_with_values)
   return struct_with_values_ != NULL ? *struct_with_values_ : *default_instance_->struct_with_values_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_values() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_values() {
   
   if (struct_with_values_ == NULL) {
     struct_with_values_ = new ::google::protobuf::testing::StructMessage;
@@ -2930,13 +3116,13 @@ void DefaultValueTestCases::clear_struct_with_values() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.struct_with_values)
   return struct_with_values_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_values() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_values() {
   
   ::google::protobuf::testing::StructMessage* temp = struct_with_values_;
   struct_with_values_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_struct_with_values(::google::protobuf::testing::StructMessage* struct_with_values) {
+void DefaultValueTestCases::set_allocated_struct_with_values(::google::protobuf::testing::StructMessage* struct_with_values) {
   delete struct_with_values_;
   struct_with_values_ = struct_with_values;
   if (struct_with_values) {
@@ -2955,11 +3141,11 @@ void DefaultValueTestCases::clear_struct_with_nested_struct() {
   if (GetArenaNoVirtual() == NULL && struct_with_nested_struct_ != NULL) delete struct_with_nested_struct_;
   struct_with_nested_struct_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_nested_struct() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_nested_struct() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.struct_with_nested_struct)
   return struct_with_nested_struct_ != NULL ? *struct_with_nested_struct_ : *default_instance_->struct_with_nested_struct_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_nested_struct() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_nested_struct() {
   
   if (struct_with_nested_struct_ == NULL) {
     struct_with_nested_struct_ = new ::google::protobuf::testing::StructMessage;
@@ -2967,13 +3153,13 @@ void DefaultValueTestCases::clear_struct_with_nested_struct() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.struct_with_nested_struct)
   return struct_with_nested_struct_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_nested_struct() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_nested_struct() {
   
   ::google::protobuf::testing::StructMessage* temp = struct_with_nested_struct_;
   struct_with_nested_struct_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_struct_with_nested_struct(::google::protobuf::testing::StructMessage* struct_with_nested_struct) {
+void DefaultValueTestCases::set_allocated_struct_with_nested_struct(::google::protobuf::testing::StructMessage* struct_with_nested_struct) {
   delete struct_with_nested_struct_;
   struct_with_nested_struct_ = struct_with_nested_struct;
   if (struct_with_nested_struct) {
@@ -2992,11 +3178,11 @@ void DefaultValueTestCases::clear_struct_with_nested_list() {
   if (GetArenaNoVirtual() == NULL && struct_with_nested_list_ != NULL) delete struct_with_nested_list_;
   struct_with_nested_list_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_nested_list() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_nested_list() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.struct_with_nested_list)
   return struct_with_nested_list_ != NULL ? *struct_with_nested_list_ : *default_instance_->struct_with_nested_list_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_nested_list() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_nested_list() {
   
   if (struct_with_nested_list_ == NULL) {
     struct_with_nested_list_ = new ::google::protobuf::testing::StructMessage;
@@ -3004,13 +3190,13 @@ void DefaultValueTestCases::clear_struct_with_nested_list() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.struct_with_nested_list)
   return struct_with_nested_list_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_nested_list() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_nested_list() {
   
   ::google::protobuf::testing::StructMessage* temp = struct_with_nested_list_;
   struct_with_nested_list_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_struct_with_nested_list(::google::protobuf::testing::StructMessage* struct_with_nested_list) {
+void DefaultValueTestCases::set_allocated_struct_with_nested_list(::google::protobuf::testing::StructMessage* struct_with_nested_list) {
   delete struct_with_nested_list_;
   struct_with_nested_list_ = struct_with_nested_list;
   if (struct_with_nested_list) {
@@ -3029,11 +3215,11 @@ void DefaultValueTestCases::clear_struct_with_list_of_nulls() {
   if (GetArenaNoVirtual() == NULL && struct_with_list_of_nulls_ != NULL) delete struct_with_list_of_nulls_;
   struct_with_list_of_nulls_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_list_of_nulls() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_list_of_nulls() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.struct_with_list_of_nulls)
   return struct_with_list_of_nulls_ != NULL ? *struct_with_list_of_nulls_ : *default_instance_->struct_with_list_of_nulls_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_list_of_nulls() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_list_of_nulls() {
   
   if (struct_with_list_of_nulls_ == NULL) {
     struct_with_list_of_nulls_ = new ::google::protobuf::testing::StructMessage;
@@ -3041,13 +3227,13 @@ void DefaultValueTestCases::clear_struct_with_list_of_nulls() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.struct_with_list_of_nulls)
   return struct_with_list_of_nulls_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_list_of_nulls() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_list_of_nulls() {
   
   ::google::protobuf::testing::StructMessage* temp = struct_with_list_of_nulls_;
   struct_with_list_of_nulls_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_struct_with_list_of_nulls(::google::protobuf::testing::StructMessage* struct_with_list_of_nulls) {
+void DefaultValueTestCases::set_allocated_struct_with_list_of_nulls(::google::protobuf::testing::StructMessage* struct_with_list_of_nulls) {
   delete struct_with_list_of_nulls_;
   struct_with_list_of_nulls_ = struct_with_list_of_nulls;
   if (struct_with_list_of_nulls) {
@@ -3066,11 +3252,11 @@ void DefaultValueTestCases::clear_struct_with_list_of_lists() {
   if (GetArenaNoVirtual() == NULL && struct_with_list_of_lists_ != NULL) delete struct_with_list_of_lists_;
   struct_with_list_of_lists_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_list_of_lists() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_list_of_lists() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.struct_with_list_of_lists)
   return struct_with_list_of_lists_ != NULL ? *struct_with_list_of_lists_ : *default_instance_->struct_with_list_of_lists_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_list_of_lists() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_list_of_lists() {
   
   if (struct_with_list_of_lists_ == NULL) {
     struct_with_list_of_lists_ = new ::google::protobuf::testing::StructMessage;
@@ -3078,13 +3264,13 @@ void DefaultValueTestCases::clear_struct_with_list_of_lists() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.struct_with_list_of_lists)
   return struct_with_list_of_lists_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_list_of_lists() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_list_of_lists() {
   
   ::google::protobuf::testing::StructMessage* temp = struct_with_list_of_lists_;
   struct_with_list_of_lists_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_struct_with_list_of_lists(::google::protobuf::testing::StructMessage* struct_with_list_of_lists) {
+void DefaultValueTestCases::set_allocated_struct_with_list_of_lists(::google::protobuf::testing::StructMessage* struct_with_list_of_lists) {
   delete struct_with_list_of_lists_;
   struct_with_list_of_lists_ = struct_with_list_of_lists;
   if (struct_with_list_of_lists) {
@@ -3103,11 +3289,11 @@ void DefaultValueTestCases::clear_struct_with_list_of_structs() {
   if (GetArenaNoVirtual() == NULL && struct_with_list_of_structs_ != NULL) delete struct_with_list_of_structs_;
   struct_with_list_of_structs_ = NULL;
 }
- const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_list_of_structs() const {
+const ::google::protobuf::testing::StructMessage& DefaultValueTestCases::struct_with_list_of_structs() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.struct_with_list_of_structs)
   return struct_with_list_of_structs_ != NULL ? *struct_with_list_of_structs_ : *default_instance_->struct_with_list_of_structs_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_list_of_structs() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::mutable_struct_with_list_of_structs() {
   
   if (struct_with_list_of_structs_ == NULL) {
     struct_with_list_of_structs_ = new ::google::protobuf::testing::StructMessage;
@@ -3115,13 +3301,13 @@ void DefaultValueTestCases::clear_struct_with_list_of_structs() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.struct_with_list_of_structs)
   return struct_with_list_of_structs_;
 }
- ::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_list_of_structs() {
+::google::protobuf::testing::StructMessage* DefaultValueTestCases::release_struct_with_list_of_structs() {
   
   ::google::protobuf::testing::StructMessage* temp = struct_with_list_of_structs_;
   struct_with_list_of_structs_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_struct_with_list_of_structs(::google::protobuf::testing::StructMessage* struct_with_list_of_structs) {
+void DefaultValueTestCases::set_allocated_struct_with_list_of_structs(::google::protobuf::testing::StructMessage* struct_with_list_of_structs) {
   delete struct_with_list_of_structs_;
   struct_with_list_of_structs_ = struct_with_list_of_structs;
   if (struct_with_list_of_structs) {
@@ -3140,11 +3326,11 @@ void DefaultValueTestCases::clear_top_level_struct() {
   if (GetArenaNoVirtual() == NULL && top_level_struct_ != NULL) delete top_level_struct_;
   top_level_struct_ = NULL;
 }
- const ::google::protobuf::Struct& DefaultValueTestCases::top_level_struct() const {
+const ::google::protobuf::Struct& DefaultValueTestCases::top_level_struct() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.top_level_struct)
   return top_level_struct_ != NULL ? *top_level_struct_ : *default_instance_->top_level_struct_;
 }
- ::google::protobuf::Struct* DefaultValueTestCases::mutable_top_level_struct() {
+::google::protobuf::Struct* DefaultValueTestCases::mutable_top_level_struct() {
   
   if (top_level_struct_ == NULL) {
     top_level_struct_ = new ::google::protobuf::Struct;
@@ -3152,13 +3338,13 @@ void DefaultValueTestCases::clear_top_level_struct() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.top_level_struct)
   return top_level_struct_;
 }
- ::google::protobuf::Struct* DefaultValueTestCases::release_top_level_struct() {
+::google::protobuf::Struct* DefaultValueTestCases::release_top_level_struct() {
   
   ::google::protobuf::Struct* temp = top_level_struct_;
   top_level_struct_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_top_level_struct(::google::protobuf::Struct* top_level_struct) {
+void DefaultValueTestCases::set_allocated_top_level_struct(::google::protobuf::Struct* top_level_struct) {
   delete top_level_struct_;
   top_level_struct_ = top_level_struct;
   if (top_level_struct) {
@@ -3177,11 +3363,11 @@ void DefaultValueTestCases::clear_value_wrapper_simple() {
   if (GetArenaNoVirtual() == NULL && value_wrapper_simple_ != NULL) delete value_wrapper_simple_;
   value_wrapper_simple_ = NULL;
 }
- const ::google::protobuf::testing::ValueMessage& DefaultValueTestCases::value_wrapper_simple() const {
+const ::google::protobuf::testing::ValueMessage& DefaultValueTestCases::value_wrapper_simple() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.value_wrapper_simple)
   return value_wrapper_simple_ != NULL ? *value_wrapper_simple_ : *default_instance_->value_wrapper_simple_;
 }
- ::google::protobuf::testing::ValueMessage* DefaultValueTestCases::mutable_value_wrapper_simple() {
+::google::protobuf::testing::ValueMessage* DefaultValueTestCases::mutable_value_wrapper_simple() {
   
   if (value_wrapper_simple_ == NULL) {
     value_wrapper_simple_ = new ::google::protobuf::testing::ValueMessage;
@@ -3189,13 +3375,13 @@ void DefaultValueTestCases::clear_value_wrapper_simple() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.value_wrapper_simple)
   return value_wrapper_simple_;
 }
- ::google::protobuf::testing::ValueMessage* DefaultValueTestCases::release_value_wrapper_simple() {
+::google::protobuf::testing::ValueMessage* DefaultValueTestCases::release_value_wrapper_simple() {
   
   ::google::protobuf::testing::ValueMessage* temp = value_wrapper_simple_;
   value_wrapper_simple_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_value_wrapper_simple(::google::protobuf::testing::ValueMessage* value_wrapper_simple) {
+void DefaultValueTestCases::set_allocated_value_wrapper_simple(::google::protobuf::testing::ValueMessage* value_wrapper_simple) {
   delete value_wrapper_simple_;
   value_wrapper_simple_ = value_wrapper_simple;
   if (value_wrapper_simple) {
@@ -3214,11 +3400,11 @@ void DefaultValueTestCases::clear_value_wrapper_with_struct() {
   if (GetArenaNoVirtual() == NULL && value_wrapper_with_struct_ != NULL) delete value_wrapper_with_struct_;
   value_wrapper_with_struct_ = NULL;
 }
- const ::google::protobuf::testing::ValueMessage& DefaultValueTestCases::value_wrapper_with_struct() const {
+const ::google::protobuf::testing::ValueMessage& DefaultValueTestCases::value_wrapper_with_struct() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.value_wrapper_with_struct)
   return value_wrapper_with_struct_ != NULL ? *value_wrapper_with_struct_ : *default_instance_->value_wrapper_with_struct_;
 }
- ::google::protobuf::testing::ValueMessage* DefaultValueTestCases::mutable_value_wrapper_with_struct() {
+::google::protobuf::testing::ValueMessage* DefaultValueTestCases::mutable_value_wrapper_with_struct() {
   
   if (value_wrapper_with_struct_ == NULL) {
     value_wrapper_with_struct_ = new ::google::protobuf::testing::ValueMessage;
@@ -3226,13 +3412,13 @@ void DefaultValueTestCases::clear_value_wrapper_with_struct() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.value_wrapper_with_struct)
   return value_wrapper_with_struct_;
 }
- ::google::protobuf::testing::ValueMessage* DefaultValueTestCases::release_value_wrapper_with_struct() {
+::google::protobuf::testing::ValueMessage* DefaultValueTestCases::release_value_wrapper_with_struct() {
   
   ::google::protobuf::testing::ValueMessage* temp = value_wrapper_with_struct_;
   value_wrapper_with_struct_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_value_wrapper_with_struct(::google::protobuf::testing::ValueMessage* value_wrapper_with_struct) {
+void DefaultValueTestCases::set_allocated_value_wrapper_with_struct(::google::protobuf::testing::ValueMessage* value_wrapper_with_struct) {
   delete value_wrapper_with_struct_;
   value_wrapper_with_struct_ = value_wrapper_with_struct;
   if (value_wrapper_with_struct) {
@@ -3251,11 +3437,11 @@ void DefaultValueTestCases::clear_value_wrapper_with_list() {
   if (GetArenaNoVirtual() == NULL && value_wrapper_with_list_ != NULL) delete value_wrapper_with_list_;
   value_wrapper_with_list_ = NULL;
 }
- const ::google::protobuf::testing::ValueMessage& DefaultValueTestCases::value_wrapper_with_list() const {
+const ::google::protobuf::testing::ValueMessage& DefaultValueTestCases::value_wrapper_with_list() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.value_wrapper_with_list)
   return value_wrapper_with_list_ != NULL ? *value_wrapper_with_list_ : *default_instance_->value_wrapper_with_list_;
 }
- ::google::protobuf::testing::ValueMessage* DefaultValueTestCases::mutable_value_wrapper_with_list() {
+::google::protobuf::testing::ValueMessage* DefaultValueTestCases::mutable_value_wrapper_with_list() {
   
   if (value_wrapper_with_list_ == NULL) {
     value_wrapper_with_list_ = new ::google::protobuf::testing::ValueMessage;
@@ -3263,13 +3449,13 @@ void DefaultValueTestCases::clear_value_wrapper_with_list() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.value_wrapper_with_list)
   return value_wrapper_with_list_;
 }
- ::google::protobuf::testing::ValueMessage* DefaultValueTestCases::release_value_wrapper_with_list() {
+::google::protobuf::testing::ValueMessage* DefaultValueTestCases::release_value_wrapper_with_list() {
   
   ::google::protobuf::testing::ValueMessage* temp = value_wrapper_with_list_;
   value_wrapper_with_list_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_value_wrapper_with_list(::google::protobuf::testing::ValueMessage* value_wrapper_with_list) {
+void DefaultValueTestCases::set_allocated_value_wrapper_with_list(::google::protobuf::testing::ValueMessage* value_wrapper_with_list) {
   delete value_wrapper_with_list_;
   value_wrapper_with_list_ = value_wrapper_with_list;
   if (value_wrapper_with_list) {
@@ -3288,11 +3474,11 @@ void DefaultValueTestCases::clear_list_value_wrapper() {
   if (GetArenaNoVirtual() == NULL && list_value_wrapper_ != NULL) delete list_value_wrapper_;
   list_value_wrapper_ = NULL;
 }
- const ::google::protobuf::testing::ListValueMessage& DefaultValueTestCases::list_value_wrapper() const {
+const ::google::protobuf::testing::ListValueMessage& DefaultValueTestCases::list_value_wrapper() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.list_value_wrapper)
   return list_value_wrapper_ != NULL ? *list_value_wrapper_ : *default_instance_->list_value_wrapper_;
 }
- ::google::protobuf::testing::ListValueMessage* DefaultValueTestCases::mutable_list_value_wrapper() {
+::google::protobuf::testing::ListValueMessage* DefaultValueTestCases::mutable_list_value_wrapper() {
   
   if (list_value_wrapper_ == NULL) {
     list_value_wrapper_ = new ::google::protobuf::testing::ListValueMessage;
@@ -3300,13 +3486,13 @@ void DefaultValueTestCases::clear_list_value_wrapper() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.list_value_wrapper)
   return list_value_wrapper_;
 }
- ::google::protobuf::testing::ListValueMessage* DefaultValueTestCases::release_list_value_wrapper() {
+::google::protobuf::testing::ListValueMessage* DefaultValueTestCases::release_list_value_wrapper() {
   
   ::google::protobuf::testing::ListValueMessage* temp = list_value_wrapper_;
   list_value_wrapper_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_list_value_wrapper(::google::protobuf::testing::ListValueMessage* list_value_wrapper) {
+void DefaultValueTestCases::set_allocated_list_value_wrapper(::google::protobuf::testing::ListValueMessage* list_value_wrapper) {
   delete list_value_wrapper_;
   list_value_wrapper_ = list_value_wrapper;
   if (list_value_wrapper) {
@@ -3325,11 +3511,11 @@ void DefaultValueTestCases::clear_top_level_value_simple() {
   if (GetArenaNoVirtual() == NULL && top_level_value_simple_ != NULL) delete top_level_value_simple_;
   top_level_value_simple_ = NULL;
 }
- const ::google::protobuf::Value& DefaultValueTestCases::top_level_value_simple() const {
+const ::google::protobuf::Value& DefaultValueTestCases::top_level_value_simple() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.top_level_value_simple)
   return top_level_value_simple_ != NULL ? *top_level_value_simple_ : *default_instance_->top_level_value_simple_;
 }
- ::google::protobuf::Value* DefaultValueTestCases::mutable_top_level_value_simple() {
+::google::protobuf::Value* DefaultValueTestCases::mutable_top_level_value_simple() {
   
   if (top_level_value_simple_ == NULL) {
     top_level_value_simple_ = new ::google::protobuf::Value;
@@ -3337,13 +3523,13 @@ void DefaultValueTestCases::clear_top_level_value_simple() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.top_level_value_simple)
   return top_level_value_simple_;
 }
- ::google::protobuf::Value* DefaultValueTestCases::release_top_level_value_simple() {
+::google::protobuf::Value* DefaultValueTestCases::release_top_level_value_simple() {
   
   ::google::protobuf::Value* temp = top_level_value_simple_;
   top_level_value_simple_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_top_level_value_simple(::google::protobuf::Value* top_level_value_simple) {
+void DefaultValueTestCases::set_allocated_top_level_value_simple(::google::protobuf::Value* top_level_value_simple) {
   delete top_level_value_simple_;
   top_level_value_simple_ = top_level_value_simple;
   if (top_level_value_simple) {
@@ -3362,11 +3548,11 @@ void DefaultValueTestCases::clear_top_level_value_with_struct() {
   if (GetArenaNoVirtual() == NULL && top_level_value_with_struct_ != NULL) delete top_level_value_with_struct_;
   top_level_value_with_struct_ = NULL;
 }
- const ::google::protobuf::Value& DefaultValueTestCases::top_level_value_with_struct() const {
+const ::google::protobuf::Value& DefaultValueTestCases::top_level_value_with_struct() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.top_level_value_with_struct)
   return top_level_value_with_struct_ != NULL ? *top_level_value_with_struct_ : *default_instance_->top_level_value_with_struct_;
 }
- ::google::protobuf::Value* DefaultValueTestCases::mutable_top_level_value_with_struct() {
+::google::protobuf::Value* DefaultValueTestCases::mutable_top_level_value_with_struct() {
   
   if (top_level_value_with_struct_ == NULL) {
     top_level_value_with_struct_ = new ::google::protobuf::Value;
@@ -3374,13 +3560,13 @@ void DefaultValueTestCases::clear_top_level_value_with_struct() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.top_level_value_with_struct)
   return top_level_value_with_struct_;
 }
- ::google::protobuf::Value* DefaultValueTestCases::release_top_level_value_with_struct() {
+::google::protobuf::Value* DefaultValueTestCases::release_top_level_value_with_struct() {
   
   ::google::protobuf::Value* temp = top_level_value_with_struct_;
   top_level_value_with_struct_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_top_level_value_with_struct(::google::protobuf::Value* top_level_value_with_struct) {
+void DefaultValueTestCases::set_allocated_top_level_value_with_struct(::google::protobuf::Value* top_level_value_with_struct) {
   delete top_level_value_with_struct_;
   top_level_value_with_struct_ = top_level_value_with_struct;
   if (top_level_value_with_struct) {
@@ -3399,11 +3585,11 @@ void DefaultValueTestCases::clear_top_level_value_with_list() {
   if (GetArenaNoVirtual() == NULL && top_level_value_with_list_ != NULL) delete top_level_value_with_list_;
   top_level_value_with_list_ = NULL;
 }
- const ::google::protobuf::Value& DefaultValueTestCases::top_level_value_with_list() const {
+const ::google::protobuf::Value& DefaultValueTestCases::top_level_value_with_list() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.top_level_value_with_list)
   return top_level_value_with_list_ != NULL ? *top_level_value_with_list_ : *default_instance_->top_level_value_with_list_;
 }
- ::google::protobuf::Value* DefaultValueTestCases::mutable_top_level_value_with_list() {
+::google::protobuf::Value* DefaultValueTestCases::mutable_top_level_value_with_list() {
   
   if (top_level_value_with_list_ == NULL) {
     top_level_value_with_list_ = new ::google::protobuf::Value;
@@ -3411,13 +3597,13 @@ void DefaultValueTestCases::clear_top_level_value_with_list() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.top_level_value_with_list)
   return top_level_value_with_list_;
 }
- ::google::protobuf::Value* DefaultValueTestCases::release_top_level_value_with_list() {
+::google::protobuf::Value* DefaultValueTestCases::release_top_level_value_with_list() {
   
   ::google::protobuf::Value* temp = top_level_value_with_list_;
   top_level_value_with_list_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_top_level_value_with_list(::google::protobuf::Value* top_level_value_with_list) {
+void DefaultValueTestCases::set_allocated_top_level_value_with_list(::google::protobuf::Value* top_level_value_with_list) {
   delete top_level_value_with_list_;
   top_level_value_with_list_ = top_level_value_with_list;
   if (top_level_value_with_list) {
@@ -3436,11 +3622,11 @@ void DefaultValueTestCases::clear_top_level_listvalue() {
   if (GetArenaNoVirtual() == NULL && top_level_listvalue_ != NULL) delete top_level_listvalue_;
   top_level_listvalue_ = NULL;
 }
- const ::google::protobuf::ListValue& DefaultValueTestCases::top_level_listvalue() const {
+const ::google::protobuf::ListValue& DefaultValueTestCases::top_level_listvalue() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.top_level_listvalue)
   return top_level_listvalue_ != NULL ? *top_level_listvalue_ : *default_instance_->top_level_listvalue_;
 }
- ::google::protobuf::ListValue* DefaultValueTestCases::mutable_top_level_listvalue() {
+::google::protobuf::ListValue* DefaultValueTestCases::mutable_top_level_listvalue() {
   
   if (top_level_listvalue_ == NULL) {
     top_level_listvalue_ = new ::google::protobuf::ListValue;
@@ -3448,13 +3634,13 @@ void DefaultValueTestCases::clear_top_level_listvalue() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.top_level_listvalue)
   return top_level_listvalue_;
 }
- ::google::protobuf::ListValue* DefaultValueTestCases::release_top_level_listvalue() {
+::google::protobuf::ListValue* DefaultValueTestCases::release_top_level_listvalue() {
   
   ::google::protobuf::ListValue* temp = top_level_listvalue_;
   top_level_listvalue_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_top_level_listvalue(::google::protobuf::ListValue* top_level_listvalue) {
+void DefaultValueTestCases::set_allocated_top_level_listvalue(::google::protobuf::ListValue* top_level_listvalue) {
   delete top_level_listvalue_;
   top_level_listvalue_ = top_level_listvalue;
   if (top_level_listvalue) {
@@ -3473,11 +3659,11 @@ void DefaultValueTestCases::clear_empty_any() {
   if (GetArenaNoVirtual() == NULL && empty_any_ != NULL) delete empty_any_;
   empty_any_ = NULL;
 }
- const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::empty_any() const {
+const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::empty_any() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.empty_any)
   return empty_any_ != NULL ? *empty_any_ : *default_instance_->empty_any_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_empty_any() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_empty_any() {
   
   if (empty_any_ == NULL) {
     empty_any_ = new ::google::protobuf::testing::AnyMessage;
@@ -3485,13 +3671,13 @@ void DefaultValueTestCases::clear_empty_any() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.empty_any)
   return empty_any_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_empty_any() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_empty_any() {
   
   ::google::protobuf::testing::AnyMessage* temp = empty_any_;
   empty_any_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_empty_any(::google::protobuf::testing::AnyMessage* empty_any) {
+void DefaultValueTestCases::set_allocated_empty_any(::google::protobuf::testing::AnyMessage* empty_any) {
   delete empty_any_;
   empty_any_ = empty_any;
   if (empty_any) {
@@ -3510,11 +3696,11 @@ void DefaultValueTestCases::clear_type_only_any() {
   if (GetArenaNoVirtual() == NULL && type_only_any_ != NULL) delete type_only_any_;
   type_only_any_ = NULL;
 }
- const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::type_only_any() const {
+const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::type_only_any() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.type_only_any)
   return type_only_any_ != NULL ? *type_only_any_ : *default_instance_->type_only_any_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_type_only_any() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_type_only_any() {
   
   if (type_only_any_ == NULL) {
     type_only_any_ = new ::google::protobuf::testing::AnyMessage;
@@ -3522,13 +3708,13 @@ void DefaultValueTestCases::clear_type_only_any() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.type_only_any)
   return type_only_any_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_type_only_any() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_type_only_any() {
   
   ::google::protobuf::testing::AnyMessage* temp = type_only_any_;
   type_only_any_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_type_only_any(::google::protobuf::testing::AnyMessage* type_only_any) {
+void DefaultValueTestCases::set_allocated_type_only_any(::google::protobuf::testing::AnyMessage* type_only_any) {
   delete type_only_any_;
   type_only_any_ = type_only_any;
   if (type_only_any) {
@@ -3547,11 +3733,11 @@ void DefaultValueTestCases::clear_recursive_any() {
   if (GetArenaNoVirtual() == NULL && recursive_any_ != NULL) delete recursive_any_;
   recursive_any_ = NULL;
 }
- const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::recursive_any() const {
+const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::recursive_any() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.recursive_any)
   return recursive_any_ != NULL ? *recursive_any_ : *default_instance_->recursive_any_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_recursive_any() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_recursive_any() {
   
   if (recursive_any_ == NULL) {
     recursive_any_ = new ::google::protobuf::testing::AnyMessage;
@@ -3559,13 +3745,13 @@ void DefaultValueTestCases::clear_recursive_any() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.recursive_any)
   return recursive_any_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_recursive_any() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_recursive_any() {
   
   ::google::protobuf::testing::AnyMessage* temp = recursive_any_;
   recursive_any_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_recursive_any(::google::protobuf::testing::AnyMessage* recursive_any) {
+void DefaultValueTestCases::set_allocated_recursive_any(::google::protobuf::testing::AnyMessage* recursive_any) {
   delete recursive_any_;
   recursive_any_ = recursive_any;
   if (recursive_any) {
@@ -3584,11 +3770,11 @@ void DefaultValueTestCases::clear_any_with_message_value() {
   if (GetArenaNoVirtual() == NULL && any_with_message_value_ != NULL) delete any_with_message_value_;
   any_with_message_value_ = NULL;
 }
- const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::any_with_message_value() const {
+const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::any_with_message_value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.any_with_message_value)
   return any_with_message_value_ != NULL ? *any_with_message_value_ : *default_instance_->any_with_message_value_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_any_with_message_value() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_any_with_message_value() {
   
   if (any_with_message_value_ == NULL) {
     any_with_message_value_ = new ::google::protobuf::testing::AnyMessage;
@@ -3596,13 +3782,13 @@ void DefaultValueTestCases::clear_any_with_message_value() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.any_with_message_value)
   return any_with_message_value_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_any_with_message_value() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_any_with_message_value() {
   
   ::google::protobuf::testing::AnyMessage* temp = any_with_message_value_;
   any_with_message_value_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_any_with_message_value(::google::protobuf::testing::AnyMessage* any_with_message_value) {
+void DefaultValueTestCases::set_allocated_any_with_message_value(::google::protobuf::testing::AnyMessage* any_with_message_value) {
   delete any_with_message_value_;
   any_with_message_value_ = any_with_message_value;
   if (any_with_message_value) {
@@ -3621,11 +3807,11 @@ void DefaultValueTestCases::clear_any_with_nested_message() {
   if (GetArenaNoVirtual() == NULL && any_with_nested_message_ != NULL) delete any_with_nested_message_;
   any_with_nested_message_ = NULL;
 }
- const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::any_with_nested_message() const {
+const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::any_with_nested_message() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.any_with_nested_message)
   return any_with_nested_message_ != NULL ? *any_with_nested_message_ : *default_instance_->any_with_nested_message_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_any_with_nested_message() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_any_with_nested_message() {
   
   if (any_with_nested_message_ == NULL) {
     any_with_nested_message_ = new ::google::protobuf::testing::AnyMessage;
@@ -3633,13 +3819,13 @@ void DefaultValueTestCases::clear_any_with_nested_message() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.any_with_nested_message)
   return any_with_nested_message_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_any_with_nested_message() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_any_with_nested_message() {
   
   ::google::protobuf::testing::AnyMessage* temp = any_with_nested_message_;
   any_with_nested_message_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_any_with_nested_message(::google::protobuf::testing::AnyMessage* any_with_nested_message) {
+void DefaultValueTestCases::set_allocated_any_with_nested_message(::google::protobuf::testing::AnyMessage* any_with_nested_message) {
   delete any_with_nested_message_;
   any_with_nested_message_ = any_with_nested_message;
   if (any_with_nested_message) {
@@ -3658,11 +3844,11 @@ void DefaultValueTestCases::clear_any_with_message_containing_map() {
   if (GetArenaNoVirtual() == NULL && any_with_message_containing_map_ != NULL) delete any_with_message_containing_map_;
   any_with_message_containing_map_ = NULL;
 }
- const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::any_with_message_containing_map() const {
+const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::any_with_message_containing_map() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.any_with_message_containing_map)
   return any_with_message_containing_map_ != NULL ? *any_with_message_containing_map_ : *default_instance_->any_with_message_containing_map_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_any_with_message_containing_map() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_any_with_message_containing_map() {
   
   if (any_with_message_containing_map_ == NULL) {
     any_with_message_containing_map_ = new ::google::protobuf::testing::AnyMessage;
@@ -3670,13 +3856,13 @@ void DefaultValueTestCases::clear_any_with_message_containing_map() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.any_with_message_containing_map)
   return any_with_message_containing_map_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_any_with_message_containing_map() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_any_with_message_containing_map() {
   
   ::google::protobuf::testing::AnyMessage* temp = any_with_message_containing_map_;
   any_with_message_containing_map_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_any_with_message_containing_map(::google::protobuf::testing::AnyMessage* any_with_message_containing_map) {
+void DefaultValueTestCases::set_allocated_any_with_message_containing_map(::google::protobuf::testing::AnyMessage* any_with_message_containing_map) {
   delete any_with_message_containing_map_;
   any_with_message_containing_map_ = any_with_message_containing_map;
   if (any_with_message_containing_map) {
@@ -3695,11 +3881,11 @@ void DefaultValueTestCases::clear_any_with_message_containing_struct() {
   if (GetArenaNoVirtual() == NULL && any_with_message_containing_struct_ != NULL) delete any_with_message_containing_struct_;
   any_with_message_containing_struct_ = NULL;
 }
- const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::any_with_message_containing_struct() const {
+const ::google::protobuf::testing::AnyMessage& DefaultValueTestCases::any_with_message_containing_struct() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.any_with_message_containing_struct)
   return any_with_message_containing_struct_ != NULL ? *any_with_message_containing_struct_ : *default_instance_->any_with_message_containing_struct_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_any_with_message_containing_struct() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::mutable_any_with_message_containing_struct() {
   
   if (any_with_message_containing_struct_ == NULL) {
     any_with_message_containing_struct_ = new ::google::protobuf::testing::AnyMessage;
@@ -3707,13 +3893,13 @@ void DefaultValueTestCases::clear_any_with_message_containing_struct() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.any_with_message_containing_struct)
   return any_with_message_containing_struct_;
 }
- ::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_any_with_message_containing_struct() {
+::google::protobuf::testing::AnyMessage* DefaultValueTestCases::release_any_with_message_containing_struct() {
   
   ::google::protobuf::testing::AnyMessage* temp = any_with_message_containing_struct_;
   any_with_message_containing_struct_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_any_with_message_containing_struct(::google::protobuf::testing::AnyMessage* any_with_message_containing_struct) {
+void DefaultValueTestCases::set_allocated_any_with_message_containing_struct(::google::protobuf::testing::AnyMessage* any_with_message_containing_struct) {
   delete any_with_message_containing_struct_;
   any_with_message_containing_struct_ = any_with_message_containing_struct;
   if (any_with_message_containing_struct) {
@@ -3732,11 +3918,11 @@ void DefaultValueTestCases::clear_top_level_any() {
   if (GetArenaNoVirtual() == NULL && top_level_any_ != NULL) delete top_level_any_;
   top_level_any_ = NULL;
 }
- const ::google::protobuf::Any& DefaultValueTestCases::top_level_any() const {
+const ::google::protobuf::Any& DefaultValueTestCases::top_level_any() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.top_level_any)
   return top_level_any_ != NULL ? *top_level_any_ : *default_instance_->top_level_any_;
 }
- ::google::protobuf::Any* DefaultValueTestCases::mutable_top_level_any() {
+::google::protobuf::Any* DefaultValueTestCases::mutable_top_level_any() {
   
   if (top_level_any_ == NULL) {
     top_level_any_ = new ::google::protobuf::Any;
@@ -3744,13 +3930,13 @@ void DefaultValueTestCases::clear_top_level_any() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.top_level_any)
   return top_level_any_;
 }
- ::google::protobuf::Any* DefaultValueTestCases::release_top_level_any() {
+::google::protobuf::Any* DefaultValueTestCases::release_top_level_any() {
   
   ::google::protobuf::Any* temp = top_level_any_;
   top_level_any_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_top_level_any(::google::protobuf::Any* top_level_any) {
+void DefaultValueTestCases::set_allocated_top_level_any(::google::protobuf::Any* top_level_any) {
   delete top_level_any_;
   top_level_any_ = top_level_any;
   if (top_level_any) {
@@ -3769,11 +3955,11 @@ void DefaultValueTestCases::clear_empty_map() {
   if (GetArenaNoVirtual() == NULL && empty_map_ != NULL) delete empty_map_;
   empty_map_ = NULL;
 }
- const ::google::protobuf::testing::StringtoIntMap& DefaultValueTestCases::empty_map() const {
+const ::google::protobuf::testing::StringtoIntMap& DefaultValueTestCases::empty_map() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.empty_map)
   return empty_map_ != NULL ? *empty_map_ : *default_instance_->empty_map_;
 }
- ::google::protobuf::testing::StringtoIntMap* DefaultValueTestCases::mutable_empty_map() {
+::google::protobuf::testing::StringtoIntMap* DefaultValueTestCases::mutable_empty_map() {
   
   if (empty_map_ == NULL) {
     empty_map_ = new ::google::protobuf::testing::StringtoIntMap;
@@ -3781,13 +3967,13 @@ void DefaultValueTestCases::clear_empty_map() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.empty_map)
   return empty_map_;
 }
- ::google::protobuf::testing::StringtoIntMap* DefaultValueTestCases::release_empty_map() {
+::google::protobuf::testing::StringtoIntMap* DefaultValueTestCases::release_empty_map() {
   
   ::google::protobuf::testing::StringtoIntMap* temp = empty_map_;
   empty_map_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_empty_map(::google::protobuf::testing::StringtoIntMap* empty_map) {
+void DefaultValueTestCases::set_allocated_empty_map(::google::protobuf::testing::StringtoIntMap* empty_map) {
   delete empty_map_;
   empty_map_ = empty_map;
   if (empty_map) {
@@ -3806,11 +3992,11 @@ void DefaultValueTestCases::clear_string_to_int() {
   if (GetArenaNoVirtual() == NULL && string_to_int_ != NULL) delete string_to_int_;
   string_to_int_ = NULL;
 }
- const ::google::protobuf::testing::StringtoIntMap& DefaultValueTestCases::string_to_int() const {
+const ::google::protobuf::testing::StringtoIntMap& DefaultValueTestCases::string_to_int() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.string_to_int)
   return string_to_int_ != NULL ? *string_to_int_ : *default_instance_->string_to_int_;
 }
- ::google::protobuf::testing::StringtoIntMap* DefaultValueTestCases::mutable_string_to_int() {
+::google::protobuf::testing::StringtoIntMap* DefaultValueTestCases::mutable_string_to_int() {
   
   if (string_to_int_ == NULL) {
     string_to_int_ = new ::google::protobuf::testing::StringtoIntMap;
@@ -3818,13 +4004,13 @@ void DefaultValueTestCases::clear_string_to_int() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.string_to_int)
   return string_to_int_;
 }
- ::google::protobuf::testing::StringtoIntMap* DefaultValueTestCases::release_string_to_int() {
+::google::protobuf::testing::StringtoIntMap* DefaultValueTestCases::release_string_to_int() {
   
   ::google::protobuf::testing::StringtoIntMap* temp = string_to_int_;
   string_to_int_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_string_to_int(::google::protobuf::testing::StringtoIntMap* string_to_int) {
+void DefaultValueTestCases::set_allocated_string_to_int(::google::protobuf::testing::StringtoIntMap* string_to_int) {
   delete string_to_int_;
   string_to_int_ = string_to_int;
   if (string_to_int) {
@@ -3843,11 +4029,11 @@ void DefaultValueTestCases::clear_int_to_string() {
   if (GetArenaNoVirtual() == NULL && int_to_string_ != NULL) delete int_to_string_;
   int_to_string_ = NULL;
 }
- const ::google::protobuf::testing::IntToStringMap& DefaultValueTestCases::int_to_string() const {
+const ::google::protobuf::testing::IntToStringMap& DefaultValueTestCases::int_to_string() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.int_to_string)
   return int_to_string_ != NULL ? *int_to_string_ : *default_instance_->int_to_string_;
 }
- ::google::protobuf::testing::IntToStringMap* DefaultValueTestCases::mutable_int_to_string() {
+::google::protobuf::testing::IntToStringMap* DefaultValueTestCases::mutable_int_to_string() {
   
   if (int_to_string_ == NULL) {
     int_to_string_ = new ::google::protobuf::testing::IntToStringMap;
@@ -3855,13 +4041,13 @@ void DefaultValueTestCases::clear_int_to_string() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.int_to_string)
   return int_to_string_;
 }
- ::google::protobuf::testing::IntToStringMap* DefaultValueTestCases::release_int_to_string() {
+::google::protobuf::testing::IntToStringMap* DefaultValueTestCases::release_int_to_string() {
   
   ::google::protobuf::testing::IntToStringMap* temp = int_to_string_;
   int_to_string_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_int_to_string(::google::protobuf::testing::IntToStringMap* int_to_string) {
+void DefaultValueTestCases::set_allocated_int_to_string(::google::protobuf::testing::IntToStringMap* int_to_string) {
   delete int_to_string_;
   int_to_string_ = int_to_string;
   if (int_to_string) {
@@ -3880,11 +4066,11 @@ void DefaultValueTestCases::clear_mixed1() {
   if (GetArenaNoVirtual() == NULL && mixed1_ != NULL) delete mixed1_;
   mixed1_ = NULL;
 }
- const ::google::protobuf::testing::MixedMap& DefaultValueTestCases::mixed1() const {
+const ::google::protobuf::testing::MixedMap& DefaultValueTestCases::mixed1() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.mixed1)
   return mixed1_ != NULL ? *mixed1_ : *default_instance_->mixed1_;
 }
- ::google::protobuf::testing::MixedMap* DefaultValueTestCases::mutable_mixed1() {
+::google::protobuf::testing::MixedMap* DefaultValueTestCases::mutable_mixed1() {
   
   if (mixed1_ == NULL) {
     mixed1_ = new ::google::protobuf::testing::MixedMap;
@@ -3892,13 +4078,13 @@ void DefaultValueTestCases::clear_mixed1() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.mixed1)
   return mixed1_;
 }
- ::google::protobuf::testing::MixedMap* DefaultValueTestCases::release_mixed1() {
+::google::protobuf::testing::MixedMap* DefaultValueTestCases::release_mixed1() {
   
   ::google::protobuf::testing::MixedMap* temp = mixed1_;
   mixed1_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_mixed1(::google::protobuf::testing::MixedMap* mixed1) {
+void DefaultValueTestCases::set_allocated_mixed1(::google::protobuf::testing::MixedMap* mixed1) {
   delete mixed1_;
   mixed1_ = mixed1;
   if (mixed1) {
@@ -3917,11 +4103,11 @@ void DefaultValueTestCases::clear_mixed2() {
   if (GetArenaNoVirtual() == NULL && mixed2_ != NULL) delete mixed2_;
   mixed2_ = NULL;
 }
- const ::google::protobuf::testing::MixedMap2& DefaultValueTestCases::mixed2() const {
+const ::google::protobuf::testing::MixedMap2& DefaultValueTestCases::mixed2() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.mixed2)
   return mixed2_ != NULL ? *mixed2_ : *default_instance_->mixed2_;
 }
- ::google::protobuf::testing::MixedMap2* DefaultValueTestCases::mutable_mixed2() {
+::google::protobuf::testing::MixedMap2* DefaultValueTestCases::mutable_mixed2() {
   
   if (mixed2_ == NULL) {
     mixed2_ = new ::google::protobuf::testing::MixedMap2;
@@ -3929,13 +4115,13 @@ void DefaultValueTestCases::clear_mixed2() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.mixed2)
   return mixed2_;
 }
- ::google::protobuf::testing::MixedMap2* DefaultValueTestCases::release_mixed2() {
+::google::protobuf::testing::MixedMap2* DefaultValueTestCases::release_mixed2() {
   
   ::google::protobuf::testing::MixedMap2* temp = mixed2_;
   mixed2_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_mixed2(::google::protobuf::testing::MixedMap2* mixed2) {
+void DefaultValueTestCases::set_allocated_mixed2(::google::protobuf::testing::MixedMap2* mixed2) {
   delete mixed2_;
   mixed2_ = mixed2;
   if (mixed2) {
@@ -3954,11 +4140,11 @@ void DefaultValueTestCases::clear_map_of_objects() {
   if (GetArenaNoVirtual() == NULL && map_of_objects_ != NULL) delete map_of_objects_;
   map_of_objects_ = NULL;
 }
- const ::google::protobuf::testing::MessageMap& DefaultValueTestCases::map_of_objects() const {
+const ::google::protobuf::testing::MessageMap& DefaultValueTestCases::map_of_objects() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.map_of_objects)
   return map_of_objects_ != NULL ? *map_of_objects_ : *default_instance_->map_of_objects_;
 }
- ::google::protobuf::testing::MessageMap* DefaultValueTestCases::mutable_map_of_objects() {
+::google::protobuf::testing::MessageMap* DefaultValueTestCases::mutable_map_of_objects() {
   
   if (map_of_objects_ == NULL) {
     map_of_objects_ = new ::google::protobuf::testing::MessageMap;
@@ -3966,13 +4152,13 @@ void DefaultValueTestCases::clear_map_of_objects() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.map_of_objects)
   return map_of_objects_;
 }
- ::google::protobuf::testing::MessageMap* DefaultValueTestCases::release_map_of_objects() {
+::google::protobuf::testing::MessageMap* DefaultValueTestCases::release_map_of_objects() {
   
   ::google::protobuf::testing::MessageMap* temp = map_of_objects_;
   map_of_objects_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_map_of_objects(::google::protobuf::testing::MessageMap* map_of_objects) {
+void DefaultValueTestCases::set_allocated_map_of_objects(::google::protobuf::testing::MessageMap* map_of_objects) {
   delete map_of_objects_;
   map_of_objects_ = map_of_objects;
   if (map_of_objects) {
@@ -3983,6 +4169,80 @@ void DefaultValueTestCases::clear_map_of_objects() {
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.map_of_objects)
 }
 
+// optional .google.protobuf.testing.MixedMap mixed_empty = 407;
+bool DefaultValueTestCases::has_mixed_empty() const {
+  return !_is_default_instance_ && mixed_empty_ != NULL;
+}
+void DefaultValueTestCases::clear_mixed_empty() {
+  if (GetArenaNoVirtual() == NULL && mixed_empty_ != NULL) delete mixed_empty_;
+  mixed_empty_ = NULL;
+}
+const ::google::protobuf::testing::MixedMap& DefaultValueTestCases::mixed_empty() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.mixed_empty)
+  return mixed_empty_ != NULL ? *mixed_empty_ : *default_instance_->mixed_empty_;
+}
+::google::protobuf::testing::MixedMap* DefaultValueTestCases::mutable_mixed_empty() {
+  
+  if (mixed_empty_ == NULL) {
+    mixed_empty_ = new ::google::protobuf::testing::MixedMap;
+  }
+  // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.mixed_empty)
+  return mixed_empty_;
+}
+::google::protobuf::testing::MixedMap* DefaultValueTestCases::release_mixed_empty() {
+  
+  ::google::protobuf::testing::MixedMap* temp = mixed_empty_;
+  mixed_empty_ = NULL;
+  return temp;
+}
+void DefaultValueTestCases::set_allocated_mixed_empty(::google::protobuf::testing::MixedMap* mixed_empty) {
+  delete mixed_empty_;
+  mixed_empty_ = mixed_empty;
+  if (mixed_empty) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.mixed_empty)
+}
+
+// optional .google.protobuf.testing.MessageMap message_map_empty = 408;
+bool DefaultValueTestCases::has_message_map_empty() const {
+  return !_is_default_instance_ && message_map_empty_ != NULL;
+}
+void DefaultValueTestCases::clear_message_map_empty() {
+  if (GetArenaNoVirtual() == NULL && message_map_empty_ != NULL) delete message_map_empty_;
+  message_map_empty_ = NULL;
+}
+const ::google::protobuf::testing::MessageMap& DefaultValueTestCases::message_map_empty() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.message_map_empty)
+  return message_map_empty_ != NULL ? *message_map_empty_ : *default_instance_->message_map_empty_;
+}
+::google::protobuf::testing::MessageMap* DefaultValueTestCases::mutable_message_map_empty() {
+  
+  if (message_map_empty_ == NULL) {
+    message_map_empty_ = new ::google::protobuf::testing::MessageMap;
+  }
+  // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.message_map_empty)
+  return message_map_empty_;
+}
+::google::protobuf::testing::MessageMap* DefaultValueTestCases::release_message_map_empty() {
+  
+  ::google::protobuf::testing::MessageMap* temp = message_map_empty_;
+  message_map_empty_ = NULL;
+  return temp;
+}
+void DefaultValueTestCases::set_allocated_message_map_empty(::google::protobuf::testing::MessageMap* message_map_empty) {
+  delete message_map_empty_;
+  message_map_empty_ = message_map_empty;
+  if (message_map_empty) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DefaultValueTestCases.message_map_empty)
+}
+
 // optional .google.protobuf.testing.DoubleValueMessage double_value = 501;
 bool DefaultValueTestCases::has_double_value() const {
   return !_is_default_instance_ && double_value_ != NULL;
@@ -3991,11 +4251,11 @@ void DefaultValueTestCases::clear_double_value() {
   if (GetArenaNoVirtual() == NULL && double_value_ != NULL) delete double_value_;
   double_value_ = NULL;
 }
- const ::google::protobuf::testing::DoubleValueMessage& DefaultValueTestCases::double_value() const {
+const ::google::protobuf::testing::DoubleValueMessage& DefaultValueTestCases::double_value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.double_value)
   return double_value_ != NULL ? *double_value_ : *default_instance_->double_value_;
 }
- ::google::protobuf::testing::DoubleValueMessage* DefaultValueTestCases::mutable_double_value() {
+::google::protobuf::testing::DoubleValueMessage* DefaultValueTestCases::mutable_double_value() {
   
   if (double_value_ == NULL) {
     double_value_ = new ::google::protobuf::testing::DoubleValueMessage;
@@ -4003,13 +4263,13 @@ void DefaultValueTestCases::clear_double_value() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.double_value)
   return double_value_;
 }
- ::google::protobuf::testing::DoubleValueMessage* DefaultValueTestCases::release_double_value() {
+::google::protobuf::testing::DoubleValueMessage* DefaultValueTestCases::release_double_value() {
   
   ::google::protobuf::testing::DoubleValueMessage* temp = double_value_;
   double_value_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_double_value(::google::protobuf::testing::DoubleValueMessage* double_value) {
+void DefaultValueTestCases::set_allocated_double_value(::google::protobuf::testing::DoubleValueMessage* double_value) {
   delete double_value_;
   double_value_ = double_value;
   if (double_value) {
@@ -4028,11 +4288,11 @@ void DefaultValueTestCases::clear_double_value_default() {
   if (GetArenaNoVirtual() == NULL && double_value_default_ != NULL) delete double_value_default_;
   double_value_default_ = NULL;
 }
- const ::google::protobuf::testing::DoubleValueMessage& DefaultValueTestCases::double_value_default() const {
+const ::google::protobuf::testing::DoubleValueMessage& DefaultValueTestCases::double_value_default() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DefaultValueTestCases.double_value_default)
   return double_value_default_ != NULL ? *double_value_default_ : *default_instance_->double_value_default_;
 }
- ::google::protobuf::testing::DoubleValueMessage* DefaultValueTestCases::mutable_double_value_default() {
+::google::protobuf::testing::DoubleValueMessage* DefaultValueTestCases::mutable_double_value_default() {
   
   if (double_value_default_ == NULL) {
     double_value_default_ = new ::google::protobuf::testing::DoubleValueMessage;
@@ -4040,13 +4300,13 @@ void DefaultValueTestCases::clear_double_value_default() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DefaultValueTestCases.double_value_default)
   return double_value_default_;
 }
- ::google::protobuf::testing::DoubleValueMessage* DefaultValueTestCases::release_double_value_default() {
+::google::protobuf::testing::DoubleValueMessage* DefaultValueTestCases::release_double_value_default() {
   
   ::google::protobuf::testing::DoubleValueMessage* temp = double_value_default_;
   double_value_default_ = NULL;
   return temp;
 }
- void DefaultValueTestCases::set_allocated_double_value_default(::google::protobuf::testing::DoubleValueMessage* double_value_default) {
+void DefaultValueTestCases::set_allocated_double_value_default(::google::protobuf::testing::DoubleValueMessage* double_value_default) {
   delete double_value_default_;
   double_value_default_ = double_value_default;
   if (double_value_default) {
@@ -4067,6 +4327,8 @@ const int DoubleMessage::kRepeatedDoubleFieldNumber;
 const int DoubleMessage::kNestedMessageFieldNumber;
 const int DoubleMessage::kRepeatedNestedMessageFieldNumber;
 const int DoubleMessage::kDoubleWrapperFieldNumber;
+const int DoubleMessage::kStrValueFieldNumber;
+const int DoubleMessage::kNumValueFieldNumber;
 #endif  // !_MSC_VER
 
 DoubleMessage::DoubleMessage()
@@ -4079,6 +4341,8 @@ void DoubleMessage::InitAsDefaultInstance() {
   _is_default_instance_ = true;
   nested_message_ = const_cast< ::google::protobuf::testing::DoubleMessage*>(&::google::protobuf::testing::DoubleMessage::default_instance());
   double_wrapper_ = const_cast< ::google::protobuf::DoubleValue*>(&::google::protobuf::DoubleValue::default_instance());
+  DoubleMessage_default_oneof_instance_->str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  DoubleMessage_default_oneof_instance_->num_value_ = GOOGLE_LONGLONG(0);
 }
 
 DoubleMessage::DoubleMessage(const DoubleMessage& from)
@@ -4091,10 +4355,12 @@ DoubleMessage::DoubleMessage(const DoubleMessage& from)
 
 void DoubleMessage::SharedCtor() {
     _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   double_value_ = 0;
   nested_message_ = NULL;
   double_wrapper_ = NULL;
+  clear_has_value();
 }
 
 DoubleMessage::~DoubleMessage() {
@@ -4103,6 +4369,9 @@ DoubleMessage::~DoubleMessage() {
 }
 
 void DoubleMessage::SharedDtor() {
+  if (has_value()) {
+    clear_value();
+  }
   if (this != default_instance_) {
     delete nested_message_;
     delete double_wrapper_;
@@ -4134,6 +4403,24 @@ DoubleMessage* DoubleMessage::New(::google::protobuf::Arena* arena) const {
   return n;
 }
 
+void DoubleMessage::clear_value() {
+  switch(value_case()) {
+    case kStrValue: {
+      value_.str_value_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+      break;
+    }
+    case kNumValue: {
+      // No need to clear
+      break;
+    }
+    case VALUE_NOT_SET: {
+      break;
+    }
+  }
+  _oneof_case_[0] = VALUE_NOT_SET;
+}
+
+
 void DoubleMessage::Clear() {
   double_value_ = 0;
   if (GetArenaNoVirtual() == NULL && nested_message_ != NULL) delete nested_message_;
@@ -4142,6 +4429,7 @@ void DoubleMessage::Clear() {
   double_wrapper_ = NULL;
   repeated_double_.Clear();
   repeated_nested_message_.Clear();
+  clear_value();
 }
 
 bool DoubleMessage::MergePartialFromCodedStream(
@@ -4164,25 +4452,24 @@ bool DoubleMessage::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(17)) goto parse_repeated_double;
+        if (input->ExpectTag(18)) goto parse_repeated_double;
         break;
       }
 
       // repeated double repeated_double = 2;
       case 2: {
-        if (tag == 17) {
+        if (tag == 18) {
          parse_repeated_double:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 1, 17, input, this->mutable_repeated_double())));
-        } else if (tag == 18) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
                  input, this->mutable_repeated_double())));
+        } else if (tag == 17) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 18, input, this->mutable_repeated_double())));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(17)) goto parse_repeated_double;
         if (input->ExpectTag(26)) goto parse_nested_message;
         break;
       }
@@ -4223,6 +4510,39 @@ bool DoubleMessage::MergePartialFromCodedStream(
          parse_double_wrapper:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_double_wrapper()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(898)) goto parse_str_value;
+        break;
+      }
+
+      // optional string str_value = 112;
+      case 112: {
+        if (tag == 898) {
+         parse_str_value:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_str_value()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->str_value().data(), this->str_value().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.DoubleMessage.str_value"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(904)) goto parse_num_value;
+        break;
+      }
+
+      // optional int64 num_value = 113;
+      case 113: {
+        if (tag == 904) {
+         parse_num_value:
+          clear_value();
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &value_.num_value_)));
+          set_has_num_value();
         } else {
           goto handle_unusual;
         }
@@ -4287,6 +4607,21 @@ void DoubleMessage::SerializeWithCachedSizes(
       100, *this->double_wrapper_, output);
   }
 
+  // optional string str_value = 112;
+  if (has_str_value()) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->str_value().data(), this->str_value().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "google.protobuf.testing.DoubleMessage.str_value");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      112, this->str_value(), output);
+  }
+
+  // optional int64 num_value = 113;
+  if (has_num_value()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(113, this->num_value(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:google.protobuf.testing.DoubleMessage)
 }
 
@@ -4331,6 +4666,22 @@ void DoubleMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         100, *this->double_wrapper_, target);
+  }
+
+  // optional string str_value = 112;
+  if (has_str_value()) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->str_value().data(), this->str_value().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "google.protobuf.testing.DoubleMessage.str_value");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        112, this->str_value(), target);
+  }
+
+  // optional int64 num_value = 113;
+  if (has_num_value()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(113, this->num_value(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:google.protobuf.testing.DoubleMessage)
@@ -4381,6 +4732,25 @@ int DoubleMessage::ByteSize() const {
         this->repeated_nested_message(i));
   }
 
+  switch (value_case()) {
+    // optional string str_value = 112;
+    case kStrValue: {
+      total_size += 2 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->str_value());
+      break;
+    }
+    // optional int64 num_value = 113;
+    case kNumValue: {
+      total_size += 2 +
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
+          this->num_value());
+      break;
+    }
+    case VALUE_NOT_SET: {
+      break;
+    }
+  }
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -4403,6 +4773,19 @@ void DoubleMessage::MergeFrom(const DoubleMessage& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   repeated_double_.MergeFrom(from.repeated_double_);
   repeated_nested_message_.MergeFrom(from.repeated_nested_message_);
+  switch (from.value_case()) {
+    case kStrValue: {
+      set_str_value(from.str_value());
+      break;
+    }
+    case kNumValue: {
+      set_num_value(from.num_value());
+      break;
+    }
+    case VALUE_NOT_SET: {
+      break;
+    }
+  }
   if (from.double_value() != 0) {
     set_double_value(from.double_value());
   }
@@ -4441,6 +4824,8 @@ void DoubleMessage::InternalSwap(DoubleMessage* other) {
   std::swap(nested_message_, other->nested_message_);
   repeated_nested_message_.UnsafeArenaSwap(&other->repeated_nested_message_);
   std::swap(double_wrapper_, other->double_wrapper_);
+  std::swap(value_, other->value_);
+  std::swap(_oneof_case_[0], other->_oneof_case_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -4508,11 +4893,11 @@ void DoubleMessage::clear_nested_message() {
   if (GetArenaNoVirtual() == NULL && nested_message_ != NULL) delete nested_message_;
   nested_message_ = NULL;
 }
- const ::google::protobuf::testing::DoubleMessage& DoubleMessage::nested_message() const {
+const ::google::protobuf::testing::DoubleMessage& DoubleMessage::nested_message() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DoubleMessage.nested_message)
   return nested_message_ != NULL ? *nested_message_ : *default_instance_->nested_message_;
 }
- ::google::protobuf::testing::DoubleMessage* DoubleMessage::mutable_nested_message() {
+::google::protobuf::testing::DoubleMessage* DoubleMessage::mutable_nested_message() {
   
   if (nested_message_ == NULL) {
     nested_message_ = new ::google::protobuf::testing::DoubleMessage;
@@ -4520,13 +4905,13 @@ void DoubleMessage::clear_nested_message() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DoubleMessage.nested_message)
   return nested_message_;
 }
- ::google::protobuf::testing::DoubleMessage* DoubleMessage::release_nested_message() {
+::google::protobuf::testing::DoubleMessage* DoubleMessage::release_nested_message() {
   
   ::google::protobuf::testing::DoubleMessage* temp = nested_message_;
   nested_message_ = NULL;
   return temp;
 }
- void DoubleMessage::set_allocated_nested_message(::google::protobuf::testing::DoubleMessage* nested_message) {
+void DoubleMessage::set_allocated_nested_message(::google::protobuf::testing::DoubleMessage* nested_message) {
   delete nested_message_;
   nested_message_ = nested_message;
   if (nested_message) {
@@ -4544,27 +4929,27 @@ int DoubleMessage::repeated_nested_message_size() const {
 void DoubleMessage::clear_repeated_nested_message() {
   repeated_nested_message_.Clear();
 }
- const ::google::protobuf::testing::DoubleMessage& DoubleMessage::repeated_nested_message(int index) const {
+const ::google::protobuf::testing::DoubleMessage& DoubleMessage::repeated_nested_message(int index) const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DoubleMessage.repeated_nested_message)
   return repeated_nested_message_.Get(index);
 }
- ::google::protobuf::testing::DoubleMessage* DoubleMessage::mutable_repeated_nested_message(int index) {
+::google::protobuf::testing::DoubleMessage* DoubleMessage::mutable_repeated_nested_message(int index) {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DoubleMessage.repeated_nested_message)
   return repeated_nested_message_.Mutable(index);
 }
- ::google::protobuf::testing::DoubleMessage* DoubleMessage::add_repeated_nested_message() {
+::google::protobuf::testing::DoubleMessage* DoubleMessage::add_repeated_nested_message() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.DoubleMessage.repeated_nested_message)
   return repeated_nested_message_.Add();
 }
- const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >&
-DoubleMessage::repeated_nested_message() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.DoubleMessage.repeated_nested_message)
-  return repeated_nested_message_;
-}
- ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >*
+::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >*
 DoubleMessage::mutable_repeated_nested_message() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.DoubleMessage.repeated_nested_message)
   return &repeated_nested_message_;
+}
+const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::DoubleMessage >&
+DoubleMessage::repeated_nested_message() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.DoubleMessage.repeated_nested_message)
+  return repeated_nested_message_;
 }
 
 // optional .google.protobuf.DoubleValue double_wrapper = 100;
@@ -4575,11 +4960,11 @@ void DoubleMessage::clear_double_wrapper() {
   if (GetArenaNoVirtual() == NULL && double_wrapper_ != NULL) delete double_wrapper_;
   double_wrapper_ = NULL;
 }
- const ::google::protobuf::DoubleValue& DoubleMessage::double_wrapper() const {
+const ::google::protobuf::DoubleValue& DoubleMessage::double_wrapper() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DoubleMessage.double_wrapper)
   return double_wrapper_ != NULL ? *double_wrapper_ : *default_instance_->double_wrapper_;
 }
- ::google::protobuf::DoubleValue* DoubleMessage::mutable_double_wrapper() {
+::google::protobuf::DoubleValue* DoubleMessage::mutable_double_wrapper() {
   
   if (double_wrapper_ == NULL) {
     double_wrapper_ = new ::google::protobuf::DoubleValue;
@@ -4587,13 +4972,13 @@ void DoubleMessage::clear_double_wrapper() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DoubleMessage.double_wrapper)
   return double_wrapper_;
 }
- ::google::protobuf::DoubleValue* DoubleMessage::release_double_wrapper() {
+::google::protobuf::DoubleValue* DoubleMessage::release_double_wrapper() {
   
   ::google::protobuf::DoubleValue* temp = double_wrapper_;
   double_wrapper_ = NULL;
   return temp;
 }
- void DoubleMessage::set_allocated_double_wrapper(::google::protobuf::DoubleValue* double_wrapper) {
+void DoubleMessage::set_allocated_double_wrapper(::google::protobuf::DoubleValue* double_wrapper) {
   delete double_wrapper_;
   double_wrapper_ = double_wrapper;
   if (double_wrapper) {
@@ -4604,6 +4989,124 @@ void DoubleMessage::clear_double_wrapper() {
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DoubleMessage.double_wrapper)
 }
 
+// optional string str_value = 112;
+bool DoubleMessage::has_str_value() const {
+  return value_case() == kStrValue;
+}
+void DoubleMessage::set_has_str_value() {
+  _oneof_case_[0] = kStrValue;
+}
+void DoubleMessage::clear_str_value() {
+  if (has_str_value()) {
+    value_.str_value_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    clear_has_value();
+  }
+}
+ const ::std::string& DoubleMessage::str_value() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DoubleMessage.str_value)
+  if (has_str_value()) {
+    return value_.str_value_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  return *&::google::protobuf::internal::GetEmptyStringAlreadyInited();
+}
+ void DoubleMessage::set_str_value(const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:google.protobuf.testing.DoubleMessage.str_value)
+  if (!has_str_value()) {
+    clear_value();
+    set_has_str_value();
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.str_value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:google.protobuf.testing.DoubleMessage.str_value)
+}
+ void DoubleMessage::set_str_value(const char* value) {
+  if (!has_str_value()) {
+    clear_value();
+    set_has_str_value();
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.str_value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:google.protobuf.testing.DoubleMessage.str_value)
+}
+ void DoubleMessage::set_str_value(const char* value, size_t size) {
+  if (!has_str_value()) {
+    clear_value();
+    set_has_str_value();
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.str_value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:google.protobuf.testing.DoubleMessage.str_value)
+}
+ ::std::string* DoubleMessage::mutable_str_value() {
+  if (!has_str_value()) {
+    clear_value();
+    set_has_str_value();
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DoubleMessage.str_value)
+  return value_.str_value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* DoubleMessage::release_str_value() {
+  if (has_str_value()) {
+    clear_has_value();
+    return value_.str_value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  } else {
+    return NULL;
+  }
+}
+ void DoubleMessage::set_allocated_str_value(::std::string* str_value) {
+  if (!has_str_value()) {
+    value_.str_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  clear_value();
+  if (str_value != NULL) {
+    set_has_str_value();
+    value_.str_value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+        str_value);
+  }
+  // @@protoc_insertion_point(field_set_allocated:google.protobuf.testing.DoubleMessage.str_value)
+}
+
+// optional int64 num_value = 113;
+bool DoubleMessage::has_num_value() const {
+  return value_case() == kNumValue;
+}
+void DoubleMessage::set_has_num_value() {
+  _oneof_case_[0] = kNumValue;
+}
+void DoubleMessage::clear_num_value() {
+  if (has_num_value()) {
+    value_.num_value_ = GOOGLE_LONGLONG(0);
+    clear_has_value();
+  }
+}
+ ::google::protobuf::int64 DoubleMessage::num_value() const {
+  // @@protoc_insertion_point(field_get:google.protobuf.testing.DoubleMessage.num_value)
+  if (has_num_value()) {
+    return value_.num_value_;
+  }
+  return GOOGLE_LONGLONG(0);
+}
+ void DoubleMessage::set_num_value(::google::protobuf::int64 value) {
+  if (!has_num_value()) {
+    clear_value();
+    set_has_num_value();
+  }
+  value_.num_value_ = value;
+  // @@protoc_insertion_point(field_set:google.protobuf.testing.DoubleMessage.num_value)
+}
+
+bool DoubleMessage::has_value() const {
+  return value_case() != VALUE_NOT_SET;
+}
+void DoubleMessage::clear_has_value() {
+  _oneof_case_[0] = VALUE_NOT_SET;
+}
+DoubleMessage::ValueCase DoubleMessage::value_case() const {
+  return DoubleMessage::ValueCase(_oneof_case_[0]);
+}
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // ===================================================================
@@ -4828,11 +5331,11 @@ void StructMessage::clear_struct_() {
   if (GetArenaNoVirtual() == NULL && struct__ != NULL) delete struct__;
   struct__ = NULL;
 }
- const ::google::protobuf::Struct& StructMessage::struct_() const {
+const ::google::protobuf::Struct& StructMessage::struct_() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.StructMessage.struct)
   return struct__ != NULL ? *struct__ : *default_instance_->struct__;
 }
- ::google::protobuf::Struct* StructMessage::mutable_struct_() {
+::google::protobuf::Struct* StructMessage::mutable_struct_() {
   
   if (struct__ == NULL) {
     struct__ = new ::google::protobuf::Struct;
@@ -4840,13 +5343,13 @@ void StructMessage::clear_struct_() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.StructMessage.struct)
   return struct__;
 }
- ::google::protobuf::Struct* StructMessage::release_struct_() {
+::google::protobuf::Struct* StructMessage::release_struct_() {
   
   ::google::protobuf::Struct* temp = struct__;
   struct__ = NULL;
   return temp;
 }
- void StructMessage::set_allocated_struct_(::google::protobuf::Struct* struct_) {
+void StructMessage::set_allocated_struct_(::google::protobuf::Struct* struct_) {
   delete struct__;
   struct__ = struct_;
   if (struct_) {
@@ -5081,11 +5584,11 @@ void ValueMessage::clear_value() {
   if (GetArenaNoVirtual() == NULL && value_ != NULL) delete value_;
   value_ = NULL;
 }
- const ::google::protobuf::Value& ValueMessage::value() const {
+const ::google::protobuf::Value& ValueMessage::value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.ValueMessage.value)
   return value_ != NULL ? *value_ : *default_instance_->value_;
 }
- ::google::protobuf::Value* ValueMessage::mutable_value() {
+::google::protobuf::Value* ValueMessage::mutable_value() {
   
   if (value_ == NULL) {
     value_ = new ::google::protobuf::Value;
@@ -5093,13 +5596,13 @@ void ValueMessage::clear_value() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.ValueMessage.value)
   return value_;
 }
- ::google::protobuf::Value* ValueMessage::release_value() {
+::google::protobuf::Value* ValueMessage::release_value() {
   
   ::google::protobuf::Value* temp = value_;
   value_ = NULL;
   return temp;
 }
- void ValueMessage::set_allocated_value(::google::protobuf::Value* value) {
+void ValueMessage::set_allocated_value(::google::protobuf::Value* value) {
   delete value_;
   value_ = value;
   if (value) {
@@ -5334,11 +5837,11 @@ void ListValueMessage::clear_shopping_list() {
   if (GetArenaNoVirtual() == NULL && shopping_list_ != NULL) delete shopping_list_;
   shopping_list_ = NULL;
 }
- const ::google::protobuf::ListValue& ListValueMessage::shopping_list() const {
+const ::google::protobuf::ListValue& ListValueMessage::shopping_list() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.ListValueMessage.shopping_list)
   return shopping_list_ != NULL ? *shopping_list_ : *default_instance_->shopping_list_;
 }
- ::google::protobuf::ListValue* ListValueMessage::mutable_shopping_list() {
+::google::protobuf::ListValue* ListValueMessage::mutable_shopping_list() {
   
   if (shopping_list_ == NULL) {
     shopping_list_ = new ::google::protobuf::ListValue;
@@ -5346,13 +5849,13 @@ void ListValueMessage::clear_shopping_list() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.ListValueMessage.shopping_list)
   return shopping_list_;
 }
- ::google::protobuf::ListValue* ListValueMessage::release_shopping_list() {
+::google::protobuf::ListValue* ListValueMessage::release_shopping_list() {
   
   ::google::protobuf::ListValue* temp = shopping_list_;
   shopping_list_ = NULL;
   return temp;
 }
- void ListValueMessage::set_allocated_shopping_list(::google::protobuf::ListValue* shopping_list) {
+void ListValueMessage::set_allocated_shopping_list(::google::protobuf::ListValue* shopping_list) {
   delete shopping_list_;
   shopping_list_ = shopping_list;
   if (shopping_list) {
@@ -5451,10 +5954,10 @@ bool RequestMessage::MergePartialFromCodedStream(
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_content()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->content().data(), this->content().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.RequestMessage.content");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.RequestMessage.content"));
         } else {
           goto handle_unusual;
         }
@@ -5488,9 +5991,9 @@ void RequestMessage::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:google.protobuf.testing.RequestMessage)
   // optional string content = 1;
   if (this->content().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->content().data(), this->content().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.RequestMessage.content");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->content(), output);
@@ -5504,9 +6007,9 @@ void RequestMessage::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:google.protobuf.testing.RequestMessage)
   // optional string content = 1;
   if (this->content().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->content().data(), this->content().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.RequestMessage.content");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -5901,11 +6404,11 @@ void AnyMessage::clear_any() {
   if (GetArenaNoVirtual() == NULL && any_ != NULL) delete any_;
   any_ = NULL;
 }
- const ::google::protobuf::Any& AnyMessage::any() const {
+const ::google::protobuf::Any& AnyMessage::any() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.AnyMessage.any)
   return any_ != NULL ? *any_ : *default_instance_->any_;
 }
- ::google::protobuf::Any* AnyMessage::mutable_any() {
+::google::protobuf::Any* AnyMessage::mutable_any() {
   
   if (any_ == NULL) {
     any_ = new ::google::protobuf::Any;
@@ -5913,13 +6416,13 @@ void AnyMessage::clear_any() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.AnyMessage.any)
   return any_;
 }
- ::google::protobuf::Any* AnyMessage::release_any() {
+::google::protobuf::Any* AnyMessage::release_any() {
   
   ::google::protobuf::Any* temp = any_;
   any_ = NULL;
   return temp;
 }
- void AnyMessage::set_allocated_any(::google::protobuf::Any* any) {
+void AnyMessage::set_allocated_any(::google::protobuf::Any* any) {
   delete any_;
   any_ = any;
   if (any) {
@@ -5938,11 +6441,11 @@ void AnyMessage::clear_data() {
   if (GetArenaNoVirtual() == NULL && data_ != NULL) delete data_;
   data_ = NULL;
 }
- const ::google::protobuf::testing::AnyData& AnyMessage::data() const {
+const ::google::protobuf::testing::AnyData& AnyMessage::data() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.AnyMessage.data)
   return data_ != NULL ? *data_ : *default_instance_->data_;
 }
- ::google::protobuf::testing::AnyData* AnyMessage::mutable_data() {
+::google::protobuf::testing::AnyData* AnyMessage::mutable_data() {
   
   if (data_ == NULL) {
     data_ = new ::google::protobuf::testing::AnyData;
@@ -5950,13 +6453,13 @@ void AnyMessage::clear_data() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.AnyMessage.data)
   return data_;
 }
- ::google::protobuf::testing::AnyData* AnyMessage::release_data() {
+::google::protobuf::testing::AnyData* AnyMessage::release_data() {
   
   ::google::protobuf::testing::AnyData* temp = data_;
   data_ = NULL;
   return temp;
 }
- void AnyMessage::set_allocated_data(::google::protobuf::testing::AnyData* data) {
+void AnyMessage::set_allocated_data(::google::protobuf::testing::AnyData* data) {
   delete data_;
   data_ = data;
   if (data) {
@@ -6095,10 +6598,10 @@ bool AnyData::MergePartialFromCodedStream(
          parse_str:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_str()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->str().data(), this->str().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.AnyData.str");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.AnyData.str"));
         } else {
           goto handle_unusual;
         }
@@ -6112,11 +6615,11 @@ bool AnyData::MergePartialFromCodedStream(
          parse_msgs:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->add_msgs()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->msgs(this->msgs_size() - 1).data(),
             this->msgs(this->msgs_size() - 1).length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.AnyData.msgs");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.AnyData.msgs"));
         } else {
           goto handle_unusual;
         }
@@ -6148,6 +6651,15 @@ bool AnyData::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map_data())[entry->key()] = *entry->mutable_value();
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->key().data(), entry->key().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.AnyData.MapDataEntry.key"));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->mutable_value()->data(),
+            entry->mutable_value()->length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.AnyData.MapDataEntry.value"));
         } else {
           goto handle_unusual;
         }
@@ -6218,9 +6730,9 @@ void AnyData::SerializeWithCachedSizes(
 
   // optional string str = 2;
   if (this->str().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->str().data(), this->str().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.AnyData.str");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->str(), output);
@@ -6228,10 +6740,10 @@ void AnyData::SerializeWithCachedSizes(
 
   // repeated string msgs = 3;
   for (int i = 0; i < this->msgs_size(); i++) {
-  ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-    this->msgs(i).data(), this->msgs(i).length(),
-    ::google::protobuf::internal::WireFormat::SERIALIZE,
-    "google.protobuf.testing.AnyData.msgs");
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->msgs(i).data(), this->msgs(i).length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "google.protobuf.testing.AnyData.msgs");
     ::google::protobuf::internal::WireFormatLite::WriteString(
       3, this->msgs(i), output);
   }
@@ -6251,6 +6763,14 @@ void AnyData::SerializeWithCachedSizes(
       entry.reset(map_data_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           7, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.AnyData.MapDataEntry.key");
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->second.data(), it->second.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.AnyData.MapDataEntry.value");
     }
   }
 
@@ -6279,9 +6799,9 @@ void AnyData::SerializeWithCachedSizes(
 
   // optional string str = 2;
   if (this->str().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->str().data(), this->str().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.AnyData.str");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -6290,9 +6810,9 @@ void AnyData::SerializeWithCachedSizes(
 
   // repeated string msgs = 3;
   for (int i = 0; i < this->msgs_size(); i++) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->msgs(i).data(), this->msgs(i).length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.AnyData.msgs");
     target = ::google::protobuf::internal::WireFormatLite::
       WriteStringToArray(3, this->msgs(i), target);
@@ -6315,6 +6835,14 @@ void AnyData::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               7, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.AnyData.MapDataEntry.key");
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->second.data(), it->second.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.AnyData.MapDataEntry.value");
     }
   }
 
@@ -6596,11 +7124,11 @@ void AnyData::clear_nested_data() {
   if (GetArenaNoVirtual() == NULL && nested_data_ != NULL) delete nested_data_;
   nested_data_ = NULL;
 }
- const ::google::protobuf::testing::AnyData& AnyData::nested_data() const {
+const ::google::protobuf::testing::AnyData& AnyData::nested_data() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.AnyData.nested_data)
   return nested_data_ != NULL ? *nested_data_ : *default_instance_->nested_data_;
 }
- ::google::protobuf::testing::AnyData* AnyData::mutable_nested_data() {
+::google::protobuf::testing::AnyData* AnyData::mutable_nested_data() {
   
   if (nested_data_ == NULL) {
     nested_data_ = new ::google::protobuf::testing::AnyData;
@@ -6608,13 +7136,13 @@ void AnyData::clear_nested_data() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.AnyData.nested_data)
   return nested_data_;
 }
- ::google::protobuf::testing::AnyData* AnyData::release_nested_data() {
+::google::protobuf::testing::AnyData* AnyData::release_nested_data() {
   
   ::google::protobuf::testing::AnyData* temp = nested_data_;
   nested_data_ = NULL;
   return temp;
 }
- void AnyData::set_allocated_nested_data(::google::protobuf::testing::AnyData* nested_data) {
+void AnyData::set_allocated_nested_data(::google::protobuf::testing::AnyData* nested_data) {
   delete nested_data_;
   nested_data_ = nested_data;
   if (nested_data) {
@@ -6651,11 +7179,11 @@ void AnyData::clear_struct_data() {
   if (GetArenaNoVirtual() == NULL && struct_data_ != NULL) delete struct_data_;
   struct_data_ = NULL;
 }
- const ::google::protobuf::Struct& AnyData::struct_data() const {
+const ::google::protobuf::Struct& AnyData::struct_data() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.AnyData.struct_data)
   return struct_data_ != NULL ? *struct_data_ : *default_instance_->struct_data_;
 }
- ::google::protobuf::Struct* AnyData::mutable_struct_data() {
+::google::protobuf::Struct* AnyData::mutable_struct_data() {
   
   if (struct_data_ == NULL) {
     struct_data_ = new ::google::protobuf::Struct;
@@ -6663,13 +7191,13 @@ void AnyData::clear_struct_data() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.AnyData.struct_data)
   return struct_data_;
 }
- ::google::protobuf::Struct* AnyData::release_struct_data() {
+::google::protobuf::Struct* AnyData::release_struct_data() {
   
   ::google::protobuf::Struct* temp = struct_data_;
   struct_data_ = NULL;
   return temp;
 }
- void AnyData::set_allocated_struct_data(::google::protobuf::Struct* struct_data) {
+void AnyData::set_allocated_struct_data(::google::protobuf::Struct* struct_data) {
   delete struct_data_;
   struct_data_ = struct_data;
   if (struct_data) {
@@ -6687,27 +7215,27 @@ int AnyData::repeated_data_size() const {
 void AnyData::clear_repeated_data() {
   repeated_data_.Clear();
 }
- const ::google::protobuf::testing::AnyData& AnyData::repeated_data(int index) const {
+const ::google::protobuf::testing::AnyData& AnyData::repeated_data(int index) const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.AnyData.repeated_data)
   return repeated_data_.Get(index);
 }
- ::google::protobuf::testing::AnyData* AnyData::mutable_repeated_data(int index) {
+::google::protobuf::testing::AnyData* AnyData::mutable_repeated_data(int index) {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.AnyData.repeated_data)
   return repeated_data_.Mutable(index);
 }
- ::google::protobuf::testing::AnyData* AnyData::add_repeated_data() {
+::google::protobuf::testing::AnyData* AnyData::add_repeated_data() {
   // @@protoc_insertion_point(field_add:google.protobuf.testing.AnyData.repeated_data)
   return repeated_data_.Add();
 }
- const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >&
-AnyData::repeated_data() const {
-  // @@protoc_insertion_point(field_list:google.protobuf.testing.AnyData.repeated_data)
-  return repeated_data_;
-}
- ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >*
+::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >*
 AnyData::mutable_repeated_data() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.testing.AnyData.repeated_data)
   return &repeated_data_;
+}
+const ::google::protobuf::RepeatedPtrField< ::google::protobuf::testing::AnyData >&
+AnyData::repeated_data() const {
+  // @@protoc_insertion_point(field_list:google.protobuf.testing.AnyData.repeated_data)
+  return repeated_data_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -6803,6 +7331,10 @@ bool StringtoIntMap::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map())[entry->key()] = *entry->mutable_value();
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->key().data(), entry->key().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.StringtoIntMap.MapEntry.key"));
         } else {
           goto handle_unusual;
         }
@@ -6845,6 +7377,10 @@ void StringtoIntMap::SerializeWithCachedSizes(
       entry.reset(map_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           1, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.StringtoIntMap.MapEntry.key");
     }
   }
 
@@ -6864,6 +7400,10 @@ void StringtoIntMap::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               1, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.StringtoIntMap.MapEntry.key");
     }
   }
 
@@ -7059,6 +7599,11 @@ bool IntToStringMap::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map())[entry->key()] = *entry->mutable_value();
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->mutable_value()->data(),
+            entry->mutable_value()->length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.IntToStringMap.MapEntry.value"));
         } else {
           goto handle_unusual;
         }
@@ -7101,6 +7646,10 @@ void IntToStringMap::SerializeWithCachedSizes(
       entry.reset(map_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           1, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->second.data(), it->second.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.IntToStringMap.MapEntry.value");
     }
   }
 
@@ -7120,6 +7669,10 @@ void IntToStringMap::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               1, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->second.data(), it->second.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.IntToStringMap.MapEntry.value");
     }
   }
 
@@ -7319,10 +7872,10 @@ bool MixedMap::MergePartialFromCodedStream(
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_msg()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->msg().data(), this->msg().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.MixedMap.msg");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.MixedMap.msg"));
         } else {
           goto handle_unusual;
         }
@@ -7340,6 +7893,10 @@ bool MixedMap::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map())[entry->key()] = *entry->mutable_value();
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->key().data(), entry->key().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.MixedMap.MapEntry.key"));
         } else {
           goto handle_unusual;
         }
@@ -7390,9 +7947,9 @@ void MixedMap::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:google.protobuf.testing.MixedMap)
   // optional string msg = 1;
   if (this->msg().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->msg().data(), this->msg().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.MixedMap.msg");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->msg(), output);
@@ -7407,6 +7964,10 @@ void MixedMap::SerializeWithCachedSizes(
       entry.reset(map_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           2, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.MixedMap.MapEntry.key");
     }
   }
 
@@ -7423,9 +7984,9 @@ void MixedMap::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:google.protobuf.testing.MixedMap)
   // optional string msg = 1;
   if (this->msg().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->msg().data(), this->msg().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.MixedMap.msg");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -7442,6 +8003,10 @@ void MixedMap::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               2, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.MixedMap.MapEntry.key");
     }
   }
 
@@ -7786,10 +8351,10 @@ bool MixedMap2::MergePartialFromCodedStream(
          parse_msg:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_msg()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->msg().data(), this->msg().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.MixedMap2.msg");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.MixedMap2.msg"));
         } else {
           goto handle_unusual;
         }
@@ -7841,9 +8406,9 @@ void MixedMap2::SerializeWithCachedSizes(
 
   // optional string msg = 4;
   if (this->msg().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->msg().data(), this->msg().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.MixedMap2.msg");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->msg(), output);
@@ -7876,9 +8441,9 @@ void MixedMap2::SerializeWithCachedSizes(
 
   // optional string msg = 4;
   if (this->msg().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->msg().data(), this->msg().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.MixedMap2.msg");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -8169,10 +8734,10 @@ bool MessageMap_M::MergePartialFromCodedStream(
          parse_inner_text:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_inner_text()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->inner_text().data(), this->inner_text().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.MessageMap.M.inner_text");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.MessageMap.M.inner_text"));
         } else {
           goto handle_unusual;
         }
@@ -8211,9 +8776,9 @@ void MessageMap_M::SerializeWithCachedSizes(
 
   // optional string inner_text = 2;
   if (this->inner_text().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->inner_text().data(), this->inner_text().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.MessageMap.M.inner_text");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->inner_text(), output);
@@ -8232,9 +8797,9 @@ void MessageMap_M::SerializeWithCachedSizes(
 
   // optional string inner_text = 2;
   if (this->inner_text().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->inner_text().data(), this->inner_text().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.MessageMap.M.inner_text");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
@@ -8419,6 +8984,10 @@ bool MessageMap::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, entry.get()));
           (*mutable_map())[entry->key()].Swap(entry->mutable_value());
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            entry->key().data(), entry->key().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.MessageMap.MapEntry.key"));
         } else {
           goto handle_unusual;
         }
@@ -8461,6 +9030,10 @@ void MessageMap::SerializeWithCachedSizes(
       entry.reset(map_.NewEntryWrapper(it->first, it->second));
       ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
           1, *entry, output);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.MessageMap.MapEntry.key");
     }
   }
 
@@ -8480,6 +9053,10 @@ void MessageMap::SerializeWithCachedSizes(
       target = ::google::protobuf::internal::WireFormatLite::
           WriteMessageNoVirtualToArray(
               1, *entry, target);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        it->first.data(), it->first.length(),
+        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+        "google.protobuf.testing.MessageMap.MapEntry.key");
     }
   }
 
@@ -8867,11 +9444,11 @@ void DoubleValueMessage::clear_double_() {
   if (GetArenaNoVirtual() == NULL && double__ != NULL) delete double__;
   double__ = NULL;
 }
- const ::google::protobuf::DoubleValue& DoubleValueMessage::double_() const {
+const ::google::protobuf::DoubleValue& DoubleValueMessage::double_() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.DoubleValueMessage.double)
   return double__ != NULL ? *double__ : *default_instance_->double__;
 }
- ::google::protobuf::DoubleValue* DoubleValueMessage::mutable_double_() {
+::google::protobuf::DoubleValue* DoubleValueMessage::mutable_double_() {
   
   if (double__ == NULL) {
     double__ = new ::google::protobuf::DoubleValue;
@@ -8879,13 +9456,13 @@ void DoubleValueMessage::clear_double_() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.DoubleValueMessage.double)
   return double__;
 }
- ::google::protobuf::DoubleValue* DoubleValueMessage::release_double_() {
+::google::protobuf::DoubleValue* DoubleValueMessage::release_double_() {
   
   ::google::protobuf::DoubleValue* temp = double__;
   double__ = NULL;
   return temp;
 }
- void DoubleValueMessage::set_allocated_double_(::google::protobuf::DoubleValue* double_) {
+void DoubleValueMessage::set_allocated_double_(::google::protobuf::DoubleValue* double_) {
   delete double__;
   double__ = double_;
   if (double_) {

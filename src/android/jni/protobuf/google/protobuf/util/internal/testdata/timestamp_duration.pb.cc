@@ -385,11 +385,11 @@ void TimestampDuration::clear_ts() {
   if (GetArenaNoVirtual() == NULL && ts_ != NULL) delete ts_;
   ts_ = NULL;
 }
- const ::google::protobuf::Timestamp& TimestampDuration::ts() const {
+const ::google::protobuf::Timestamp& TimestampDuration::ts() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.timestampduration.TimestampDuration.ts)
   return ts_ != NULL ? *ts_ : *default_instance_->ts_;
 }
- ::google::protobuf::Timestamp* TimestampDuration::mutable_ts() {
+::google::protobuf::Timestamp* TimestampDuration::mutable_ts() {
   
   if (ts_ == NULL) {
     ts_ = new ::google::protobuf::Timestamp;
@@ -397,13 +397,13 @@ void TimestampDuration::clear_ts() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.timestampduration.TimestampDuration.ts)
   return ts_;
 }
- ::google::protobuf::Timestamp* TimestampDuration::release_ts() {
+::google::protobuf::Timestamp* TimestampDuration::release_ts() {
   
   ::google::protobuf::Timestamp* temp = ts_;
   ts_ = NULL;
   return temp;
 }
- void TimestampDuration::set_allocated_ts(::google::protobuf::Timestamp* ts) {
+void TimestampDuration::set_allocated_ts(::google::protobuf::Timestamp* ts) {
   delete ts_;
   ts_ = ts;
   if (ts) {
@@ -422,11 +422,11 @@ void TimestampDuration::clear_dur() {
   if (GetArenaNoVirtual() == NULL && dur_ != NULL) delete dur_;
   dur_ = NULL;
 }
- const ::google::protobuf::Duration& TimestampDuration::dur() const {
+const ::google::protobuf::Duration& TimestampDuration::dur() const {
   // @@protoc_insertion_point(field_get:google.protobuf.testing.timestampduration.TimestampDuration.dur)
   return dur_ != NULL ? *dur_ : *default_instance_->dur_;
 }
- ::google::protobuf::Duration* TimestampDuration::mutable_dur() {
+::google::protobuf::Duration* TimestampDuration::mutable_dur() {
   
   if (dur_ == NULL) {
     dur_ = new ::google::protobuf::Duration;
@@ -434,13 +434,13 @@ void TimestampDuration::clear_dur() {
   // @@protoc_insertion_point(field_mutable:google.protobuf.testing.timestampduration.TimestampDuration.dur)
   return dur_;
 }
- ::google::protobuf::Duration* TimestampDuration::release_dur() {
+::google::protobuf::Duration* TimestampDuration::release_dur() {
   
   ::google::protobuf::Duration* temp = dur_;
   dur_ = NULL;
   return temp;
 }
- void TimestampDuration::set_allocated_dur(::google::protobuf::Duration* dur) {
+void TimestampDuration::set_allocated_dur(::google::protobuf::Duration* dur) {
   delete dur_;
   dur_ = dur;
   if (dur) {

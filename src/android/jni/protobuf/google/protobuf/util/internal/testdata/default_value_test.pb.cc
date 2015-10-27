@@ -247,25 +247,24 @@ bool DefaultValueTest::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(17)) goto parse_repeated_double;
+        if (input->ExpectTag(18)) goto parse_repeated_double;
         break;
       }
 
       // repeated double repeated_double = 2;
       case 2: {
-        if (tag == 17) {
+        if (tag == 18) {
          parse_repeated_double:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 1, 17, input, this->mutable_repeated_double())));
-        } else if (tag == 18) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
                  input, this->mutable_repeated_double())));
+        } else if (tag == 17) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 18, input, this->mutable_repeated_double())));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(17)) goto parse_repeated_double;
         if (input->ExpectTag(29)) goto parse_float_value;
         break;
       }
@@ -366,10 +365,10 @@ bool DefaultValueTest::MergePartialFromCodedStream(
          parse_string_value:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_string_value()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->string_value().data(), this->string_value().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "google.protobuf.testing.DefaultValueTest.string_value");
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "google.protobuf.testing.DefaultValueTest.string_value"));
         } else {
           goto handle_unusual;
         }
@@ -461,9 +460,9 @@ void DefaultValueTest::SerializeWithCachedSizes(
 
   // optional string string_value = 15;
   if (this->string_value().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->string_value().data(), this->string_value().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.DefaultValueTest.string_value");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       15, this->string_value(), output);
@@ -532,9 +531,9 @@ void DefaultValueTest::SerializeWithCachedSizes(
 
   // optional string string_value = 15;
   if (this->string_value().size() > 0) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->string_value().data(), this->string_value().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "google.protobuf.testing.DefaultValueTest.string_value");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
