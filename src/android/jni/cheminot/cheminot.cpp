@@ -172,7 +172,7 @@ JNIEXPORT jstring JNICALL Java_m_cheminot_plugin_jni_CheminotLib_lookForBestDire
   cheminotc::CheminotDb connection = connections[dbPath];
 
   cheminotc::unlock(connection);
-  std::pair<bool, std::list<cheminotc::ArrivalTime>> result = lookForBestDirectTrip(connection, { "TER" }, graph, cache, calendarDates, vsId, veId, at, te);
+  std::pair<bool, std::list<cheminotc::ArrivalTime>> result = lookForBestDirectTrip(connection, { "TER", "TRANS", "INTER" }, graph, cache, calendarDates, vsId, veId, at, te);
   std::list<cheminotc::ArrivalTime> arrivalTimes = result.second;
 
   env->ReleaseStringUTFChars(jdbPath, dbPath);
